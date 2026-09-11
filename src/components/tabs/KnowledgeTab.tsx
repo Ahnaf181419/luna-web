@@ -65,13 +65,13 @@ export const KnowledgeTab: React.FC = () => {
   return (
     <div className="space-y-8">
       
-      {/* SECTION HEADER */}
-      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6">
+      {/* SECTION HEADER (NASA ARCHIVAL) */}
+      <div className="bg-obsidian-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
         <h2 className="text-xl font-bold text-white font-mono flex items-center gap-2">
-          <Network className="w-5 h-5 text-purple-400" />
+          <Network className="w-5 h-5 text-amber-400" />
           <span>Obsidian Knowledge Graph & Maps of Content</span>
         </h2>
-        <p className="text-xs text-slate-400 font-mono mt-1 max-w-3xl">
+        <p className="text-xs text-zinc-400 font-mono mt-1 max-w-3xl">
           The entire LUNARVOID research body is structured as an interconnected bi-directional knowledge vault. Maps of Content (MOCs) organize atomic notes across geological sites, gates, and epistemology.
         </p>
       </div>
@@ -88,29 +88,29 @@ export const KnowledgeTab: React.FC = () => {
               onClick={() => setActiveMoc(moc)}
               className={`p-5 rounded-xl border transition cursor-pointer space-y-3 ${
                 isSelected
-                  ? 'bg-purple-950/40 border-purple-700 shadow-lg shadow-purple-950/40'
-                  : 'bg-obsidian-900 border-slate-800 hover:border-slate-700'
+                  ? 'bg-amber-950/40 border-amber-700 shadow-lg shadow-amber-950/40'
+                  : 'bg-obsidian-900 border-zinc-800 hover:border-zinc-700'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  isSelected ? 'bg-purple-900 text-purple-300' : 'bg-obsidian-950 text-slate-400'
+                  isSelected ? 'bg-amber-900/60 text-amber-300' : 'bg-obsidian-950 text-zinc-400'
                 }`}>
                   <IconComp className="w-4 h-4" />
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-obsidian-950 text-slate-400 border border-slate-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-obsidian-950 text-zinc-400 border border-zinc-800">
                   {moc.notesCount} notes
                 </span>
               </div>
 
               <div>
-                <span className="text-[10px] font-mono text-purple-400 uppercase tracking-wider">
+                <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider">
                   {moc.category}
                 </span>
                 <h3 className="text-sm font-bold text-white font-mono mt-0.5">{moc.title}</h3>
               </div>
 
-              <p className="text-xs text-slate-400 font-sans leading-relaxed">
+              <p className="text-xs text-zinc-400 font-sans leading-relaxed">
                 {moc.summary}
               </p>
             </div>
@@ -119,29 +119,29 @@ export const KnowledgeTab: React.FC = () => {
       </div>
 
       {/* ACTIVE MOC DETAIL EXPLORER */}
-      <div className="bg-obsidian-900 border border-purple-800/60 rounded-2xl p-6 sm:p-8 space-y-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-obsidian-900 border border-amber-800/60 rounded-2xl p-6 sm:p-8 space-y-5 shadow-xl">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
           <div>
-            <span className="text-[10px] font-mono text-slate-400 uppercase">ACTIVE KNOWLEDGE CLUSTER</span>
+            <span className="text-[10px] font-mono text-zinc-400 uppercase">ACTIVE KNOWLEDGE CLUSTER</span>
             <h3 className="text-base font-bold text-white font-mono mt-0.5">{activeMoc.title}</h3>
           </div>
-          <span className="px-3 py-1 text-xs font-mono rounded bg-purple-950 text-purple-300 border border-purple-800">
+          <span className="px-3 py-1 text-xs font-mono rounded bg-amber-950/60 text-amber-300 border border-amber-800">
             {activeMoc.category}
           </span>
         </div>
 
         <div className="space-y-3">
-          <span className="text-[11px] font-mono uppercase text-slate-400 tracking-wider">
+          <span className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">
             FIRST-CLASS GRAPH NODES & CORE REFS
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
             {activeMoc.keyConcepts.map((concept, idx) => (
               <div
                 key={idx}
-                className="p-3 bg-obsidian-950 border border-slate-800 rounded-xl flex items-center justify-between text-slate-200"
+                className="p-3 bg-obsidian-950 border border-zinc-800 rounded-xl flex items-center justify-between text-zinc-200"
               >
                 <span>[[{concept}]]</span>
-                <span className="text-[10px] text-purple-400 hover:underline">View node →</span>
+                <span className="text-[10px] text-amber-400 hover:underline">View node →</span>
               </div>
             ))}
           </div>

@@ -18,7 +18,6 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
   const [viewMode, setViewMode] = useState<'TABLE' | 'CARDS'>('TABLE');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Filtering candidates
   const filteredCandidates = useMemo(() => {
     return CANDIDATES.filter((c) => {
       const matchesSite = selectedSite === 'ALL' || c.siteId === selectedSite;
@@ -50,29 +49,29 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
   return (
     <div className="space-y-6">
       
-      {/* TOOLBAR & RETICLE FILTER CONSOLE */}
-      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+      {/* TOOLBAR CONSOLE (NASA ARCHIVAL) */}
+      <div className="bg-obsidian-900 border border-zinc-800 rounded-2xl p-6 space-y-4 shadow-xl">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
               <h2 className="text-xl font-bold text-white font-mono">
                 Lunar Subsurface Candidate Registry
               </h2>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-xs text-zinc-400 font-mono mt-0.5">
               257 features across 21 calibrated LROC NAC DTM targets • N = 21/649 = 3.2%
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-obsidian-950 border border-slate-800 rounded-lg p-1">
+            <div className="flex items-center bg-obsidian-950 border border-zinc-800 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('TABLE')}
                 className={`p-1.5 rounded transition ${
-                  viewMode === 'TABLE' ? 'bg-cyan-950 text-cyan-300' : 'text-slate-500 hover:text-white'
+                  viewMode === 'TABLE' ? 'bg-amber-950/60 text-amber-300' : 'text-zinc-500 hover:text-white'
                 }`}
                 title="Console Table View"
               >
@@ -81,7 +80,7 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
               <button
                 onClick={() => setViewMode('CARDS')}
                 className={`p-1.5 rounded transition ${
-                  viewMode === 'CARDS' ? 'bg-cyan-950 text-cyan-300' : 'text-slate-500 hover:text-white'
+                  viewMode === 'CARDS' ? 'bg-amber-950/60 text-amber-300' : 'text-zinc-500 hover:text-white'
                 }`}
                 title="Visual Dossier Cards"
               >
@@ -91,13 +90,13 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
 
             {/* Search Input */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search ID, target, morphology..."
-                className="pl-9 pr-3 py-1.5 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-52 sm:w-60"
+                className="pl-9 pr-3 py-1.5 text-xs font-mono bg-obsidian-950 border border-zinc-700/80 rounded-lg text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500 w-52 sm:w-60"
               />
             </div>
 
@@ -105,7 +104,7 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="py-1.5 px-3 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
+              className="py-1.5 px-3 text-xs font-mono bg-obsidian-950 border border-zinc-700/80 rounded-lg text-zinc-200 focus:outline-none focus:border-amber-500 cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               <option value="PITS">Primary Skylight Pits</option>
@@ -116,13 +115,13 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
         </div>
 
         {/* Quick Target Pills */}
-        <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-800/80 text-xs font-mono">
+        <div className="flex flex-wrap gap-2 pt-3 border-t border-zinc-800/80 text-xs font-mono">
           <button
             onClick={() => setSelectedSite('ALL')}
             className={`px-2.5 py-1 rounded-md transition ${
               selectedSite === 'ALL'
-                ? 'bg-cyan-950 text-cyan-300 border border-cyan-700'
-                : 'bg-obsidian-950 text-slate-400 border border-slate-850 hover:text-white'
+                ? 'bg-amber-950/60 text-amber-300 border border-amber-700'
+                : 'bg-obsidian-950 text-zinc-400 border border-zinc-800 hover:text-white'
             }`}
           >
             ALL TARGETS ({CANDIDATES.length})
@@ -134,8 +133,8 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
               onClick={() => setSelectedSite(site.id)}
               className={`px-2.5 py-1 rounded-md transition ${
                 selectedSite === site.id
-                  ? 'bg-cyan-950 text-cyan-300 border border-cyan-700'
-                  : 'bg-obsidian-950 text-slate-400 border border-slate-850 hover:text-white'
+                  ? 'bg-amber-950/60 text-amber-300 border border-amber-700'
+                  : 'bg-obsidian-950 text-zinc-400 border border-zinc-800 hover:text-white'
               }`}
             >
               {site.id}
@@ -148,13 +147,13 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
       {/* MAIN SPLIT VIEW */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* Left: Candidates Viewport (Table or Grid) */}
+        {/* Left: Candidates Viewport */}
         <div className="lg:col-span-7">
           {viewMode === 'TABLE' ? (
-            <div className="bg-obsidian-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div className="bg-obsidian-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
-                  <thead className="bg-obsidian-950/85 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                  <thead className="bg-obsidian-950/90 text-zinc-400 border-b border-zinc-800 uppercase tracking-wider text-[11px]">
                     <tr>
                       <th className="p-3.5">Candidate ID</th>
                       <th className="p-3.5">Site</th>
@@ -164,27 +163,27 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                       <th className="p-3.5 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                  <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
                     {filteredCandidates.map((cand) => {
                       const isSelected = inspectedCandidate?.id === cand.id;
-                      let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
+                      let badgeColor = 'bg-zinc-800 text-zinc-400 border-zinc-700';
                       if (cand.status === 'CONFIRMED ANCHOR') badgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-800';
-                      else if (cand.status === 'HIGH CONFIDENCE') badgeColor = 'bg-cyan-950 text-cyan-400 border-cyan-800';
-                      else if (cand.status === 'INSPECTION BACKLOG') badgeColor = 'bg-amber-950 text-amber-400 border-amber-800';
+                      else if (cand.status === 'HIGH CONFIDENCE') badgeColor = 'bg-amber-950 text-amber-400 border-amber-800';
+                      else if (cand.status === 'INSPECTION BACKLOG') badgeColor = 'bg-orange-950 text-orange-400 border-orange-800';
 
                       return (
                         <tr
                           key={cand.id}
                           onClick={() => setInspectedCandidate(cand)}
-                          className={`hover:bg-slate-800/40 transition cursor-pointer ${
-                            isSelected ? 'bg-slate-800/60 border-l-2 border-l-cyan-400' : ''
+                          className={`hover:bg-zinc-800/40 transition cursor-pointer ${
+                            isSelected ? 'bg-zinc-800/60 border-l-2 border-l-amber-400' : ''
                           }`}
                         >
                           <td className="p-3.5 font-bold text-white whitespace-nowrap">{cand.id}</td>
-                          <td className="p-3.5 text-slate-400 whitespace-nowrap">{cand.siteId}</td>
-                          <td className="p-3.5 text-slate-300 whitespace-nowrap">{cand.morphology}</td>
+                          <td className="p-3.5 text-zinc-400 whitespace-nowrap">{cand.siteId}</td>
+                          <td className="p-3.5 text-zinc-300 whitespace-nowrap">{cand.morphology}</td>
                           <td className="p-3.5 font-bold whitespace-nowrap">
-                            <span className={cand.score >= 0.8 ? 'text-cyan-400' : 'text-slate-300'}>
+                            <span className={cand.score >= 0.8 ? 'text-amber-400' : 'text-zinc-300'}>
                               {cand.score.toFixed(2)}
                             </span>
                           </td>
@@ -194,7 +193,7 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                             </span>
                           </td>
                           <td className="p-3.5 text-right whitespace-nowrap">
-                            <ChevronRight className="w-4 h-4 inline text-slate-500 hover:text-cyan-400" />
+                            <ChevronRight className="w-4 h-4 inline text-zinc-500 hover:text-amber-400" />
                           </td>
                         </tr>
                       );
@@ -213,18 +212,18 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                     onClick={() => setInspectedCandidate(cand)}
                     className={`p-4 rounded-xl border transition cursor-pointer space-y-3 font-mono text-xs ${
                       isSelected
-                        ? 'bg-cyan-950/30 border-cyan-600 shadow-lg'
-                        : 'bg-obsidian-900 border-slate-800 hover:border-slate-700'
+                        ? 'bg-amber-950/30 border-amber-600 shadow-lg'
+                        : 'bg-obsidian-900 border-zinc-800 hover:border-zinc-700'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-white text-sm">{cand.id}</span>
-                      <span className="text-cyan-400 font-bold">{cand.score.toFixed(2)}</span>
+                      <span className="text-amber-400 font-bold">{cand.score.toFixed(2)}</span>
                     </div>
 
-                    <div className="text-slate-400 text-[11px]">{cand.morphology}</div>
+                    <div className="text-zinc-400 text-[11px]">{cand.morphology}</div>
                     
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between text-[10px] text-zinc-500 pt-2 border-t border-zinc-800">
                       <span>{cand.siteName}</span>
                       <span>{cand.depthMeters ? `${cand.depthMeters}m depth` : 'Sag'}</span>
                     </div>
@@ -235,14 +234,13 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
           )}
         </div>
 
-        {/* Right: Candidate Detail & Scientific Instruments */}
+        {/* Right: Candidate Detail Drawer */}
         {inspectedCandidate && (
-          <div className="lg:col-span-5 bg-obsidian-900 border border-cyan-800/80 rounded-2xl p-6 space-y-6 shadow-2xl sticky top-24">
+          <div className="lg:col-span-5 bg-obsidian-900 border border-amber-800/80 rounded-2xl p-6 space-y-6 shadow-2xl sticky top-24">
             
-            {/* Header with Copy Action */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div>
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
                   CANDIDATE DOSSIER
                 </span>
                 <h3 className="text-base font-bold text-white font-mono mt-0.5">
@@ -252,7 +250,7 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleCopyCitation(inspectedCandidate)}
-                  className="p-1.5 rounded-lg bg-obsidian-950 border border-slate-800 text-slate-400 hover:text-cyan-400 transition"
+                  className="p-1.5 rounded-lg bg-obsidian-950 border border-zinc-800 text-zinc-400 hover:text-amber-400 transition"
                   title="Copy Candidate Record"
                 >
                   {copiedId === inspectedCandidate.id ? (
@@ -266,8 +264,8 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                     inspectedCandidate.status === 'CONFIRMED ANCHOR'
                       ? 'bg-emerald-950 text-emerald-400 border-emerald-800'
                       : inspectedCandidate.status === 'HIGH CONFIDENCE'
-                      ? 'bg-cyan-950 text-cyan-400 border-cyan-800'
-                      : 'bg-amber-950 text-amber-400 border-amber-800'
+                      ? 'bg-amber-950 text-amber-400 border-amber-800'
+                      : 'bg-orange-950 text-orange-400 border-orange-800'
                   }`}
                 >
                   {inspectedCandidate.status}
@@ -277,16 +275,16 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
 
             {/* Coordinates & Geometry Card */}
             <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-              <div className="bg-obsidian-950 p-3 rounded-lg border border-slate-800">
-                <span className="text-slate-500 text-[10px] block">LUNAR COORDINATES</span>
+              <div className="bg-obsidian-950 p-3 rounded-lg border border-zinc-800">
+                <span className="text-zinc-500 text-[10px] block">LUNAR COORDINATES</span>
                 <span className="text-white font-bold">
                   {inspectedCandidate.lat.toFixed(2)}°N, {inspectedCandidate.lon.toFixed(2)}°E
                 </span>
               </div>
 
-              <div className="bg-obsidian-950 p-3 rounded-lg border border-slate-800">
-                <span className="text-slate-500 text-[10px] block">DTM PRODUCT</span>
-                <span className="text-cyan-400 font-bold">{inspectedCandidate.dtmProduct}</span>
+              <div className="bg-obsidian-950 p-3 rounded-lg border border-zinc-800">
+                <span className="text-zinc-500 text-[10px] block">DTM PRODUCT</span>
+                <span className="text-amber-400 font-bold">{inspectedCandidate.dtmProduct}</span>
               </div>
             </div>
 
@@ -308,17 +306,17 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
 
             {/* Analyst Notes */}
             <div className="space-y-2">
-              <span className="text-[11px] font-mono uppercase text-slate-400 tracking-wider">
+              <span className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">
                 MORPHOLOGICAL EVALUATION & NOTES
               </span>
-              <p className="text-xs text-slate-300 leading-relaxed bg-obsidian-950/80 p-3.5 rounded-xl border border-slate-800 font-sans">
+              <p className="text-xs text-zinc-300 leading-relaxed bg-obsidian-950/80 p-3.5 rounded-xl border border-zinc-800 font-sans">
                 {inspectedCandidate.notes}
               </p>
             </div>
 
             {inspectedCandidate.isBacklog && (
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-300 text-xs font-mono">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" />
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-orange-950/40 border border-orange-800/60 text-orange-300 text-xs font-mono">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-orange-400" />
                 <span>Requires human stereo review via LROC NAC browse image suite</span>
               </div>
             )}

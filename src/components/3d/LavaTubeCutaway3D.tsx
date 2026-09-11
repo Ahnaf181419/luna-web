@@ -40,10 +40,10 @@ export const LavaTubeCutaway3D: React.FC = () => {
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
 
-    // 1. Host Basalt Crust Block
+    // 1. Host Basalt Crust Block (Warm Graphite Tone)
     const crustGeom = new THREE.BoxGeometry(4.2, 1.9, 2.4);
     const crustMat = new THREE.MeshStandardMaterial({
-      color: 0x141b27,
+      color: 0x18181c,
       roughness: 0.92,
       metalness: 0.08,
       transparent: true,
@@ -56,7 +56,7 @@ export const LavaTubeCutaway3D: React.FC = () => {
     // 2. Surface Regolith Layer
     const surfaceGeom = new THREE.BoxGeometry(4.24, 0.12, 2.44);
     const surfaceMat = new THREE.MeshStandardMaterial({
-      color: 0x334155,
+      color: 0x27272a,
       roughness: 0.96,
       metalness: 0.04,
     });
@@ -67,7 +67,7 @@ export const LavaTubeCutaway3D: React.FC = () => {
     // 3. Vertical Skylight Pit Breach
     const pitGeom = new THREE.CylinderGeometry(0.48, 0.54, 0.95, 32, 1, true);
     const pitMat = new THREE.MeshStandardMaterial({
-      color: 0x070b12,
+      color: 0x0c0c0e,
       side: THREE.DoubleSide,
       roughness: 0.98,
     });
@@ -75,9 +75,9 @@ export const LavaTubeCutaway3D: React.FC = () => {
     pitMesh.position.set(-0.6, 0.38, 0);
     modelGroup.add(pitMesh);
 
-    // Rim Highlight
+    // Solar Gold Rim Lip
     const rimGeom = new THREE.TorusGeometry(0.5, 0.035, 16, 32);
-    const rimMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.7 });
+    const rimMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.7 });
     const rimMesh = new THREE.Mesh(rimGeom, rimMat);
     rimMesh.rotation.x = Math.PI / 2;
     rimMesh.position.set(-0.6, 0.84, 0);
@@ -86,7 +86,7 @@ export const LavaTubeCutaway3D: React.FC = () => {
     // 4. Hollow Subsurface Basalt Lava Tube Conduit
     const tubeGeom = new THREE.CylinderGeometry(0.58, 0.58, 4.0, 32, 1, true);
     const tubeMat = new THREE.MeshStandardMaterial({
-      color: 0x070a10,
+      color: 0x0c0c0e,
       side: THREE.BackSide,
       roughness: 0.98,
     });
@@ -95,19 +95,19 @@ export const LavaTubeCutaway3D: React.FC = () => {
     tubeMesh.position.set(0, -0.25, 0);
     modelGroup.add(tubeMesh);
 
-    // Internal structural reinforcing ribs / radar echo contours
+    // Internal structural reinforcing ribs (Warm Solar Gold)
     for (let i = -1.8; i <= 1.8; i += 0.6) {
       const ribGeom = new THREE.TorusGeometry(0.59, 0.015, 12, 32);
-      const ribMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.5 });
+      const ribMat = new THREE.MeshBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.5 });
       const ribMesh = new THREE.Mesh(ribGeom, ribMat);
       ribMesh.rotation.y = Math.PI / 2;
       ribMesh.position.set(i, -0.25, 0);
       modelGroup.add(ribMesh);
     }
 
-    // Rubble Talus Mound under skylight
+    // Talus Mound under skylight
     const talusGeom = new THREE.ConeGeometry(0.42, 0.35, 24);
-    const talusMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
+    const talusMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.9 });
     const talusMesh = new THREE.Mesh(talusGeom, talusMat);
     talusMesh.position.set(-0.6, -0.65, 0);
     modelGroup.add(talusMesh);
@@ -115,15 +115,15 @@ export const LavaTubeCutaway3D: React.FC = () => {
     // 5. Orbital Radar Sounding Instrument & Pulsing Rays
     const satGeom = new THREE.BoxGeometry(0.32, 0.16, 0.22);
     const satMat = new THREE.MeshStandardMaterial({
-      color: 0x06b6d4,
-      emissive: 0x06b6d4,
-      emissiveIntensity: 0.5,
+      color: 0xf59e0b,
+      emissive: 0xf59e0b,
+      emissiveIntensity: 0.6,
     });
     const satMesh = new THREE.Mesh(satGeom, satMat);
     satMesh.position.set(0.6, 2.3, 0);
     modelGroup.add(satMesh);
 
-    // Radar Rays
+    // Radar Rays (Amber Pulsing Rays)
     const radarLines: THREE.Line[] = [];
     const rayTargets = [
       { x: 0.3, y: -0.25 },
@@ -134,12 +134,12 @@ export const LavaTubeCutaway3D: React.FC = () => {
     rayTargets.forEach((rt) => {
       const points = [
         new THREE.Vector3(satMesh.position.x, satMesh.position.y, 0),
-        new THREE.Vector3(rt.x, 0.78, 0), // Surface impact
-        new THREE.Vector3(rt.x, rt.y, 0), // Conduit echo
+        new THREE.Vector3(rt.x, 0.78, 0),
+        new THREE.Vector3(rt.x, rt.y, 0),
       ];
       const geom = new THREE.BufferGeometry().setFromPoints(points);
       const mat = new THREE.LineDashedMaterial({
-        color: 0x6366f1,
+        color: 0xf59e0b,
         dashSize: 0.15,
         gapSize: 0.08,
         transparent: true,
@@ -153,15 +153,15 @@ export const LavaTubeCutaway3D: React.FC = () => {
     radarRaysRef.current = radarLines;
 
     // Lighting
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const dirLight = new THREE.DirectionalLight(0xfffaf0, 2.2);
     dirLight.position.set(4, 5, 4);
     scene.add(dirLight);
 
-    const cyanLight = new THREE.DirectionalLight(0x06b6d4, 0.7);
-    cyanLight.position.set(-3, -2, -3);
-    scene.add(cyanLight);
+    const warmFill = new THREE.DirectionalLight(0xfbbf24, 0.6);
+    warmFill.position.set(-3, -2, -3);
+    scene.add(warmFill);
 
-    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.1);
+    const ambientLight = new THREE.AmbientLight(0x27272a, 1.1);
     scene.add(ambientLight);
 
     // Mouse Drag Controls
@@ -232,34 +232,34 @@ export const LavaTubeCutaway3D: React.FC = () => {
   }, [radarActive]);
 
   return (
-    <div className="relative w-full h-[460px] bg-obsidian-900 border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="relative w-full h-[460px] bg-obsidian-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* Top Left: Subsurface HUD */}
       <div className="absolute top-4 left-4 z-10 pointer-events-none">
-        <div className="flex items-center space-x-2 bg-obsidian-950/85 backdrop-blur-md border border-slate-800 px-3.5 py-1.5 rounded-lg text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-          <span className="text-white font-bold">SUBTERRANEAN CONDUIT GEOMETRY</span>
-          <span className="text-slate-500 text-[10px]">| Basalt Host Unit</span>
+        <div className="flex items-center space-x-2 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3.5 py-1.5 rounded-lg text-xs font-mono">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span className="text-zinc-100 font-bold">SUBTERRANEAN CONDUIT GEOMETRY</span>
+          <span className="text-zinc-500 text-[10px]">| Basalt Host Unit</span>
         </div>
       </div>
 
       {/* Top Right: Geological Layer Badges */}
       <div className="absolute top-4 right-4 z-10 hidden sm:flex flex-col gap-1.5 font-mono text-[10px] pointer-events-none">
-        <div className="bg-obsidian-950/85 backdrop-blur-md border border-cyan-800/60 text-cyan-300 px-2.5 py-1 rounded">
+        <div className="bg-obsidian-950/90 backdrop-blur-md border border-amber-800/60 text-amber-300 px-2.5 py-1 rounded">
           ● Surface Regolith (~5-15m)
         </div>
-        <div className="bg-obsidian-950/85 backdrop-blur-md border border-emerald-800/60 text-emerald-300 px-2.5 py-1 rounded">
+        <div className="bg-obsidian-950/90 backdrop-blur-md border border-emerald-800/60 text-emerald-300 px-2.5 py-1 rounded">
           ● Vertical Pit Skylight (-105m)
         </div>
-        <div className="bg-obsidian-950/85 backdrop-blur-md border border-indigo-800/60 text-indigo-300 px-2.5 py-1 rounded">
+        <div className="bg-obsidian-950/90 backdrop-blur-md border border-amber-800/60 text-amber-300 px-2.5 py-1 rounded">
           ● Intact Basalt Conduit (Span ~80m)
         </div>
       </div>
 
       {/* Bottom Controls */}
       <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-auto font-mono text-xs">
-        <div className="text-slate-400 bg-obsidian-950/80 backdrop-blur-md border border-slate-800/80 px-3 py-1.5 rounded-lg hidden sm:block text-[11px]">
+        <div className="text-zinc-400 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3 py-1.5 rounded-lg hidden sm:block text-[11px]">
           Drag block to inspect internal conduit cross-section
         </div>
 
@@ -268,8 +268,8 @@ export const LavaTubeCutaway3D: React.FC = () => {
             onClick={() => setRadarActive(!radarActive)}
             className={`px-3 py-1.5 rounded-lg border backdrop-blur-md transition flex items-center gap-1.5 ${
               radarActive
-                ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800'
-                : 'bg-obsidian-950/80 text-slate-400 border-slate-800 hover:text-white'
+                ? 'bg-amber-950/60 text-amber-300 border-amber-700/80'
+                : 'bg-obsidian-950/90 text-zinc-400 border-zinc-800 hover:text-white'
             }`}
           >
             <Waves className="w-3.5 h-3.5" />
