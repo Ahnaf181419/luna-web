@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { CANDIDATES } from '../../data/candidates';
 import { SITES } from '../../data/sites';
 import type { Candidate } from '../../types';
-import { Search, AlertTriangle, ChevronRight } from 'lucide-react';
+import { ElevationProfileChart } from '../instruments/ElevationProfileChart';
+import { EvidenceRadarChart } from '../instruments/EvidenceRadarChart';
+import { Search, ChevronRight, AlertTriangle, LayoutList, LayoutGrid, Copy, Check } from 'lucide-react';
 
 interface AtlasTabProps {
   initialSiteFilter?: string;
@@ -13,6 +15,8 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
   const [inspectedCandidate, setInspectedCandidate] = useState<Candidate | null>(CANDIDATES[0]);
+  const [viewMode, setViewMode] = useState<'TABLE' | 'CARDS'>('TABLE');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Filtering candidates
   const filteredCandidates = useMemo(() => {
@@ -36,23 +40,55 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
     });
   }, [selectedSite, searchTerm, categoryFilter]);
 
+  const handleCopyCitation = (candidate: Candidate) => {
+    const text = `LUNARVOID Candidate ${candidate.id} (${candidate.siteName}): Lat ${candidate.lat.toFixed(2)}, Lon ${candidate.lon.toFixed(2)}, Score ${candidate.score.toFixed(2)}, DTM ${candidate.dtmProduct}`;
+    navigator.clipboard.writeText(text);
+    setCopiedId(candidate.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
   return (
     <div className="space-y-6">
       
-      {/* Header & Filter Controls Bar */}
-      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+      {/* TOOLBAR & RETICLE FILTER CONSOLE */}
+      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-white font-mono flex items-center gap-2">
-              <span>Lunar Subsurface Candidate Registry</span>
-            </h2>
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <h2 className="text-xl font-bold text-white font-mono">
+                Lunar Subsurface Candidate Registry
+              </h2>
+            </div>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
-              257 detected candidate features across 21 calibrated LROC NAC DTM targets
+              257 features across 21 calibrated LROC NAC DTM targets • N = 21/649 = 3.2%
             </p>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-obsidian-950 border border-slate-800 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('TABLE')}
+                className={`p-1.5 rounded transition ${
+                  viewMode === 'TABLE' ? 'bg-cyan-950 text-cyan-300' : 'text-slate-500 hover:text-white'
+                }`}
+                title="Console Table View"
+              >
+                <LayoutList className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setViewMode('CARDS')}
+                className={`p-1.5 rounded transition ${
+                  viewMode === 'CARDS' ? 'bg-cyan-950 text-cyan-300' : 'text-slate-500 hover:text-white'
+                }`}
+                title="Visual Dossier Cards"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Search Input */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -60,28 +96,26 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search ID, site, feature..."
-                className="pl-9 pr-3 py-1.5 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-56"
+                placeholder="Search ID, target, morphology..."
+                className="pl-9 pr-3 py-1.5 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-52 sm:w-60"
               />
             </div>
 
             {/* Category Dropdown */}
-            <div className="relative">
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="py-1.5 px-3 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
-              >
-                <option value="ALL">All Features</option>
-                <option value="PITS">Primary Skylight Pits</option>
-                <option value="SAGS">Roof Subsidence Sags</option>
-                <option value="BACKLOG">Visual Backlog (27)</option>
-              </select>
-            </div>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="py-1.5 px-3 text-xs font-mono bg-obsidian-950 border border-slate-700/80 rounded-lg text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
+            >
+              <option value="ALL">All Categories</option>
+              <option value="PITS">Primary Skylight Pits</option>
+              <option value="SAGS">Roof Subsidence Sags</option>
+              <option value="BACKLOG">Visual Backlog (27)</option>
+            </select>
           </div>
         </div>
 
-        {/* Quick Site Filter Chips */}
+        {/* Quick Target Pills */}
         <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-800/80 text-xs font-mono">
           <button
             onClick={() => setSelectedSite('ALL')}
@@ -111,67 +145,101 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
 
       </div>
 
-      {/* Main Content Split: Candidate Table & Inspection Panel */}
+      {/* MAIN SPLIT VIEW */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* Candidates Table (Left 7 Cols) */}
-        <div className="lg:col-span-7 bg-obsidian-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-obsidian-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[11px]">
-                <tr>
-                  <th className="p-3.5">Candidate ID</th>
-                  <th className="p-3.5">Site</th>
-                  <th className="p-3.5">Morphology</th>
-                  <th className="p-3.5">Score</th>
-                  <th className="p-3.5">Status</th>
-                  <th className="p-3.5 text-right">Inspect</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
-                {filteredCandidates.map((cand) => {
-                  const isSelected = inspectedCandidate?.id === cand.id;
-                  let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
-                  if (cand.status === 'CONFIRMED ANCHOR') badgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-800';
-                  else if (cand.status === 'HIGH CONFIDENCE') badgeColor = 'bg-cyan-950 text-cyan-400 border-cyan-800';
-                  else if (cand.status === 'INSPECTION BACKLOG') badgeColor = 'bg-amber-950 text-amber-400 border-amber-800';
-
-                  return (
-                    <tr
-                      key={cand.id}
-                      onClick={() => setInspectedCandidate(cand)}
-                      className={`hover:bg-slate-800/40 transition cursor-pointer ${
-                        isSelected ? 'bg-slate-800/60 border-l-2 border-l-cyan-400' : ''
-                      }`}
-                    >
-                      <td className="p-3.5 font-bold text-white whitespace-nowrap">{cand.id}</td>
-                      <td className="p-3.5 text-slate-400 whitespace-nowrap">{cand.siteId}</td>
-                      <td className="p-3.5 text-slate-300 whitespace-nowrap">{cand.morphology}</td>
-                      <td className="p-3.5 font-bold whitespace-nowrap">
-                        <span className={cand.score >= 0.8 ? 'text-cyan-400' : 'text-slate-300'}>
-                          {cand.score.toFixed(2)}
-                        </span>
-                      </td>
-                      <td className="p-3.5 whitespace-nowrap">
-                        <span className={`px-2 py-0.5 text-[10px] rounded border ${badgeColor}`}>
-                          {cand.status}
-                        </span>
-                      </td>
-                      <td className="p-3.5 text-right whitespace-nowrap">
-                        <ChevronRight className="w-4 h-4 inline text-slate-500 hover:text-cyan-400" />
-                      </td>
+        {/* Left: Candidates Viewport (Table or Grid) */}
+        <div className="lg:col-span-7">
+          {viewMode === 'TABLE' ? (
+            <div className="bg-obsidian-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-obsidian-950/85 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                    <tr>
+                      <th className="p-3.5">Candidate ID</th>
+                      <th className="p-3.5">Site</th>
+                      <th className="p-3.5">Morphology</th>
+                      <th className="p-3.5">Score</th>
+                      <th className="p-3.5">Status</th>
+                      <th className="p-3.5 text-right">Action</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    {filteredCandidates.map((cand) => {
+                      const isSelected = inspectedCandidate?.id === cand.id;
+                      let badgeColor = 'bg-slate-800 text-slate-400 border-slate-700';
+                      if (cand.status === 'CONFIRMED ANCHOR') badgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-800';
+                      else if (cand.status === 'HIGH CONFIDENCE') badgeColor = 'bg-cyan-950 text-cyan-400 border-cyan-800';
+                      else if (cand.status === 'INSPECTION BACKLOG') badgeColor = 'bg-amber-950 text-amber-400 border-amber-800';
+
+                      return (
+                        <tr
+                          key={cand.id}
+                          onClick={() => setInspectedCandidate(cand)}
+                          className={`hover:bg-slate-800/40 transition cursor-pointer ${
+                            isSelected ? 'bg-slate-800/60 border-l-2 border-l-cyan-400' : ''
+                          }`}
+                        >
+                          <td className="p-3.5 font-bold text-white whitespace-nowrap">{cand.id}</td>
+                          <td className="p-3.5 text-slate-400 whitespace-nowrap">{cand.siteId}</td>
+                          <td className="p-3.5 text-slate-300 whitespace-nowrap">{cand.morphology}</td>
+                          <td className="p-3.5 font-bold whitespace-nowrap">
+                            <span className={cand.score >= 0.8 ? 'text-cyan-400' : 'text-slate-300'}>
+                              {cand.score.toFixed(2)}
+                            </span>
+                          </td>
+                          <td className="p-3.5 whitespace-nowrap">
+                            <span className={`px-2 py-0.5 text-[10px] rounded border ${badgeColor}`}>
+                              {cand.status}
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-right whitespace-nowrap">
+                            <ChevronRight className="w-4 h-4 inline text-slate-500 hover:text-cyan-400" />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredCandidates.map((cand) => {
+                const isSelected = inspectedCandidate?.id === cand.id;
+                return (
+                  <div
+                    key={cand.id}
+                    onClick={() => setInspectedCandidate(cand)}
+                    className={`p-4 rounded-xl border transition cursor-pointer space-y-3 font-mono text-xs ${
+                      isSelected
+                        ? 'bg-cyan-950/30 border-cyan-600 shadow-lg'
+                        : 'bg-obsidian-900 border-slate-800 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-white text-sm">{cand.id}</span>
+                      <span className="text-cyan-400 font-bold">{cand.score.toFixed(2)}</span>
+                    </div>
+
+                    <div className="text-slate-400 text-[11px]">{cand.morphology}</div>
+                    
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-slate-800">
+                      <span>{cand.siteName}</span>
+                      <span>{cand.depthMeters ? `${cand.depthMeters}m depth` : 'Sag'}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Candidate Detail Inspection Drawer (Right 5 Cols) */}
+        {/* Right: Candidate Detail & Scientific Instruments */}
         {inspectedCandidate && (
-          <div className="lg:col-span-5 bg-obsidian-900 border border-cyan-800/80 rounded-2xl p-6 space-y-5 shadow-2xl sticky top-24">
+          <div className="lg:col-span-5 bg-obsidian-900 border border-cyan-800/80 rounded-2xl p-6 space-y-6 shadow-2xl sticky top-24">
             
+            {/* Header with Copy Action */}
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
@@ -181,15 +249,30 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
                   {inspectedCandidate.id}
                 </h3>
               </div>
-              <span className={`px-2.5 py-1 text-[11px] font-mono rounded border ${
-                inspectedCandidate.status === 'CONFIRMED ANCHOR'
-                  ? 'bg-emerald-950 text-emerald-400 border-emerald-800'
-                  : inspectedCandidate.status === 'HIGH CONFIDENCE'
-                  ? 'bg-cyan-950 text-cyan-400 border-cyan-800'
-                  : 'bg-amber-950 text-amber-400 border-amber-800'
-              }`}>
-                {inspectedCandidate.status}
-              </span>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleCopyCitation(inspectedCandidate)}
+                  className="p-1.5 rounded-lg bg-obsidian-950 border border-slate-800 text-slate-400 hover:text-cyan-400 transition"
+                  title="Copy Candidate Record"
+                >
+                  {copiedId === inspectedCandidate.id ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+                <span
+                  className={`px-2.5 py-1 text-[10px] font-mono rounded border ${
+                    inspectedCandidate.status === 'CONFIRMED ANCHOR'
+                      ? 'bg-emerald-950 text-emerald-400 border-emerald-800'
+                      : inspectedCandidate.status === 'HIGH CONFIDENCE'
+                      ? 'bg-cyan-950 text-cyan-400 border-cyan-800'
+                      : 'bg-amber-950 text-amber-400 border-amber-800'
+                  }`}
+                >
+                  {inspectedCandidate.status}
+                </span>
+              </div>
             </div>
 
             {/* Coordinates & Geometry Card */}
@@ -207,36 +290,28 @@ export const AtlasTab: React.FC<AtlasTabProps> = ({ initialSiteFilter = 'ALL' })
               </div>
             </div>
 
-            {/* Physical Metrics */}
-            <div className="grid grid-cols-3 gap-2 text-xs font-mono">
-              <div className="bg-obsidian-950 p-3 rounded-lg border border-slate-800 text-center">
-                <span className="text-slate-500 text-[10px] block">EST. DEPTH</span>
-                <span className="text-white font-bold text-sm">
-                  {inspectedCandidate.depthMeters ? `${inspectedCandidate.depthMeters}m` : 'N/A'}
-                </span>
-              </div>
+            {/* Scientific Instrument 1: DTM Elevation Transect */}
+            <ElevationProfileChart
+              depthMeters={inspectedCandidate.depthMeters}
+              spanMeters={inspectedCandidate.spanMeters}
+              candidateId={inspectedCandidate.id}
+              resolution={inspectedCandidate.resolution}
+            />
 
-              <div className="bg-obsidian-950 p-3 rounded-lg border border-slate-800 text-center">
-                <span className="text-slate-500 text-[10px] block">RADAR CPR</span>
-                <span className="text-indigo-400 font-bold text-sm">
-                  {inspectedCandidate.cprRatio.toFixed(1)}x
-                </span>
-              </div>
-
-              <div className="bg-obsidian-950 p-3 rounded-lg border border-slate-800 text-center">
-                <span className="text-slate-500 text-[10px] block">GRAIL DEFICIT</span>
-                <span className="text-purple-400 font-bold text-sm">
-                  {inspectedCandidate.bouguerMGal} mGal
-                </span>
-              </div>
-            </div>
+            {/* Scientific Instrument 2: Multi-Axis Evidence Radar Chart */}
+            <EvidenceRadarChart
+              score={inspectedCandidate.score}
+              cprRatio={inspectedCandidate.cprRatio}
+              bouguerMGal={inspectedCandidate.bouguerMGal}
+              depthMeters={inspectedCandidate.depthMeters}
+            />
 
             {/* Analyst Notes */}
             <div className="space-y-2">
               <span className="text-[11px] font-mono uppercase text-slate-400 tracking-wider">
-                SCIENTIFIC EVALUATION & NOTES
+                MORPHOLOGICAL EVALUATION & NOTES
               </span>
-              <p className="text-xs text-slate-300 leading-relaxed bg-obsidian-950/80 p-3.5 rounded-xl border border-slate-800">
+              <p className="text-xs text-slate-300 leading-relaxed bg-obsidian-950/80 p-3.5 rounded-xl border border-slate-800 font-sans">
                 {inspectedCandidate.notes}
               </p>
             </div>

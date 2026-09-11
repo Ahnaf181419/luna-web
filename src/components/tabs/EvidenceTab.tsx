@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LavaTubeCutaway3D } from '../3d/LavaTubeCutaway3D';
+import { EvidenceRadarChart } from '../instruments/EvidenceRadarChart';
 import { Camera, Radio, Globe, Compass, Calculator } from 'lucide-react';
 
 export const EvidenceTab: React.FC = () => {
@@ -14,30 +15,49 @@ export const EvidenceTab: React.FC = () => {
   const gravScore = Math.min(1.0, Math.abs(bouguerDeficit) / 14.0) * 0.25;
   const compositeScore = Math.min(0.99, Math.max(0.05, morphScore + radarScore + gravScore));
 
-  // False positive envelope calculation
-  const fpRate = Math.max(1.8, ((1.0 - compositeScore) * 19.4)).toFixed(1);
+  // False positive envelope
+  const fpRate = Math.max(1.8, (1.0 - compositeScore) * 19.4).toFixed(1);
+
+  // Real-time Bayesian PDF Curve calculation (Gaussian bell curve)
+  const mu = compositeScore; // Mean score [0, 1]
+  const sigma = 0.12 - (compositeScore * 0.05); // Uncertainty narrows with higher evidence
+
+  const pdfPoints: { x: number; y: number }[] = [];
+  const svgW = 400;
+  const svgH = 100;
+  for (let i = 0; i <= 80; i++) {
+    const val = i / 80;
+    const gaussian = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((val - mu) / sigma, 2));
+    const sx = (i / 80) * svgW;
+    const sy = svgH - (gaussian / 4.0) * (svgH * 0.85);
+    pdfPoints.push({ x: sx, y: sy });
+  }
+
+  const pdfD = pdfPoints.reduce((acc, p, idx) => (idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`), '');
+  const pdfFill = `${pdfD} L ${svgW} ${svgH} L 0 ${svgH} Z`;
 
   return (
     <div className="space-y-10">
       
       {/* SECTION HEADER */}
-      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6">
+      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <h2 className="text-xl font-bold text-white font-mono flex items-center gap-2">
-          <span>Multi-Evidence Subsurface Bayesian Fusion</span>
+          <span>Multi-Evidence Subsurface Bayesian Fusion Engine</span>
         </h2>
         <p className="text-xs text-slate-400 font-mono mt-1 max-w-3xl">
-          Because no single orbital instrument can verify subsurface voids unambiguously, LUNARVOID couples four independent physical layers into a calibrated log-likelihood ratio with observational confound penalties.
+          Because no single orbital instrument can verify subsurface lunar voids unambiguously, LUNARVOID couples four independent physical layers into a calibrated log-likelihood ratio with observational confound penalties.
         </p>
       </div>
 
       {/* 3D SUBTERRANEAN CONDUIT CUTAWAY */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-white font-mono">
-            3D Geological Block Model: Skylight Pit & Basalt Conduit Void
+          <span className="text-sm font-bold text-white font-mono flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-indigo-400" />
+            <span>3D Geological Block Model: Skylight Pit & Basalt Conduit Void</span>
           </span>
-          <span className="text-xs font-mono text-indigo-400">
-            Simulated 1/6 g basalt span
+          <span className="text-xs font-mono text-indigo-400 hidden sm:inline">
+            1/6 g basalt span geomechanics
           </span>
         </div>
         <LavaTubeCutaway3D />
@@ -54,7 +74,7 @@ export const EvidenceTab: React.FC = () => {
           </div>
           <h3 className="text-sm font-bold text-white font-sans">NAC Photogrammetry</h3>
           <p className="text-slate-400 leading-relaxed font-sans text-xs">
-            USGS ISIS3 + NASA Ames Stereo Pipeline (ASP) stereo pair ingestion. Sub-meter DTMs characterize rimless vertical pit drops, collapse sags, and wall overhanging benches.
+            Stereo pairs processed through USGS ISIS3 + NASA Ames Stereo Pipeline (ASP). Sub-meter DTMs characterize rimless vertical pit drops, collapse sags, and wall overhanging benches.
           </p>
           <div className="text-[10px] text-slate-500 pt-2 border-t border-slate-800">
             Resolution: 0.5–1.5 m/px • ASP stereo
@@ -108,24 +128,25 @@ export const EvidenceTab: React.FC = () => {
 
       </div>
 
-      {/* INTERACTIVE BAYESIAN INFERENCE CALCULATOR */}
-      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+      {/* INTERACTIVE BAYESIAN INFERENCE CALCULATOR & REAL-TIME PDF CURVE */}
+      <div className="bg-obsidian-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
         
-        <div className="flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-base font-bold text-white font-mono">
-            Interactive Multi-Evidence Fusion Calculator
-          </h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-cyan-400" />
+            <h3 className="text-base font-bold text-white font-mono">
+              Live Bayesian Inference Instrument & PDF Distribution
+            </h3>
+          </div>
+          <span className="text-xs font-mono text-cyan-400 hidden sm:inline">
+            Active Fusion: P(Void | E)
+          </span>
         </div>
 
-        <p className="text-xs text-slate-400 font-mono">
-          Adjust observational instrument inputs to observe how evidence accumulation dynamically shapes the calibrated likelihood score and false-positive risk envelope.
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Sliders (Left 7 Cols) */}
-          <div className="lg:col-span-7 space-y-5 text-xs font-mono">
+          {/* Sliders (Left 6 Cols) */}
+          <div className="lg:col-span-6 space-y-5 text-xs font-mono">
             
             {/* Morphometry Slider */}
             <div className="space-y-1.5">
@@ -143,7 +164,7 @@ export const EvidenceTab: React.FC = () => {
                 className="w-full accent-cyan-400 bg-obsidian-950 h-1.5 rounded cursor-pointer"
               />
               <span className="text-[10px] text-slate-500 block">
-                Higher ratios indicate steep rimless collapse walls typical of skylights.
+                Steep vertical wall drop without impact ejecta rim.
               </span>
             </div>
 
@@ -163,7 +184,7 @@ export const EvidenceTab: React.FC = () => {
                 className="w-full accent-indigo-400 bg-obsidian-950 h-1.5 rounded cursor-pointer"
               />
               <span className="text-[10px] text-slate-500 block">
-                Elevated circular polarized ratio relative to background regolith backscatter.
+                S-band circular polarization contrast vs background mare regolith.
               </span>
             </div>
 
@@ -183,18 +204,28 @@ export const EvidenceTab: React.FC = () => {
                 className="w-full accent-purple-400 bg-obsidian-950 h-1.5 rounded cursor-pointer"
               />
               <span className="text-[10px] text-slate-500 block">
-                Negative Bouguer anomaly consistent with subsurface uncompensated mass deficiency.
+                Mass deficit anomaly consistent with uncompensated conduit void.
               </span>
+            </div>
+
+            {/* Live Spider Chart */}
+            <div className="pt-2">
+              <EvidenceRadarChart
+                score={compositeScore}
+                cprRatio={radarCpr}
+                bouguerMGal={bouguerDeficit}
+                depthMeters={Math.round(morphRatio * 80)}
+              />
             </div>
 
           </div>
 
-          {/* Calculator Output Card (Right 5 Cols) */}
-          <div className="lg:col-span-5 bg-obsidian-950 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+          {/* Calculator Output & PDF Bell Curve (Right 6 Cols) */}
+          <div className="lg:col-span-6 bg-obsidian-950 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl">
             
             <div>
               <span className="text-[10px] font-mono uppercase text-slate-500 tracking-wider">
-                CALCULATED LIKELIHOOD SCORE
+                CALCULATED CALIBRATED LIKELIHOOD SCORE
               </span>
               <div className="text-4xl font-black font-mono text-white flex items-baseline gap-2 mt-1">
                 <span className={compositeScore >= 0.8 ? 'text-cyan-400' : compositeScore >= 0.5 ? 'text-indigo-400' : 'text-slate-400'}>
@@ -204,16 +235,48 @@ export const EvidenceTab: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-obsidian-900 border border-slate-850 text-xs font-sans text-slate-300 leading-relaxed">
+            {/* Real-Time Bayesian PDF Distribution Curve */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span>Bayesian Posterior Density P(Void | E)</span>
+                <span className="text-cyan-400">μ = {compositeScore.toFixed(2)} • σ = ±{sigma.toFixed(2)}</span>
+              </div>
+              
+              <div className="border border-slate-800 rounded-lg p-2 bg-obsidian-900">
+                <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-20 select-none">
+                  {/* Fill area under curve */}
+                  <path d={pdfFill} fill="rgba(6, 182, 212, 0.2)" />
+                  {/* Curve stroke */}
+                  <path d={pdfD} fill="none" stroke="#06b6d4" strokeWidth="2" />
+                  {/* Mean marker */}
+                  <line
+                    x1={compositeScore * svgW}
+                    y1={0}
+                    x2={compositeScore * svgW}
+                    y2={svgH}
+                    stroke="#10b981"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 2"
+                  />
+                </svg>
+                <div className="flex justify-between text-[9px] text-slate-500 font-mono mt-1">
+                  <span>0.00 (Pure Crater)</span>
+                  <span className="text-emerald-400 font-bold">Posterior Peak</span>
+                  <span>1.00 (Void Anchor)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-obsidian-900 border border-slate-850 text-xs font-sans text-slate-300 leading-relaxed">
               {compositeScore >= 0.8
-                ? 'High-confidence candidate. Significant multi-instrument agreement across morphometry, radar backscatter, and mass deficiency.'
+                ? 'High-confidence candidate. Significant multi-instrument agreement across morphometry, radar backscatter, and mass deficiency. Meets Gate G2 inclusion criteria.'
                 : compositeScore >= 0.5
                 ? 'Plausible subsurface sag. Moderate evidence fusion; requires targeted stereo photogrammetric inspection.'
                 : 'Marginal signature. High probability of degraded impact crater or superficial surface depression.'}
             </div>
 
             <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
-              <span className="text-slate-400">Calibration FP Bound:</span>
+              <span className="text-slate-400">Calibration-Context FP Rate:</span>
               <span className="text-emerald-400 font-bold">{fpRate} per 10⁴ km²</span>
             </div>
 

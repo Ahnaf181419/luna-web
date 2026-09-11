@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Database, Activity, ShieldCheck, Network } from 'lucide-react';
+import { Layers, Database, Activity, ShieldCheck, Network, Search } from 'lucide-react';
 
 export type TabType = 'overview' | 'atlas' | 'evidence' | 'gates' | 'knowledge';
 
@@ -7,11 +7,17 @@ interface HeaderProps {
   activeTab: TabType;
   onSelectTab: (tab: TabType) => void;
   candidateCount: number;
+  onOpenCommandPalette: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, candidateCount }) => {
+export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  onSelectTab,
+  candidateCount,
+  onOpenCommandPalette,
+}) => {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-obsidian-950/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-obsidian-950/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand & Mission Badge */}
@@ -98,11 +104,23 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, candidat
           </button>
         </nav>
 
-        {/* Right Telemetry Widget */}
-        <div className="hidden lg:flex items-center space-x-3 text-xs font-mono">
-          <div className="flex items-center space-x-1.5 text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 px-2.5 py-1 rounded-md">
+        {/* Right Command Palette & Telemetry Widget */}
+        <div className="flex items-center space-x-2 sm:space-x-3 text-xs font-mono">
+          <button
+            onClick={onOpenCommandPalette}
+            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-obsidian-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition"
+            title="Open Command Palette (Cmd+K)"
+          >
+            <Search className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline text-[11px]">Command</span>
+            <kbd className="hidden sm:inline text-[9px] px-1.5 py-0.5 rounded bg-obsidian-950 border border-slate-700 text-slate-400">
+              ⌘K
+            </kbd>
+          </button>
+
+          <div className="hidden xl:flex items-center space-x-1.5 text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 px-2.5 py-1 rounded-md">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Compute: $0.00 / $800</span>
+            <span>$0.00 / $800</span>
           </div>
         </div>
 

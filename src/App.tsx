@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/layout/Header';
 import type { TabType } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -7,11 +7,25 @@ import { AtlasTab } from './components/tabs/AtlasTab';
 import { EvidenceTab } from './components/tabs/EvidenceTab';
 import { GatesTab } from './components/tabs/GatesTab';
 import { KnowledgeTab } from './components/tabs/KnowledgeTab';
+import { CommandPalette } from './components/instruments/CommandPalette';
 import { CANDIDATES } from './data/candidates';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [atlasSiteFilter, setAtlasSiteFilter] = useState<string>('ALL');
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
+
+  // Global Cmd+K / Ctrl+K listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleNavigateToAtlas = (siteId?: string) => {
     if (siteId) {
@@ -28,6 +42,7 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         candidateCount={CANDIDATES.length}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
       />
 
       {/* Main Tab Content Viewport */}
@@ -52,6 +67,17 @@ export const App: React.FC = () => {
           <KnowledgeTab />
         )}
       </main>
+
+      {/* Omnipresent Command Palette Modal */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSelectTab={setActiveTab}
+        onSelectSite={(siteId) => {
+          setAtlasSiteFilter(siteId);
+          setActiveTab('atlas');
+        }}
+      />
 
       {/* Observational Provenance & Citations */}
       <Footer />
