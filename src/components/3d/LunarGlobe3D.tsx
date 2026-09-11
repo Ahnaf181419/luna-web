@@ -1,105 +1,134 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { SITES } from '../../data/sites';
 import type { SiteDossier } from '../../types';
-import { RotateCw, Sun } from 'lucide-react';
 
 interface LunarGlobe3DProps {
-  selectedSiteId?: string;
+  selectedSiteId: string | null;
   onSelectSite: (site: SiteDossier) => void;
+  onHoverSite?: (site: SiteDossier | null) => void;
+  onCursorCoords?: (coords: { lat: number; lon: number } | null) => void;
 }
 
-export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSelectSite }) => {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const [hoveredSite, setHoveredSite] = useState<SiteDossier | null>(null);
-  const [sunAngle, setSunAngle] = useState<number>(45);
+const latLonToVector3 = (lat: number, lon: number, radius: number): THREE.Vector3 => {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  const x = -(radius * Math.sin(phi) * Math.cos(theta));
+  const z = radius * Math.sin(phi) * Math.sin(theta);
+  const y = radius * Math.cos(phi);
+  return new THREE.Vector3(x, y, z);
+};
 
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({
+  selectedSiteId,
+  onSelectSite,
+  onHoverSite,
+  onCursorCoords,
+}) => {
+  const mountRef = useRef<HTMLDivElement>(null);
   const globeGroupRef = useRef<THREE.Group | null>(null);
-  const sunLightRef = useRef<THREE.DirectionalLight | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const targetRotationRef = useRef<{ x: number; y: number } | null>(null);
   const isDraggingRef = useRef(false);
   const previousMousePositionRef = useRef({ x: 0, y: 0 });
+  const autoRotateRef = useRef(true);
+  const mouseRef = useRef(new THREE.Vector2());
+  const raycasterRef = useRef(new THREE.Raycaster());
 
-  const latLonToVector3 = (lat: number, lon: number, radius: number): THREE.Vector3 => {
-    const phi = (90 - lat) * (Math.PI / 180);
-    const theta = (lon + 180) * (Math.PI / 180);
-    const x = -(radius * Math.sin(phi) * Math.cos(theta));
-    const z = radius * Math.sin(phi) * Math.sin(theta);
-    const y = radius * Math.cos(phi);
-    return new THREE.Vector3(x, y, z);
-  };
+  // Store callbacks in refs to avoid re-init
+  const onSelectSiteRef = useRef(onSelectSite);
+  const onHoverSiteRef = useRef(onHoverSite);
+  const onCursorCoordsRef = useRef(onCursorCoords);
+
+  useEffect(() => {
+    onSelectSiteRef.current = onSelectSite;
+    onHoverSiteRef.current = onHoverSite;
+    onCursorCoordsRef.current = onCursorCoords;
+  }, [onSelectSite, onHoverSite, onCursorCoords]);
+
+  const handleSelectedSite = useCallback((siteId: string | null) => {
+    if (!siteId) return;
+    const site = SITES.find((s) => s.id === siteId);
+    if (!site) return;
+    const phi = site.lat * (Math.PI / 180);
+    const theta = -(site.lon + 180) * (Math.PI / 180) - Math.PI / 2;
+    targetRotationRef.current = { x: phi, y: theta };
+  }, []);
+
+  // React to selectedSiteId changes
+  useEffect(() => {
+    handleSelectedSite(selectedSiteId);
+  }, [selectedSiteId, handleSelectedSite]);
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    const width = container.clientWidth;
-    const height = container.clientHeight || 480;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
+    // Scene
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
 
+    // Camera
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 1000);
     camera.position.z = 5.2;
     cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Renderer — fills entire viewport
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    rendererRef.current = renderer;
+    renderer.toneMappingExposure = 1.1;
+    renderer.setClearColor(0x0a0a0c, 1);
     container.replaceChildren(renderer.domElement);
 
+    // Globe group
     const globeGroup = new THREE.Group();
     scene.add(globeGroup);
     globeGroupRef.current = globeGroup;
 
-    // PROCEDURAL MONOCHROME LUNAR REGOLITH TEXTURE
+    // Moon sphere — procedural texture
     const sphereRadius = 2.0;
-    const geometry = new THREE.SphereGeometry(sphereRadius, 80, 80);
+    const geometry = new THREE.SphereGeometry(sphereRadius, 96, 96);
 
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
     canvas.height = 512;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      // 1. Dark Basaltic Mare Background (Warm Graphite Tone)
-      ctx.fillStyle = '#1c1c21';
+      // Dark mare basalt
+      ctx.fillStyle = '#1a1a1e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 2. High-Albedo Highlands (Natural Silver-Grey Dust)
-      for (let i = 0; i < 600; i++) {
+      // Highlands
+      for (let i = 0; i < 500; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
-        const r = Math.random() * 90 + 20;
+        const r = Math.random() * 80 + 20;
         const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-        grad.addColorStop(0, 'rgba(140, 140, 150, 0.15)');
-        grad.addColorStop(1, 'rgba(28, 28, 33, 0)');
+        grad.addColorStop(0, 'rgba(130, 130, 140, 0.12)');
+        grad.addColorStop(1, 'rgba(26, 26, 30, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // 3. Prominent Impact Craters with Ejecta Rays (Tycho / Copernicus style)
-      const majorCraters = [
-        { x: 260, y: 380, r: 24 },
-        { x: 380, y: 190, r: 18 },
-        { x: 620, y: 220, r: 20 },
-        { x: 780, y: 340, r: 22 },
+      // Major craters with ejecta
+      const craters = [
+        { x: 260, y: 380, r: 22 },
+        { x: 380, y: 190, r: 16 },
+        { x: 620, y: 220, r: 18 },
+        { x: 780, y: 340, r: 20 },
       ];
-
-      majorCraters.forEach((mc) => {
-        for (let a = 0; a < 14; a++) {
-          const angle = (a / 14) * Math.PI * 2;
-          const rayLen = Math.random() * 120 + 50;
-          ctx.strokeStyle = 'rgba(200, 200, 215, 0.18)';
-          ctx.lineWidth = 1.4;
+      craters.forEach((mc) => {
+        for (let a = 0; a < 12; a++) {
+          const angle = (a / 12) * Math.PI * 2;
+          const rayLen = Math.random() * 100 + 40;
+          ctx.strokeStyle = 'rgba(180, 180, 195, 0.14)';
+          ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(mc.x, mc.y);
           ctx.lineTo(mc.x + Math.cos(angle) * rayLen, mc.y + Math.sin(angle) * rayLen);
@@ -107,20 +136,19 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
         }
       });
 
-      // 4. Micro Craters
-      for (let i = 0; i < 280; i++) {
+      // Micro craters
+      for (let i = 0; i < 220; i++) {
         const x = Math.random() * canvas.width;
         const y = Math.random() * canvas.height;
-        const r = Math.random() * 10 + 2;
-        ctx.strokeStyle = 'rgba(180, 180, 195, 0.4)';
-        ctx.lineWidth = 1.0;
+        const r = Math.random() * 8 + 2;
+        ctx.strokeStyle = 'rgba(160, 160, 175, 0.35)';
+        ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.stroke();
-
-        ctx.fillStyle = 'rgba(12, 12, 15, 0.7)';
+        ctx.fillStyle = 'rgba(10, 10, 12, 0.6)';
         ctx.beginPath();
-        ctx.arc(x + 0.4, y + 0.4, r * 0.75, 0, Math.PI * 2);
+        ctx.arc(x + 0.3, y + 0.3, r * 0.7, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -128,26 +156,25 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
     const moonTexture = new THREE.CanvasTexture(canvas);
     const material = new THREE.MeshStandardMaterial({
       map: moonTexture,
-      roughness: 0.88,
-      metalness: 0.08,
+      roughness: 0.9,
+      metalness: 0.05,
       bumpMap: moonTexture,
-      bumpScale: 0.05,
+      bumpScale: 0.04,
     });
     const moonMesh = new THREE.Mesh(geometry, material);
     globeGroup.add(moonMesh);
 
-    // Warm Limb Rim Atmosphere
-    const limbGeom = new THREE.SphereGeometry(sphereRadius * 1.012, 64, 64);
+    // Subtle limb wireframe
+    const limbGeom = new THREE.SphereGeometry(sphereRadius * 1.008, 64, 64);
     const limbMat = new THREE.MeshBasicMaterial({
-      color: 0xfde68a,
+      color: 0x3b82f6,
       transparent: true,
-      opacity: 0.05,
+      opacity: 0.02,
       wireframe: true,
     });
-    const limbMesh = new THREE.Mesh(limbGeom, limbMat);
-    globeGroup.add(limbMesh);
+    globeGroup.add(new THREE.Mesh(limbGeom, limbMat));
 
-    // EXTRUDED ALTITUDE PINS (SOLAR GOLD & EMERALD)
+    // Site pins
     const pinGroup = new THREE.Group();
     globeGroup.add(pinGroup);
 
@@ -155,36 +182,39 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
 
     SITES.forEach((site) => {
       const surfacePos = latLonToVector3(site.lat, site.lon, sphereRadius);
-      const headPos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.12);
+      const headPos = latLonToVector3(site.lat, site.lon, sphereRadius + 0.1);
 
       const isAnchor = site.primaryAnchor;
-      const markerColor = isAnchor ? 0x10b981 : 0xf59e0b; // Apollo Solar Gold
+      const markerColor = isAnchor ? 0x14b8a6 : 0x3b82f6;
 
-      // Altitude Stem
+      // Stem line
       const stemGeom = new THREE.BufferGeometry().setFromPoints([surfacePos, headPos]);
-      const stemMat = new THREE.LineBasicMaterial({ color: markerColor, transparent: true, opacity: 0.85 });
-      const stemLine = new THREE.Line(stemGeom, stemMat);
-      pinGroup.add(stemLine);
+      const stemMat = new THREE.LineBasicMaterial({
+        color: markerColor,
+        transparent: true,
+        opacity: 0.7,
+      });
+      pinGroup.add(new THREE.Line(stemGeom, stemMat));
 
-      // Target Pin Head
-      const pinGeom = new THREE.SphereGeometry(0.042, 16, 16);
+      // Pin head
+      const pinGeom = new THREE.SphereGeometry(0.035, 12, 12);
       const pinMat = new THREE.MeshStandardMaterial({
         color: markerColor,
         emissive: markerColor,
-        emissiveIntensity: 0.9,
+        emissiveIntensity: 0.7,
       });
       const pinMesh = new THREE.Mesh(pinGeom, pinMat);
       pinMesh.position.copy(headPos);
       pinMesh.userData = { site };
       pinGroup.add(pinMesh);
 
-      // Surface Pulse Ring
-      const ringGeom = new THREE.RingGeometry(0.055, 0.075, 24);
+      // Surface ring
+      const ringGeom = new THREE.RingGeometry(0.045, 0.06, 20);
       const ringMat = new THREE.MeshBasicMaterial({
         color: markerColor,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.65,
+        opacity: 0.5,
       });
       const ringMesh = new THREE.Mesh(ringGeom, ringMat);
       ringMesh.position.copy(surfacePos);
@@ -194,46 +224,47 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
       siteMeshes.push({ mesh: pinMesh, site });
     });
 
-    // WARM SOLAR LIGHTING
-    const sunLight = new THREE.DirectionalLight(0xfffaf0, 2.5); // Warm sun
-    sunLight.position.set(5 * Math.cos(sunAngle * (Math.PI / 180)), 1.5, 5 * Math.sin(sunAngle * (Math.PI / 180)));
+    // Lighting — neutral white, not warm
+    const sunLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    sunLight.position.set(5, 2, 4);
     scene.add(sunLight);
-    sunLightRef.current = sunLight;
 
-    const ambientLight = new THREE.AmbientLight(0x18181b, 0.6);
+    const ambientLight = new THREE.AmbientLight(0x1a1a1e, 0.8);
     scene.add(ambientLight);
 
-    const earthFillLight = new THREE.DirectionalLight(0x71717a, 0.35);
-    earthFillLight.position.set(-4, -2, -3);
-    scene.add(earthFillLight);
+    const fillLight = new THREE.DirectionalLight(0x52525b, 0.3);
+    fillLight.position.set(-4, -2, -3);
+    scene.add(fillLight);
 
-    // Neutral Deep Starfield
+    // Starfield — subtle
     const starGeom = new THREE.BufferGeometry();
-    const starCount = 400;
+    const starCount = 300;
     const starPositions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount * 3; i += 3) {
-      starPositions[i] = (Math.random() - 0.5) * 45;
-      starPositions[i + 1] = (Math.random() - 0.5) * 45;
-      starPositions[i + 2] = -Math.random() * 30 - 5;
+      starPositions[i] = (Math.random() - 0.5) * 50;
+      starPositions[i + 1] = (Math.random() - 0.5) * 50;
+      starPositions[i + 2] = -Math.random() * 30 - 8;
     }
     starGeom.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xd4d4d8, size: 0.08, transparent: true, opacity: 0.7 });
-    const starField = new THREE.Points(starGeom, starMat);
-    scene.add(starField);
+    const starMat = new THREE.PointsMaterial({
+      color: 0xa1a1aa,
+      size: 0.06,
+      transparent: true,
+      opacity: 0.5,
+    });
+    scene.add(new THREE.Points(starGeom, starMat));
 
-    // Raycasting & Interaction
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
+    // Interaction handlers
     const handlePointerDown = (e: MouseEvent) => {
       isDraggingRef.current = true;
+      autoRotateRef.current = false;
       previousMousePositionRef.current = { x: e.clientX, y: e.clientY };
     };
 
     const handlePointerMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
-      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      mouseRef.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouseRef.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       if (isDraggingRef.current && globeGroupRef.current) {
         const deltaX = e.clientX - previousMousePositionRef.current.x;
@@ -241,20 +272,40 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
 
         globeGroupRef.current.rotation.y += deltaX * 0.005;
         globeGroupRef.current.rotation.x += deltaY * 0.005;
-        globeGroupRef.current.rotation.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, globeGroupRef.current.rotation.x));
+        globeGroupRef.current.rotation.x = Math.max(
+          -Math.PI / 2.2,
+          Math.min(Math.PI / 2.2, globeGroupRef.current.rotation.x)
+        );
 
         previousMousePositionRef.current = { x: e.clientX, y: e.clientY };
         targetRotationRef.current = null;
       } else {
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(siteMeshes.map((s) => s.mesh));
+        raycasterRef.current.setFromCamera(mouseRef.current, camera);
+        const intersects = raycasterRef.current.intersectObjects(
+          siteMeshes.map((s) => s.mesh)
+        );
         if (intersects.length > 0) {
           const hovered = intersects[0].object.userData.site as SiteDossier;
-          setHoveredSite(hovered);
+          onHoverSiteRef.current?.(hovered);
           container.style.cursor = 'pointer';
         } else {
-          setHoveredSite(null);
-          container.style.cursor = isDraggingRef.current ? 'grabbing' : 'grab';
+          onHoverSiteRef.current?.(null);
+          container.style.cursor = isDraggingRef.current ? 'grabbing' : 'default';
+        }
+
+        // Compute lat/lon from mouse intersection with moon sphere
+        const moonIntersects = raycasterRef.current.intersectObject(moonMesh);
+        if (moonIntersects.length > 0) {
+          const point = moonIntersects[0].point;
+          // Convert world point to globe-local
+          const localPoint = globeGroup.worldToLocal(point.clone());
+          const r = localPoint.length();
+          const lat = 90 - Math.acos(localPoint.y / r) * (180 / Math.PI);
+          const lon = -(Math.atan2(localPoint.z, -localPoint.x) * (180 / Math.PI)) - 180;
+          const normalizedLon = ((lon + 540) % 360) - 180;
+          onCursorCoordsRef.current?.({ lat, lon: normalizedLon });
+        } else {
+          onCursorCoordsRef.current?.(null);
         }
       }
     };
@@ -263,19 +314,31 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
       if (!isDraggingRef.current) return;
       isDraggingRef.current = false;
 
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(siteMeshes.map((s) => s.mesh));
+      raycasterRef.current.setFromCamera(mouseRef.current, camera);
+      const intersects = raycasterRef.current.intersectObjects(
+        siteMeshes.map((s) => s.mesh)
+      );
       if (intersects.length > 0) {
         const site = intersects[0].object.userData.site as SiteDossier;
-        onSelectSite(site);
+        onSelectSiteRef.current(site);
       }
+
+      // Resume auto-rotate after 5 seconds of no drag
+      setTimeout(() => {
+        if (!isDraggingRef.current) {
+          autoRotateRef.current = true;
+        }
+      }, 5000);
     };
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       if (!cameraRef.current) return;
       cameraRef.current.position.z += e.deltaY * 0.003;
-      cameraRef.current.position.z = Math.max(3.0, Math.min(8.0, cameraRef.current.position.z));
+      cameraRef.current.position.z = Math.max(
+        3.0,
+        Math.min(8.0, cameraRef.current.position.z)
+      );
     };
 
     container.addEventListener('mousedown', handlePointerDown);
@@ -283,16 +346,19 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
     window.addEventListener('mouseup', handlePointerUp);
     container.addEventListener('wheel', handleWheel, { passive: false });
 
+    // Animation loop
     let animId: number;
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
       if (globeGroupRef.current) {
         if (targetRotationRef.current) {
-          globeGroupRef.current.rotation.y += (targetRotationRef.current.y - globeGroupRef.current.rotation.y) * 0.05;
-          globeGroupRef.current.rotation.x += (targetRotationRef.current.x - globeGroupRef.current.rotation.x) * 0.05;
-        } else if (autoRotate && !isDraggingRef.current) {
-          globeGroupRef.current.rotation.y += 0.0018;
+          globeGroupRef.current.rotation.y +=
+            (targetRotationRef.current.y - globeGroupRef.current.rotation.y) * 0.05;
+          globeGroupRef.current.rotation.x +=
+            (targetRotationRef.current.x - globeGroupRef.current.rotation.x) * 0.05;
+        } else if (autoRotateRef.current && !isDraggingRef.current) {
+          globeGroupRef.current.rotation.y += 0.001;
         }
       }
 
@@ -300,13 +366,13 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
     };
     animate();
 
+    // Resize to fill viewport
     const handleResize = () => {
-      if (!container || !renderer || !camera) return;
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight || 480;
-      camera.aspect = newWidth / newHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
+      renderer.setSize(w, h);
     };
     window.addEventListener('resize', handleResize);
 
@@ -321,92 +387,11 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({ selectedSiteId, onSe
     };
   }, []);
 
-  useEffect(() => {
-    if (!sunLightRef.current) return;
-    const rad = sunAngle * (Math.PI / 180);
-    sunLightRef.current.position.set(5.5 * Math.cos(rad), 1.5, 5.5 * Math.sin(rad));
-  }, [sunAngle]);
-
-  useEffect(() => {
-    if (!selectedSiteId) return;
-    const site = SITES.find((s) => s.id === selectedSiteId);
-    if (!site) return;
-
-    const phi = site.lat * (Math.PI / 180);
-    const theta = -(site.lon + 180) * (Math.PI / 180) - Math.PI / 2;
-
-    targetRotationRef.current = { x: phi, y: theta };
-  }, [selectedSiteId]);
-
   return (
-    <div className="relative w-full h-[480px] bg-obsidian-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
-
-      {/* Top Left: Orbit HUD Title */}
-      <div className="absolute top-4 left-4 z-10 pointer-events-none">
-        <div className="flex items-center space-x-2 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3.5 py-1.5 rounded-lg text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-zinc-100 font-bold">LUNAR OBSERVATORY GLOBE</span>
-          <span className="text-zinc-500 text-[10px]">| Mean Radius: 1,737.4 km</span>
-        </div>
-      </div>
-
-      {/* Top Right: Hovered Target Dossier Overlay */}
-      {hoveredSite && (
-        <div className="absolute top-4 right-4 z-10 bg-obsidian-950/95 backdrop-blur-md border border-amber-750/90 px-4 py-2.5 rounded-xl text-xs font-mono shadow-xl pointer-events-none max-w-xs transition-all">
-          <div className="text-amber-400 font-bold flex items-center justify-between">
-            <span>{hoveredSite.name}</span>
-            {hoveredSite.primaryAnchor && (
-              <span className="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-800">
-                ANCHOR
-              </span>
-            )}
-          </div>
-          <div className="text-zinc-400 text-[11px] mt-1">
-            {hoveredSite.lat.toFixed(2)}°N, {hoveredSite.lon.toFixed(2)}°E • {hoveredSite.dtmResolution}
-          </div>
-          <div className="text-zinc-500 text-[10px] mt-0.5">
-            {hoveredSite.candidateCount} candidate features indexed
-          </div>
-        </div>
-      )}
-
-      {/* Bottom Floating Control Panel */}
-      <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pointer-events-auto">
-        
-        {/* Dynamic Solar Terminator Scrubbing Slider */}
-        <div className="flex items-center space-x-2 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3.5 py-2 rounded-xl text-xs font-mono">
-          <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="text-zinc-400 text-[11px] whitespace-nowrap">Solar Terminator:</span>
-          <input
-            type="range"
-            min="0"
-            max="360"
-            step="5"
-            value={sunAngle}
-            onChange={(e) => setSunAngle(parseInt(e.target.value))}
-            className="w-24 sm:w-32 accent-amber-400 bg-obsidian-900 h-1.5 rounded cursor-pointer"
-            title="Adjust Solar Incidence Angle"
-          />
-          <span className="text-amber-400 font-bold text-[10px] w-8">{sunAngle}°</span>
-        </div>
-
-        {/* Orbit Controls */}
-        <div className="flex items-center space-x-2 justify-end">
-          <button
-            onClick={() => setAutoRotate(!autoRotate)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono border backdrop-blur-md transition flex items-center gap-1.5 ${
-              autoRotate
-                ? 'bg-amber-950/60 text-amber-300 border-amber-700/80'
-                : 'bg-obsidian-950/90 text-zinc-400 border-zinc-800 hover:text-white'
-            }`}
-          >
-            <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-spin' : ''}`} />
-            <span>{autoRotate ? 'Orbit: Active' : 'Orbit: Paused'}</span>
-          </button>
-        </div>
-
-      </div>
-    </div>
+    <div
+      ref={mountRef}
+      className="fixed inset-0 z-0"
+      style={{ cursor: 'default' }}
+    />
   );
 };

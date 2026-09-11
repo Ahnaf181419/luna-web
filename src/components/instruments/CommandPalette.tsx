@@ -3,9 +3,10 @@ import { Search, X, Compass, Database, ShieldCheck, Network, ArrowRight } from '
 import { CANDIDATES } from '../../data/candidates';
 import { SITES } from '../../data/sites';
 import { GATES } from '../../data/gates';
-import type { TabType } from '../layout/Header';
 
-interface CommandPaletteProps {
+export type TabType = 'overview' | 'atlas' | 'evidence' | 'gates' | 'knowledge';
+
+export interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectTab: (tab: TabType) => void;
@@ -98,43 +99,43 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-void-black/80 backdrop-blur-sm">
       <div
-        className="w-full max-w-xl bg-obsidian-900 border border-amber-700/80 rounded-2xl shadow-2xl overflow-hidden font-mono text-xs"
+        className="w-full max-w-xl bg-panel-bg border border-panel-border rounded-lg shadow-2xl overflow-hidden font-mono text-xs"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center px-4 py-3.5 border-b border-zinc-800 bg-obsidian-950">
-          <Search className="w-4 h-4 text-amber-400 mr-2.5 shrink-0" />
+        <div className="flex items-center px-3.5 py-3 border-b border-panel-border bg-void-black/60">
+          <Search className="w-4 h-4 text-blue-400 mr-2.5 shrink-0" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search target site, candidate ID, or gate..."
-            className="w-full bg-transparent text-white placeholder-zinc-500 focus:outline-none text-xs"
+            placeholder="Search target sites, candidates, or gates..."
+            className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 focus:outline-none text-xs"
           />
-          <button onClick={onClose} className="text-zinc-500 hover:text-white ml-2">
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-200 ml-2">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="max-h-80 overflow-y-auto divide-y divide-zinc-800/60 p-2">
+        <div className="max-h-80 overflow-y-auto panel-scroll divide-y divide-panel-border/60 p-1.5">
           {filteredItems.length === 0 ? (
             <div className="p-6 text-center text-zinc-500">
               No matching lunar records found.
             </div>
           ) : (
             filteredItems.slice(0, 15).map((item) => {
-              let typeBadge = 'bg-zinc-800 text-zinc-400 border-zinc-700';
+              let typeBadge = 'bg-panel-surface text-zinc-400 border-panel-border';
               let Icon = Database;
               if (item.type === 'SITE') {
-                typeBadge = 'bg-amber-950 text-amber-400 border-amber-800';
+                typeBadge = 'bg-blue-950/60 text-blue-400 border-blue-800';
                 Icon = Compass;
               } else if (item.type === 'GATE') {
-                typeBadge = 'bg-emerald-950 text-emerald-400 border-emerald-800';
+                typeBadge = 'bg-teal-950/60 text-teal-400 border-teal-800';
                 Icon = ShieldCheck;
               } else if (item.type === 'KNOWLEDGE') {
-                typeBadge = 'bg-zinc-800 text-zinc-300 border-zinc-700';
+                typeBadge = 'bg-panel-surface text-zinc-300 border-panel-border';
                 Icon = Network;
               }
 
@@ -142,12 +143,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 <div
                   key={item.id}
                   onClick={item.action}
-                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-850/50 cursor-pointer transition group"
+                  className="flex items-center justify-between p-2 rounded hover:bg-panel-surface cursor-pointer transition group"
                 >
-                  <div className="flex items-center space-x-3 overflow-hidden">
-                    <Icon className="w-4 h-4 text-zinc-400 group-hover:text-amber-400 shrink-0" />
+                  <div className="flex items-center space-x-2.5 overflow-hidden">
+                    <Icon className="w-4 h-4 text-zinc-400 group-hover:text-blue-400 shrink-0" />
                     <div className="overflow-hidden">
-                      <div className="text-zinc-200 group-hover:text-white font-bold truncate">
+                      <div className="text-zinc-200 group-hover:text-white font-semibold truncate">
                         {item.title}
                       </div>
                       <div className="text-zinc-500 text-[10px] truncate">{item.subtitle}</div>
@@ -155,10 +156,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   </div>
 
                   <div className="flex items-center space-x-2 shrink-0 ml-3">
-                    <span className={`px-1.5 py-0.5 text-[9px] rounded border ${typeBadge}`}>
+                    <span className={`px-1.5 py-0.2 text-[9px] rounded border ${typeBadge}`}>
                       {item.type}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-amber-400" />
+                    <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:text-blue-400" />
                   </div>
                 </div>
               );
@@ -166,9 +167,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           )}
         </div>
 
-        <div className="px-4 py-2 bg-obsidian-950 border-t border-zinc-800 flex items-center justify-between text-[10px] text-zinc-500">
-          <span>Navigate: ↑ ↓ • Select: Enter • Dismiss: Esc</span>
-          <span className="text-amber-400 font-semibold">LUNARVOID Telemetry Bus</span>
+        <div className="px-3 py-1.5 bg-void-black/80 border-t border-panel-border flex items-center justify-between text-[10px] text-zinc-500">
+          <span>↑ ↓ Navigate • Enter Select • Esc Close</span>
+          <span className="text-blue-400 font-mono">LUNARVOID BUS</span>
         </div>
       </div>
     </div>

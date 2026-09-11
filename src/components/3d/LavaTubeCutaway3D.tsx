@@ -232,48 +232,48 @@ export const LavaTubeCutaway3D: React.FC = () => {
   }, [radarActive]);
 
   return (
-    <div className="relative w-full h-[460px] bg-obsidian-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="relative w-full h-[360px] sm:h-[420px] bg-panel-bg border border-panel-border rounded-lg overflow-hidden">
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* Top Left: Subsurface HUD */}
-      <div className="absolute top-4 left-4 z-10 pointer-events-none">
-        <div className="flex items-center space-x-2 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3.5 py-1.5 rounded-lg text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+      <div className="absolute top-3 left-3 z-10 pointer-events-none">
+        <div className="flex items-center space-x-2 bg-void-black/90 backdrop-blur-md border border-panel-border px-3 py-1 rounded text-xs font-mono">
+          <span className="w-2 h-2 rounded-full bg-blue-400" />
           <span className="text-zinc-100 font-bold">SUBTERRANEAN CONDUIT GEOMETRY</span>
           <span className="text-zinc-500 text-[10px]">| Basalt Host Unit</span>
         </div>
       </div>
 
       {/* Top Right: Geological Layer Badges */}
-      <div className="absolute top-4 right-4 z-10 hidden sm:flex flex-col gap-1.5 font-mono text-[10px] pointer-events-none">
-        <div className="bg-obsidian-950/90 backdrop-blur-md border border-amber-800/60 text-amber-300 px-2.5 py-1 rounded">
+      <div className="absolute top-3 right-3 z-10 hidden sm:flex flex-col gap-1 font-mono text-[10px] pointer-events-none">
+        <div className="bg-void-black/90 backdrop-blur-md border border-panel-border text-zinc-300 px-2 py-0.5 rounded">
           ● Surface Regolith (~5-15m)
         </div>
-        <div className="bg-obsidian-950/90 backdrop-blur-md border border-emerald-800/60 text-emerald-300 px-2.5 py-1 rounded">
+        <div className="bg-void-black/90 backdrop-blur-md border border-teal-800/60 text-teal-300 px-2 py-0.5 rounded">
           ● Vertical Pit Skylight (-105m)
         </div>
-        <div className="bg-obsidian-950/90 backdrop-blur-md border border-amber-800/60 text-amber-300 px-2.5 py-1 rounded">
+        <div className="bg-void-black/90 backdrop-blur-md border border-blue-800/60 text-blue-300 px-2 py-0.5 rounded">
           ● Intact Basalt Conduit (Span ~80m)
         </div>
       </div>
 
       {/* Bottom Controls */}
-      <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-auto font-mono text-xs">
-        <div className="text-zinc-400 bg-obsidian-950/90 backdrop-blur-md border border-zinc-800 px-3 py-1.5 rounded-lg hidden sm:block text-[11px]">
-          Drag block to inspect internal conduit cross-section
+      <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-auto font-mono text-xs">
+        <div className="text-zinc-400 bg-void-black/90 backdrop-blur-md border border-panel-border px-2.5 py-1 rounded hidden sm:block text-[10px]">
+          Drag block to rotate • Scroll to zoom
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setRadarActive(!radarActive)}
-            className={`px-3 py-1.5 rounded-lg border backdrop-blur-md transition flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded border backdrop-blur-md transition flex items-center gap-1.5 text-xs font-mono ${
               radarActive
-                ? 'bg-amber-950/60 text-amber-300 border-amber-700/80'
-                : 'bg-obsidian-950/90 text-zinc-400 border-zinc-800 hover:text-white'
+                ? 'bg-blue-950/60 text-blue-300 border-blue-700/80'
+                : 'bg-void-black/90 text-zinc-400 border-panel-border hover:text-white'
             }`}
           >
             <Waves className="w-3.5 h-3.5" />
-            <span>{radarActive ? 'Radar Sounding: Active' : 'Radar: Off'}</span>
+            <span>{radarActive ? 'Radar: Active' : 'Radar: Off'}</span>
           </button>
         </div>
       </div>
