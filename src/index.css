@@ -4,7 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-void-black text-zinc-200 antialiased font-sans m-0 p-0 overflow-hidden;
+    background-color: #0a0a0c;
+    @apply text-zinc-200 antialiased font-sans m-0 p-0 overflow-hidden;
     height: 100vh;
     height: 100dvh;
   }
