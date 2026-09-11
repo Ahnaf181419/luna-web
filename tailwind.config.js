@@ -7,22 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        void: {
-          black: '#0a0a0c',
-        },
-        panel: {
-          bg: '#111114',
-          surface: '#18181b',
-          border: '#27272a',
+        space: {
+          950: '#060609', // Deep space void
+          900: '#0b0b10', // Deep obsidian
+          850: '#111118', // Card background
+          800: '#191924', // Elevated surface
+          700: '#272738', // Muted borders
+          600: '#3c3c52',
         },
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace'],
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-      },
-      width: {
-        'drawer-left': '320px',
-        'drawer-right': '380px',
       },
     },
   },

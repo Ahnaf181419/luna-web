@@ -64,8 +64,8 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({
     const container = mountRef.current;
     if (!container) return;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = container.clientWidth || 800;
+    const height = container.clientHeight || 540;
 
     // Scene
     const scene = new THREE.Scene();
@@ -75,13 +75,13 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({
     camera.position.z = 5.2;
     cameraRef.current = camera;
 
-    // Renderer — fills entire viewport
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
-    renderer.setClearColor(0x0a0a0c, 1);
+    renderer.setClearColor(0x060609, 1);
     container.replaceChildren(renderer.domElement);
 
     // Globe group
@@ -366,10 +366,11 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({
     };
     animate();
 
-    // Resize to fill viewport
+    // Resize
     const handleResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      if (!container || !camera || !renderer) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight || 540;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -390,7 +391,7 @@ export const LunarGlobe3D: React.FC<LunarGlobe3DProps> = ({
   return (
     <div
       ref={mountRef}
-      className="fixed inset-0 z-0"
+      className="relative w-full h-full min-h-[500px]"
       style={{ cursor: 'default' }}
     />
   );
