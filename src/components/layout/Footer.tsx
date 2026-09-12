@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Copy, Check, ShieldCheck, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const Footer: React.FC = () => {
   const [copiedBib, setCopiedBib] = useState(false);
+  const resetTimer = React.useRef<number | undefined>(undefined);
+
+  React.useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
   const bibtex = `@article{lunarvoid2026,
   title={Calibrated Multi-Evidence Subsurface Inference of Lunar Lava Tubes from Orbital Morphometry and Geophysics},
@@ -15,101 +19,111 @@ export const Footer: React.FC = () => {
   const copyBibtex = () => {
     navigator.clipboard.writeText(bibtex);
     setCopiedBib(true);
-    setTimeout(() => setCopiedBib(false), 2000);
+    window.clearTimeout(resetTimer.current);
+    resetTimer.current = window.setTimeout(() => setCopiedBib(false), 2000);
   };
 
   return (
-    <footer className="border-t border-space-700/80 bg-space-950 py-16 text-xs font-mono text-zinc-400">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <footer className="border-t border-border py-10 font-mono text-xs text-muted-foreground">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 lg:px-8">
         {/* Top: Provenance & BibTeX */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-6 space-y-4">
-            <div className="flex items-center space-x-2 text-zinc-100">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-bold tracking-wider text-sm">LUNARVOID OPEN RESEARCH INITIATIVE</span>
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+          <div className="space-y-4 lg:col-span-6">
+            <div className="label-mono flex items-center gap-2 text-foreground">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
+              <span>LUNARVOID open research initiative</span>
             </div>
-            <p className="text-zinc-400 font-sans leading-relaxed text-xs">
-              This research portal documents the complete empirical pipeline, Bayesian inference mathematics, candidate registry, and milestone gate evidence for inferring subsurface basaltic conduits beneath the lunar mare.
+            <p className="font-sans text-xs leading-relaxed text-muted-foreground">
+              This research portal documents the complete empirical pipeline, Bayesian
+              inference mathematics, candidate registry, and milestone gate evidence for
+              inferring subsurface basaltic conduits beneath the lunar mare.
             </p>
-            <div className="p-3.5 rounded-lg bg-space-900 border border-space-700/80 space-y-1.5">
-              <div className="flex items-center space-x-2 text-amber-400 text-[11px] font-semibold">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Epistemic Governance Notice</span>
+            <div className="space-y-1.5 rounded-md border border-border bg-card/60 p-3.5">
+              <div className="label-mono flex items-center gap-2 text-warning">
+                <ShieldCheck className="h-4 w-4" />
+                <span>Epistemic governance notice</span>
               </div>
-              <p className="text-zinc-400 font-sans text-[11px] leading-relaxed">
-                Nothing subsurface on the Moon is verifiable today except the radar-evidenced Tranquillitatis conduit. All candidates cataloged here represent calibrated log-likelihood inferences anchored in terrestrial basalt geomechanics, with published false positive rates per 10⁴ km².
+              <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
+                Nothing subsurface on the Moon is verifiable today except the
+                radar-evidenced Tranquillitatis conduit. All candidates cataloged here
+                represent calibrated log-likelihood inferences anchored in terrestrial
+                basalt geomechanics, with published false positive rates per 10⁴ km².
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-6 space-y-2">
+          <div className="space-y-2 lg:col-span-6">
             <div className="flex items-center justify-between">
-              <span className="text-zinc-400 text-[11px] font-bold uppercase tracking-wider">
-                Academic Citation (BibTeX)
-              </span>
-              <button
+              <span className="label-mono">Academic citation (BibTeX)</span>
+              <Button
                 onClick={copyBibtex}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-space-850 hover:bg-space-800 border border-space-700 text-zinc-300 hover:text-white transition"
+                variant="outline"
+                size="sm"
+                className="h-7 px-2.5 font-mono text-[10px]"
               >
-                {copiedBib ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span className="text-[10px]">{copiedBib ? 'Copied' : 'Copy BibTeX'}</span>
-              </button>
+                {copiedBib ? (
+                  <Check className="h-3.5 w-3.5 text-success" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
+                <span>{copiedBib ? 'Copied' : 'Copy BibTeX'}</span>
+              </Button>
             </div>
-            <pre className="p-3.5 rounded-lg bg-space-900 border border-space-700 text-[10px] text-zinc-300 overflow-x-auto leading-relaxed">
+            <pre className="overflow-x-auto rounded-md border border-border bg-card/60 p-3.5 text-[10px] leading-relaxed text-foreground/80">
               {bibtex}
             </pre>
           </div>
         </div>
 
-        {/* Middle: Mission & Data Acknowledgements */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-space-800 text-[11px]">
+        {/* Middle: Mission & data acknowledgements */}
+        <div className="grid grid-cols-2 gap-4 border-t border-border pt-6 text-[11px] sm:grid-cols-4">
           <div>
-            <span className="text-zinc-500 uppercase block text-[10px]">Photogrammetry</span>
-            <span className="text-zinc-200 font-semibold block mt-1">LROC NAC Stereo</span>
-            <span className="text-zinc-400 text-[10px]">ASU / NASA Ames (ASP)</span>
+            <span className="label-mono block">Photogrammetry</span>
+            <span className="mt-1 block font-semibold text-foreground">LROC NAC Stereo</span>
+            <span className="text-[10px] text-muted-foreground">ASU / NASA Ames (ASP)</span>
           </div>
           <div>
-            <span className="text-zinc-500 uppercase block text-[10px]">Radar Backscatter</span>
-            <span className="text-zinc-200 font-semibold block mt-1">Mini-RF S-Band</span>
-            <span className="text-zinc-400 text-[10px]">LRO / Kaguya LRS Horizons</span>
+            <span className="label-mono block">Radar backscatter</span>
+            <span className="mt-1 block font-semibold text-foreground">Mini-RF S-Band</span>
+            <span className="text-[10px] text-muted-foreground">LRO / Kaguya LRS horizons</span>
           </div>
           <div>
-            <span className="text-zinc-500 uppercase block text-[10px]">Gravity Mass Deficit</span>
-            <span className="text-zinc-200 font-semibold block mt-1">GRAIL GL1200A</span>
-            <span className="text-zinc-400 text-[10px]">Degree-1200 Spherical</span>
+            <span className="label-mono block">Gravity mass deficit</span>
+            <span className="mt-1 block font-semibold text-foreground">GRAIL GL1200A</span>
+            <span className="text-[10px] text-muted-foreground">Degree-1200 spherical</span>
           </div>
           <div>
-            <span className="text-zinc-500 uppercase block text-[10px]">Terrestrial Analogs</span>
-            <span className="text-zinc-200 font-semibold block mt-1">NASA LiDAR Archive</span>
-            <span className="text-zinc-400 text-[10px]">Kīlauea & Modoc Basalts</span>
+            <span className="label-mono block">Terrestrial analogs</span>
+            <span className="mt-1 block font-semibold text-foreground">NASA LiDAR Archive</span>
+            <span className="text-[10px] text-muted-foreground">Kīlauea & Modoc basalts</span>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-6 border-t border-space-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-zinc-400">
-          <div className="flex items-center space-x-3">
+        {/* Bottom bar */}
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-[10px] sm:flex-row">
+          <div className="flex flex-wrap items-center gap-3">
             <span>© 2026 LUNARVOID Research Group</span>
-            <span>•</span>
-            <span>Zero-Spend Frugal Science Compliance ($0.00 / $800 spent)</span>
+            <span>·</span>
+            <span>Zero-spend frugal science compliance ($0.00 / $800 spent)</span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <a
               href="https://quickmap.lroc.asu.edu/"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center space-x-1 text-zinc-400 hover:text-zinc-200 transition"
+              className="flex items-center gap-1 transition-colors hover:text-foreground"
             >
               <span>LROC QuickMap</span>
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="h-3 w-3" />
             </a>
             <a
               href="https://pds-geosciences.wustl.edu/"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center space-x-1 text-zinc-400 hover:text-zinc-200 transition"
+              className="flex items-center gap-1 transition-colors hover:text-foreground"
             >
               <span>NASA PDS Geosciences</span>
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         </div>

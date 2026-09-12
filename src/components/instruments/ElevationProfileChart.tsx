@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CHART } from '@/lib/chart-theme';
 
 interface ElevationProfileChartProps {
   depthMeters?: number;
@@ -95,14 +96,14 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
   };
 
   return (
-    <div className="bg-obsidian-950 border border-zinc-800 rounded-xl p-4 space-y-3 font-mono">
-      <div className="flex items-center justify-between border-b border-zinc-850 pb-2">
-        <div className="flex items-center space-x-2 text-xs">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
-          <span className="font-bold text-zinc-100">DTM ELEVATION TRANSECT: {candidateId} (A — A′)</span>
-          <span className="text-zinc-500 text-[10px]">| {resolution} grid</span>
+    <div className="rounded-lg border border-border bg-card/80 p-4 space-y-3 font-mono">
+      <div className="flex items-center justify-between border-b border-border pb-2">
+        <div className="flex items-center space-x-2 label-mono text-foreground">
+          <span className="w-2 h-2 rounded-full bg-primary" />
+          <span>DTM Elevation Transect: {candidateId} (A — A′)</span>
+          <span className="text-muted-foreground text-[10px]">| {resolution} grid</span>
         </div>
-        <div className="text-[10px] text-amber-400">
+        <div className="text-[10px] text-primary">
           Span: ~{spanMeters}m • Max Drop: -{maxDepth}m
         </div>
       </div>
@@ -119,11 +120,11 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
             y1={scaleY(0)}
             x2={svgWidth - padRight}
             y2={scaleY(0)}
-            stroke="#52525b"
+            stroke={CHART.label}
             strokeDasharray="4 3"
             strokeWidth="1"
           />
-          <text x={padLeft - 8} y={scaleY(0) + 3} fill="#71717a" fontSize="9" textAnchor="end">
+          <text x={padLeft - 8} y={scaleY(0) + 3} fill={CHART.label} fontSize="9" textAnchor="end">
             0m
           </text>
 
@@ -132,10 +133,10 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
             y1={scaleY(-maxDepth / 2)}
             x2={svgWidth - padRight}
             y2={scaleY(-maxDepth / 2)}
-            stroke="#27272a"
+            stroke={CHART.grid}
             strokeWidth="0.8"
           />
-          <text x={padLeft - 8} y={scaleY(-maxDepth / 2) + 3} fill="#52525b" fontSize="8" textAnchor="end">
+          <text x={padLeft - 8} y={scaleY(-maxDepth / 2) + 3} fill={CHART.labelDim} fontSize="8" textAnchor="end">
             -{Math.round(maxDepth / 2)}m
           </text>
 
@@ -144,18 +145,18 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
             y1={scaleY(-maxDepth)}
             x2={svgWidth - padRight}
             y2={scaleY(-maxDepth)}
-            stroke="#27272a"
+            stroke={CHART.grid}
             strokeWidth="0.8"
           />
-          <text x={padLeft - 8} y={scaleY(-maxDepth) + 3} fill="#52525b" fontSize="8" textAnchor="end">
+          <text x={padLeft - 8} y={scaleY(-maxDepth) + 3} fill={CHART.labelDim} fontSize="8" textAnchor="end">
             -{maxDepth}m
           </text>
 
           {/* Shaded subterranean bedrock */}
-          <path d={fillD} fill="rgba(24, 24, 28, 0.75)" />
+          <path d={fillD} fill={CHART.bedrockFill} />
 
-          {/* Warm Solar Gold Elevation Profile Line */}
-          <path d={pathD} fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
+          {/* Telemetry amber elevation profile */}
+          <path d={pathD} fill="none" stroke={CHART.primary} strokeWidth="2" strokeLinecap="round" />
 
           {hoverPoint && (
             <>
@@ -164,7 +165,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
                 y1={padTop}
                 x2={scaleX(hoverPoint.x)}
                 y2={svgHeight - padBottom}
-                stroke="#fbbf24"
+                stroke={CHART.primaryBright}
                 strokeWidth="1"
                 strokeDasharray="3 2"
               />
@@ -172,8 +173,8 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
                 cx={scaleX(hoverPoint.x)}
                 cy={scaleY(hoverPoint.z)}
                 r="4.5"
-                fill="#f59e0b"
-                stroke="#0c0c0e"
+                fill={CHART.primary}
+                stroke={CHART.voidInk}
                 strokeWidth="2"
               />
             </>
@@ -181,27 +182,27 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
         </svg>
 
         {hoverPoint && (
-          <div className="mt-2 p-2 bg-obsidian-900 border border-amber-700/80 rounded-lg flex items-center justify-between text-[11px] text-zinc-300">
+          <div className="mt-2 p-2 bg-surface/60 border border-primary/30 rounded-md flex items-center justify-between text-[11px] text-foreground">
             <div>
-              <span className="text-zinc-500">Distance: </span>
-              <span className="text-zinc-100 font-bold">{hoverPoint.x.toFixed(1)}m</span>
+              <span className="text-muted-foreground">Distance: </span>
+              <span className="text-foreground font-bold">{hoverPoint.x.toFixed(1)}m</span>
             </div>
             <div>
-              <span className="text-zinc-500">Elevation: </span>
-              <span className={hoverPoint.z < -10 ? 'text-amber-400 font-bold' : 'text-zinc-300'}>
+              <span className="text-muted-foreground">Elevation: </span>
+              <span className={hoverPoint.z < -10 ? 'text-primary font-bold' : 'text-foreground'}>
                 {hoverPoint.z.toFixed(1)}m
               </span>
             </div>
-            <div className="text-zinc-400 hidden sm:block">
+            <div className="text-muted-foreground hidden sm:block">
               <span>{hoverPoint.label}</span>
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between text-[10px] text-zinc-500 pt-1">
+      <div className="flex items-center justify-between label-mono pt-1">
         <span>Transect Start: A (West Rim)</span>
-        <span>Collinear Axis: 092° Azimuth</span>
+        <span className="hidden sm:inline">Collinear Axis: 092° Azimuth</span>
         <span>Transect End: A′ (East Rim)</span>
       </div>
     </div>

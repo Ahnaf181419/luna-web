@@ -1,106 +1,92 @@
 import React from 'react';
 import { Layers, Radio } from 'lucide-react';
-import { LavaTubeCutaway3D } from '../3d/LavaTubeCutaway3D';
+import { StratigraphyOverlay } from '@/components/lunar/StratigraphyOverlay';
+
+const STRATA = [
+  {
+    title: '1. Surface regolith blanket',
+    depth: 'Depth ~5–15 m',
+    tone: 'text-foreground',
+    body: 'Fine impact ejecta dust and micro-breccia with high dielectric loss tangent, dampening superficial radar reflections.',
+  },
+  {
+    title: '2. Vertical skylight pit drop',
+    depth: '−105 m depth',
+    tone: 'text-radar',
+    body: 'Vertical collapse entrance created when molten lava evacuated the conduit, leaving an unreinforced basalt ceiling segment that subsequently breached.',
+  },
+  {
+    title: '3. Intact subterranean conduit',
+    depth: 'Span ~80 m',
+    tone: 'text-primary',
+    body: 'Hollow, continuous basalt conduit. Natural thermal equilibrium maintains a steady −20°C shielded from surface diurnal swings (−130°C to +120°C).',
+  },
+  {
+    title: '4. Talus collapse mound',
+    depth: 'Debris cone',
+    tone: 'text-muted-foreground',
+    body: 'Fallen basalt ceiling blocks forming a boulder cone on the tube floor directly beneath the skylight rim.',
+  },
+];
 
 export const CutawaySection: React.FC = () => {
   return (
-    <section id="cutaway" className="py-24 border-b border-space-700/60 bg-space-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
-        {/* Section Header */}
-        <div className="max-w-3xl space-y-3">
-          <div className="text-blue-400 font-mono text-xs uppercase tracking-wider font-semibold">
-            03 • GEOMECHANICAL STRATIGRAPHY & 3D MODELLING
+    <section className="space-y-6">
+      {/* Header */}
+      <div className="max-w-3xl">
+        <h2 className="text-2xl font-bold text-foreground">Evidence fusion & subsurface cutaway</h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          The schematic below is what the likelihood is actually about: a rimless skylight
+          opening into a hollow basalt conduit, and orbital radar pulses that return
+          twice — once from the conduit ceiling, once from its floor. The separation
+          between those two returns is the observable; the void is the inference. Under
+          1/6 lunar gravity, structural basalt beam stability allows spans of 80 to 200
+          meters without roof collapse.
+        </p>
+      </div>
+
+      {/* 3D cutaway + stratigraphy legend */}
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <StratigraphyOverlay />
+          <div className="flex items-center justify-between px-1 pt-3 font-mono text-[11px] text-muted-foreground">
+            <span>● Interactive WebGL model · drag to orbit</span>
+            <span>1/6 g lunar basalt mechanics</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans">
-            3D Geological Conduit Model
-          </h2>
-          <p className="text-zinc-400 font-sans text-sm sm:text-base leading-relaxed">
-            Interactive block cutaway of a lunar skylight pit breaching an intact subsurface basalt lava tube. Under 1/6 lunar gravity, structural basalt beam stability allows spans of 80 to 200 meters without roof collapse.
-          </p>
         </div>
 
-        {/* 3D Cutaway Canvas + Stratigraphy Legend */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* 3D Cutaway Viewport (7 Cols) */}
-          <div className="lg:col-span-7">
-            <div className="rounded-2xl border border-space-700/80 overflow-hidden shadow-2xl bg-space-900">
-              <LavaTubeCutaway3D />
+        <div className="space-y-4 lg:col-span-5">
+          <div className="panel space-y-3 p-5">
+            <div className="label-mono flex items-center gap-2 text-primary">
+              <Layers className="h-4 w-4" />
+              <span>Geological strata identification</span>
             </div>
-            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 pt-3 px-1">
-              <span>● Interactive WebGL 3D Model • Drag to rotate block</span>
-              <span>1/6 g Lunar Basalt Mechanics</span>
+
+            <div className="space-y-3 font-mono text-xs">
+              {STRATA.map((s) => (
+                <div key={s.title} className="border-t border-border pt-3 first:border-t-0 first:pt-0">
+                  <div className={`${s.tone} flex items-center justify-between font-semibold`}>
+                    <span>{s.title}</span>
+                    <span className="text-[10px] text-muted-foreground">{s.depth}</span>
+                  </div>
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.body}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Stratigraphic Breakdown & Geomechanics (5 Cols) */}
-          <div className="lg:col-span-5 space-y-4">
-            
-            <div className="bg-space-900 p-5 rounded-2xl border border-space-700/80 space-y-3 shadow-lg">
-              <div className="flex items-center space-x-2 text-blue-400 font-mono text-xs font-bold">
-                <Layers className="w-4 h-4" />
-                <span>GEOLOGICAL STRATA IDENTIFICATION</span>
-              </div>
-
-              <div className="space-y-3 font-mono text-xs divide-y divide-space-800">
-                <div className="pt-2">
-                  <div className="text-zinc-200 font-semibold flex items-center justify-between">
-                    <span>1. Surface Regolith Blanket</span>
-                    <span className="text-zinc-500 text-[10px]">Depth ~5–15 m</span>
-                  </div>
-                  <p className="text-zinc-400 font-sans text-[11px] mt-1 leading-relaxed">
-                    Fine impact ejecta dust and micro-breccia with high dielectric loss tangent, dampening superficial radar reflections.
-                  </p>
-                </div>
-
-                <div className="pt-3">
-                  <div className="text-teal-400 font-semibold flex items-center justify-between">
-                    <span>2. Vertical Skylight Pit Drop</span>
-                    <span className="text-zinc-500 text-[10px]">-105 m depth</span>
-                  </div>
-                  <p className="text-zinc-400 font-sans text-[11px] mt-1 leading-relaxed">
-                    Vertical collapse entrance created when molten lava evacuated the conduit, leaving an unreinforced basalt ceiling segment that subsequently breached.
-                  </p>
-                </div>
-
-                <div className="pt-3">
-                  <div className="text-blue-400 font-semibold flex items-center justify-between">
-                    <span>3. Intact Subterranean Conduit</span>
-                    <span className="text-zinc-500 text-[10px]">Span ~80 m</span>
-                  </div>
-                  <p className="text-zinc-400 font-sans text-[11px] mt-1 leading-relaxed">
-                    Hollow, continuous basalt conduit. Natural thermal equilibrium maintains a steady -20°C shielded from surface diurnal swings (-130°C to +120°C).
-                  </p>
-                </div>
-
-                <div className="pt-3">
-                  <div className="text-zinc-300 font-semibold flex items-center justify-between">
-                    <span>4. Talus Collapse Mound</span>
-                    <span className="text-zinc-500 text-[10px]">Debris Cone</span>
-                  </div>
-                  <p className="text-zinc-400 font-sans text-[11px] mt-1 leading-relaxed">
-                    Fallen basalt ceiling blocks forming a boulder cone on the tube floor directly beneath the skylight rim.
-                  </p>
-                </div>
-              </div>
+          <div className="panel space-y-2 p-4">
+            <div className="label-mono flex items-center gap-2 text-radar">
+              <Radio className="h-3.5 w-3.5" />
+              <span>Radar sounding reflection signature</span>
             </div>
-
-            {/* Radar Sounding Callout */}
-            <div className="p-4 rounded-xl bg-space-900 border border-space-700 text-xs font-sans text-zinc-300 space-y-2">
-              <div className="flex items-center space-x-2 text-teal-400 font-mono text-[11px] font-bold">
-                <Radio className="w-3.5 h-3.5" />
-                <span>RADAR SOUNDING REFLECTION SIGNATURE</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Mini-RF and Kaguya LRS radar waves penetrate the low-loss lunar regolith. A dielectric impedance contrast between solid basalt and the hollow void generates distinctive dual-horizon return echoes.
-              </p>
-            </div>
-
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              Mini-RF and Kaguya LRS radar waves penetrate the low-loss lunar regolith. A
+              dielectric impedance contrast between solid basalt and the hollow void
+              generates distinctive dual-horizon return echoes.
+            </p>
           </div>
-
         </div>
-
       </div>
     </section>
   );

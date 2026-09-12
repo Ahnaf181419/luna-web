@@ -1,212 +1,240 @@
 import React, { useState } from 'react';
-import { GATES, BUDGET_LEDGER } from '../../data/gates';
-import { CheckCircle2, Clock, DollarSign, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
+import { CheckCircle2, Clock, CircleDollarSign, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { GATES, BUDGET_LEDGER, type GateCriterion } from '@/lib/lunarvoid-data';
+
+const VERDICT_TONE: Record<GateCriterion['verdict'], string> = {
+  PASS: 'border-success/50 bg-success/15 text-success',
+  PARTIAL: 'border-warning/40 bg-warning/10 text-warning',
+  DEMONSTRATION: 'border-accent/40 bg-accent/10 text-accent',
+  DEFERRED: 'border-border bg-muted text-muted-foreground',
+  PENDING: 'border-border bg-muted text-muted-foreground',
+};
+
+const JOURNEY = [
+  {
+    phase: 'Sessions 01–06 · Passed',
+    title: 'Gate G0′ scoping',
+    body: 'Prior-art matrix, dataset licensing audit (NASA/ISRO/JAXA), and initial Tier-0 workstation setup.',
+    tone: 'border-success/40',
+    label: 'text-success',
+  },
+  {
+    phase: 'Sessions 07–14 · Passed',
+    title: 'Gate G1 pipeline',
+    body: 'USGS ISIS3 ingestion, Ames Stereo Pipeline reproduction at Mare Tranquillitatis, and Decision D1.',
+    tone: 'border-success/40',
+    label: 'text-success',
+  },
+  {
+    phase: 'Sessions 15–24 · Active',
+    title: 'Gate G2 candidate scope',
+    body: '21 DTM targets mapped, 257 candidate features cataloged, and false-positive bounds calibrated.',
+    tone: 'border-primary/50',
+    label: 'text-primary',
+  },
+  {
+    phase: 'Planned WP1',
+    title: 'Gate G3 manuscript',
+    body: 'Peer-reviewed journal publication, Zenodo artifact archiving, and open code release.',
+    tone: 'border-border opacity-60',
+    label: 'text-muted-foreground',
+  },
+];
 
 export const GatesJourneySection: React.FC = () => {
   const [expandedGate, setExpandedGate] = useState<string>('G2');
 
   return (
-    <section id="gates" className="py-24 border-b border-space-700/60 bg-space-900/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        
-        {/* Header */}
-        <div className="max-w-3xl space-y-3">
-          <div className="text-blue-400 font-mono text-xs uppercase tracking-wider font-semibold">
-            06 • GOVERNANCE & REPRODUCIBILITY AUDIT
+    <section className="space-y-8">
+      {/* Header */}
+      <div className="max-w-3xl">
+        <h2 className="text-2xl font-bold text-foreground">Gates & budget ledger</h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Nothing advances without a gate review, and no gate opens spend it has not been
+          approved for. LUNARVOID progresses strictly across verifiable milestone gates
+          with numerical pass criteria, explicit decision records, and complete budget
+          transparency.
+        </p>
+      </div>
+
+      {/* 24-session roadmap */}
+      <div className="panel space-y-6 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+          <div className="flex items-center gap-2">
+            <GitBranch className="h-4 w-4 text-primary" />
+            <h3 className="font-mono text-sm font-semibold text-foreground">
+              The 24-session autonomous research odyssey
+            </h3>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-sans">
-            Research Gates & Journey Ledger
-          </h2>
-          <p className="text-zinc-400 font-sans text-sm sm:text-base leading-relaxed">
-            LUNARVOID progresses strictly across verifiable milestone gates with numerical pass criteria, explicit decision records, and complete budget transparency.
-          </p>
+          <Badge
+            variant="outline"
+            className="border-success/50 bg-success/15 font-mono text-[10px] tracking-widest text-success"
+          >
+            Active session: 24 (Gate G2 review)
+          </Badge>
         </div>
 
-        {/* 24-Session Roadmap Timeline Visual */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-space-900 border border-space-700/80 shadow-xl space-y-6">
-          <div className="flex items-center justify-between border-b border-space-800 pb-4">
-            <div className="flex items-center space-x-2.5">
-              <GitBranch className="w-5 h-5 text-blue-400" />
-              <h3 className="text-base font-bold text-white font-mono">
-                The 24-Session Autonomous Research Odyssey
-              </h3>
+        <div className="grid grid-cols-1 gap-4 font-mono text-xs md:grid-cols-4">
+          {JOURNEY.map((j) => (
+            <div key={j.title} className={`rounded-md border border-border bg-surface/60 p-4 ${j.tone}`}>
+              <div className={`text-[10px] font-bold ${j.label}`}>{j.phase}</div>
+              <div className="mt-1 text-sm font-bold text-foreground">{j.title}</div>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{j.body}</p>
             </div>
-            <span className="text-xs font-mono text-teal-400 bg-teal-950/80 px-2.5 py-1 rounded border border-teal-800">
-              Active Session: 24 (Gate G2 Review)
+          ))}
+        </div>
+      </div>
+
+      {/* Milestone gates accordion */}
+      <div className="space-y-4">
+        <p className="label-mono">Verifiable gate criteria matrices</p>
+
+        {GATES.map((gate) => {
+          const isExpanded = expandedGate === gate.id;
+          const isDraft = gate.status === 'DRAFT-FOR-REVIEW';
+
+          return (
+            <div
+              key={gate.id}
+              className={`panel overflow-hidden ${isDraft ? 'border-primary/40' : ''}`}
+            >
+              <div
+                onClick={() => setExpandedGate(isExpanded ? '' : gate.id)}
+                className="flex cursor-pointer items-center justify-between p-5 transition-colors hover:bg-surface/40"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-md border ${
+                      gate.status === 'PASSED'
+                        ? 'border-success/50 bg-success/15 text-success'
+                        : 'border-primary/50 bg-primary/15 text-primary'
+                    }`}
+                  >
+                    {gate.status === 'PASSED' ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <Clock className="h-5 w-5" />
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="font-mono text-sm font-semibold text-foreground">
+                        {gate.title}
+                      </h3>
+                      <Badge
+                        variant="outline"
+                        className={`font-mono text-[10px] tracking-widest ${
+                          gate.status === 'PASSED'
+                            ? 'border-success/50 bg-success/15 text-success'
+                            : 'border-warning/50 bg-warning/15 text-warning'
+                        }`}
+                      >
+                        {gate.status}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 font-mono text-xs text-muted-foreground">
+                      Spend: ${gate.spend}.00 ·{' '}
+                      {gate.sessionCompleted
+                        ? `Passed in session ${gate.sessionCompleted}`
+                        : 'Active working milestone'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-muted-foreground">
+                  {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </div>
+              </div>
+
+              {isExpanded && (
+                <div className="space-y-4 border-t border-border bg-background/40 px-5 pb-5 pt-4">
+                  <p className="text-xs leading-relaxed text-foreground/80">{gate.summary}</p>
+
+                  <div className="space-y-2">
+                    <p className="label-mono">Criteria satisfaction verdict matrix</p>
+                    <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-2">
+                      {gate.criteria.map((c) => (
+                        <div
+                          key={c.id}
+                          className="space-y-1.5 rounded-md border border-border bg-surface/60 p-4"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-foreground">{c.name}</span>
+                            <Badge
+                              variant="outline"
+                              className={`shrink-0 font-mono text-[10px] tracking-widest ${VERDICT_TONE[c.verdict]}`}
+                            >
+                              {c.verdict}
+                            </Badge>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            {c.detail}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Frugal science compute ledger */}
+      <div className="panel space-y-6 p-5 sm:p-8">
+        <div className="flex flex-col justify-between gap-4 border-b border-border pb-4 sm:flex-row sm:items-center">
+          <div className="space-y-1">
+            <div className="label-mono flex items-center gap-2 text-success">
+              <CircleDollarSign className="h-4 w-4" />
+              <span>Frugal science compute ledger</span>
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">
+              Compute infrastructure & zero cloud waste
+            </h3>
+            <p className="font-mono text-xs text-muted-foreground">
+              Rigorous discipline: all 24 research sessions executed on local Tier-0
+              hardware with zero cloud waste.
+            </p>
+          </div>
+
+          <div className="shrink-0 rounded-md border border-border bg-surface/60 p-3.5 text-right font-mono">
+            <span className="label-mono block">Total expenditure</span>
+            <span className="text-2xl font-bold text-success">$0.00 USD</span>
+            <span className="block text-[10px] text-muted-foreground">
+              against $800 lifetime ceiling
             </span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono text-xs">
-            <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-1.5">
-              <div className="text-teal-400 text-[10px] font-bold">SESSIONS 01–06 • PASSED</div>
-              <div className="text-sm font-bold text-white">Gate G0′ Scoping</div>
-              <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
-                Prior-art matrix, dataset licensing audit (NASA/ISRO/JAXA), and initial Tier-0 workstation setup.
-              </p>
-            </div>
-
-            <div className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-1.5">
-              <div className="text-teal-400 text-[10px] font-bold">SESSIONS 07–14 • PASSED</div>
-              <div className="text-sm font-bold text-white">Gate G1 Pipeline</div>
-              <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
-                USGS ISIS3 ingestion, Ames Stereo Pipeline reproduction at Mare Tranquillitatis, and Decision D1.
-              </p>
-            </div>
-
-            <div className="bg-space-950 p-4 rounded-xl border border-blue-600/80 space-y-1.5 shadow-lg shadow-blue-950">
-              <div className="text-blue-400 text-[10px] font-bold">SESSIONS 15–24 • ACTIVE</div>
-              <div className="text-sm font-bold text-white">Gate G2 Candidate Scope</div>
-              <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
-                21 DTM targets mapped, 257 candidate features cataloged, and false-positive bounds calibrated.
-              </p>
-            </div>
-
-            <div className="bg-space-950/60 p-4 rounded-xl border border-space-800 space-y-1.5 opacity-60">
-              <div className="text-zinc-500 text-[10px] font-bold">PLANNED WP1</div>
-              <div className="text-sm font-bold text-zinc-300">Gate G3 Manuscript</div>
-              <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
-                Peer-reviewed journal publication, Zenodo artifact archiving, and open code release.
-              </p>
-            </div>
-          </div>
         </div>
 
-        {/* Milestone Gates Accordion */}
-        <div className="space-y-4">
-          <div className="text-xs font-mono uppercase text-zinc-400 tracking-wider">
-            VERIFIABLE GATE CRITERIA MATRICES
-          </div>
-
-          {GATES.map((gate) => {
-            const isExpanded = expandedGate === gate.id;
-            const isDraft = gate.status === 'DRAFT-FOR-REVIEW';
-
-            return (
-              <div
-                key={gate.id}
-                className={`bg-space-900 border rounded-2xl overflow-hidden transition ${
-                  isDraft ? 'border-blue-600/80 shadow-xl shadow-blue-950/30' : 'border-space-700/80'
-                }`}
-              >
-                {/* Gate Header Row */}
-                <div
-                  onClick={() => setExpandedGate(isExpanded ? '' : gate.id)}
-                  className="p-6 flex items-center justify-between cursor-pointer hover:bg-space-850/60 transition"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center font-mono font-bold text-sm ${
-                        gate.status === 'PASSED'
-                          ? 'bg-teal-950/80 text-teal-400 border border-teal-800'
-                          : 'bg-blue-950/80 text-blue-400 border border-blue-800'
-                      }`}
-                    >
-                      {gate.status === 'PASSED' ? <CheckCircle2 className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-                    </div>
-
-                    <div>
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-base font-bold text-white font-mono">{gate.title}</h3>
-                        <span
-                          className={`px-2.5 py-0.5 text-[10px] font-mono rounded border ${
-                            gate.status === 'PASSED'
-                              ? 'bg-teal-950/80 text-teal-300 border border-teal-800'
-                              : 'bg-blue-950/80 text-blue-300 border border-blue-800 animate-pulse'
-                          }`}
-                        >
-                          {gate.status}
-                        </span>
-                      </div>
-                      <p className="text-xs text-zinc-400 font-mono mt-1">
-                        Spend: ${gate.spend}.00 • {gate.sessionCompleted ? `Passed in Session ${gate.sessionCompleted}` : 'Active Working Milestone'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-zinc-500">
-                    {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                  </div>
-                </div>
-
-                {/* Gate Expanded Criteria */}
-                {isExpanded && (
-                  <div className="px-6 pb-6 pt-2 border-t border-space-800 space-y-4 bg-space-950/40">
-                    <p className="text-xs text-zinc-300 font-sans leading-relaxed">
-                      {gate.summary}
-                    </p>
-
-                    <div className="space-y-2">
-                      <span className="text-[11px] font-mono uppercase text-zinc-400 tracking-wider">
-                        CRITERIA SATISFACTION VERDICT MATRIX
-                      </span>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
-                        {gate.criteria.map((c) => (
-                          <div key={c.id} className="bg-space-950 p-4 rounded-xl border border-space-800 space-y-1.5">
-                            <div className="flex items-center justify-between">
-                              <span className="font-bold text-white text-xs">{c.name}</span>
-                              <span
-                                className={`text-[10px] px-2 py-0.5 rounded font-bold border ${
-                                  c.verdict === 'PASS'
-                                    ? 'bg-teal-950/80 text-teal-400 border border-teal-800'
-                                    : c.verdict === 'DEMONSTRATION'
-                                    ? 'bg-blue-950/80 text-blue-400 border border-blue-800'
-                                    : 'bg-space-800 text-zinc-400 border border-space-700'
-                                }`}
-                              >
-                                {c.verdict}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-zinc-400 leading-relaxed font-sans">{c.detail}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+        <div className="grid grid-cols-1 gap-4 font-mono text-xs md:grid-cols-3">
+          {BUDGET_LEDGER.map((b) => (
+            <div key={b.tier} className="space-y-2 rounded-md border border-border bg-surface/60 p-5">
+              <div className="text-[11px] text-muted-foreground">{b.tier}</div>
+              <div className="text-2xl font-bold text-foreground">
+                ${b.spent}.00{' '}
+                <span className="text-xs font-normal text-muted-foreground">
+                  / ${b.allocation}.00
+                </span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Frugal Science Compute Ledger */}
-        <div id="ledger" className="bg-space-900 p-6 sm:p-10 rounded-2xl border border-space-700/80 space-y-6 shadow-2xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-space-800">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2 text-teal-400 font-mono text-xs font-bold">
-                <DollarSign className="w-5 h-5" />
-                <span>FRUGAL SCIENCE COMPUTE LEDGER</span>
-              </div>
-              <h3 className="text-xl font-bold text-white font-sans">
-                Compute Infrastructure & Zero Cloud Waste
-              </h3>
-              <p className="text-xs text-zinc-400 font-mono">
-                Rigorous discipline: all 24 research sessions executed on local Tier-0 hardware with zero cloud waste.
+              <div className="text-[10px] font-bold text-primary">{b.status}</div>
+              <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
+                {b.description}
               </p>
             </div>
-
-            <div className="text-left sm:text-right font-mono bg-space-950 p-3.5 rounded-xl border border-space-800 shrink-0">
-              <span className="text-zinc-500 text-[10px] block">TOTAL EXPENDITURE</span>
-              <span className="text-teal-400 font-bold text-2xl">$0.00 USD</span>
-              <span className="text-zinc-500 text-[10px] block">against $800 lifetime ceiling</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-            {BUDGET_LEDGER.map((b, idx) => (
-              <div key={idx} className="bg-space-950 p-5 rounded-xl border border-space-800 space-y-2">
-                <div className="text-[11px] text-zinc-400">{b.tier}</div>
-                <div className="text-2xl font-bold text-white">
-                  ${b.spent}.00 <span className="text-xs text-zinc-500 font-normal">/ ${b.allocation}.00</span>
-                </div>
-                <div className="text-[10px] font-bold text-blue-400">{b.status}</div>
-                <p className="text-[11px] text-zinc-400 font-sans leading-relaxed pt-1">
-                  {b.description}
-                </p>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
 
+        <div>
+          <div className="flex justify-between font-mono text-[11px] text-muted-foreground">
+            <span>$0.00 drawn</span>
+            <span>$800.00 ceiling</span>
+          </div>
+          <Progress value={0} className="mt-2 h-2" />
+        </div>
       </div>
     </section>
   );

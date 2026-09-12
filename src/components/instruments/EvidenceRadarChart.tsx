@@ -1,4 +1,5 @@
 import React from 'react';
+import { CHART } from '@/lib/chart-theme';
 
 interface EvidenceRadarChartProps {
   score: number;
@@ -46,19 +47,19 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
     .join(' ');
 
   return (
-    <div className="bg-obsidian-950 border border-zinc-800 rounded-xl p-4 space-y-2 font-mono">
-      <div className="flex items-center justify-between border-b border-zinc-850 pb-2">
-        <span className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
-          <span>4-LAYER EVIDENCE RADAR</span>
+    <div className="rounded-lg border border-border bg-card/80 p-4 space-y-2 font-mono">
+      <div className="flex items-center justify-between border-b border-border pb-2">
+        <span className="label-mono flex items-center gap-1.5 text-foreground">
+          <span className="w-2 h-2 rounded-full bg-primary" />
+          <span>4-Layer Evidence Radar</span>
         </span>
-        <span className="text-[10px] text-amber-400 font-bold">
+        <span className="text-[10px] text-primary font-bold">
           Fusion Index: {(score * 100).toFixed(0)}%
         </span>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-1">
-        
+
         <div className="relative w-48 h-48 shrink-0">
           <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
             {[0.25, 0.5, 0.75, 1.0].map((ringLevel, rIdx) => {
@@ -73,7 +74,7 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
                   key={rIdx}
                   points={ringPoints}
                   fill="none"
-                  stroke="#27272a"
+                  stroke={CHART.grid}
                   strokeWidth="0.8"
                   strokeDasharray={rIdx < 3 ? '2 2' : 'none'}
                 />
@@ -89,17 +90,17 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
                   y1={center}
                   x2={x}
                   y2={y}
-                  stroke="#3f3f46"
+                  stroke={CHART.gridStrong}
                   strokeWidth="0.8"
                 />
               );
             })}
 
-            {/* Shaded Solar Gold Radar Polygon */}
+            {/* Shaded telemetry amber radar polygon */}
             <polygon
               points={polygonPoints}
-              fill="rgba(245, 158, 11, 0.2)"
-              stroke="#f59e0b"
+              fill={CHART.primaryFill}
+              stroke={CHART.primary}
               strokeWidth="1.8"
             />
 
@@ -111,8 +112,8 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
                   cx={x}
                   cy={y}
                   r="3.5"
-                  fill="#fbbf24"
-                  stroke="#0c0c0e"
+                  fill={CHART.primaryBright}
+                  stroke={CHART.voidInk}
                   strokeWidth="1.5"
                 />
               );
@@ -122,9 +123,9 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
 
         <div className="space-y-1.5 text-[11px] w-full">
           {axes.map((ax, idx) => (
-            <div key={idx} className="flex items-center justify-between bg-obsidian-900 px-2.5 py-1 rounded border border-zinc-800">
-              <span className="text-zinc-400 text-[10px] truncate max-w-[140px]">{ax.label}</span>
-              <span className="text-amber-400 font-bold text-[10px]">
+            <div key={idx} className="flex items-center justify-between bg-surface/60 px-2.5 py-1 rounded border border-border">
+              <span className="text-muted-foreground text-[10px] truncate max-w-[140px]">{ax.label}</span>
+              <span className="text-primary font-bold text-[10px]">
                 {(ax.val * 100).toFixed(0)}%
               </span>
             </div>
