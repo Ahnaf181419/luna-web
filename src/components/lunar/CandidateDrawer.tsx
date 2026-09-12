@@ -48,7 +48,7 @@ export function CandidateDrawer({
       <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
         {candidate && site && (
           <>
-            <SheetHeader className="space-y-3 text-left">
+            <SheetHeader className="space-y-3 pr-8 text-left">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
@@ -64,7 +64,7 @@ export function CandidateDrawer({
               </SheetDescription>
             </SheetHeader>
 
-            <div className="space-y-5 px-4 pb-8">
+            <div className="space-y-5 pt-4 pb-8">
               <div className="rounded-md border border-border bg-surface/60 p-3">
                 <div className="flex items-center justify-between">
                   <span className="label-mono">Likelihood score</span>

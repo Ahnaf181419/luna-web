@@ -97,7 +97,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
 
   return (
     <div className="rounded-lg border border-border bg-card/80 p-4 space-y-3 font-mono">
-      <div className="flex items-center justify-between border-b border-border pb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
         <div className="flex items-center space-x-2 label-mono text-foreground">
           <span className="w-2 h-2 rounded-full bg-primary" />
           <span>DTM Elevation Transect: {candidateId} (A — A′)</span>
@@ -200,7 +200,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
         )}
       </div>
 
-      <div className="flex items-center justify-between label-mono pt-1">
+      <div className="flex flex-wrap items-center justify-between gap-1 label-mono pt-1">
         <span>Transect Start: A (West Rim)</span>
         <span className="hidden sm:inline">Collinear Axis: 092° Azimuth</span>
         <span>Transect End: A′ (East Rim)</span>

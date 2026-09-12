@@ -19,8 +19,8 @@ export function StratigraphyOverlay() {
         <TubeCutaway />
       </Suspense>
 
-      {/* Geological layer badges — carried over from the original instrument */}
-      <div className="pointer-events-none absolute right-16 top-3 z-10 hidden flex-col gap-1 font-mono text-[10px] sm:flex">
+      {/* Geological layer badges positioned below the top controls bar */}
+      <div className="pointer-events-none absolute right-3 top-14 z-10 hidden flex-col items-end gap-1 font-mono text-[10px] sm:flex">
         <div className="rounded border border-border bg-background/80 px-2 py-0.5 text-muted-foreground backdrop-blur-md">
           ● Surface regolith (~5–15 m)
         </div>

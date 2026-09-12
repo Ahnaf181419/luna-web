@@ -6,17 +6,30 @@ import { CATALOG_SIZE } from "@/lib/lunarvoid-data";
 function Telemetry({
   label,
   value,
+  shortValue,
   tone,
+  className = "",
 }: {
   label: string;
   value: string;
+  shortValue?: string;
   tone?: string;
+  className?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5">
-      <span className={`h-1.5 w-1.5 rounded-full ${tone ?? "bg-muted-foreground"}`} />
+    <div className={`flex items-center gap-1.5 sm:gap-2 rounded border border-border bg-surface/60 px-2 sm:px-2.5 py-1 sm:py-1.5 ${className}`}>
+      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${tone ?? "bg-muted-foreground"}`} />
       <span className="label-mono">{label}</span>
-      <span className="font-mono text-[11px] text-foreground">{value}</span>
+      <span className="font-mono text-[10px] sm:text-[11px] text-foreground">
+        {shortValue ? (
+          <>
+            <span className="sm:hidden">{shortValue}</span>
+            <span className="hidden sm:inline">{value}</span>
+          </>
+        ) : (
+          value
+        )}
+      </span>
     </div>
   );
 }
@@ -52,9 +65,25 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Telemetry label="Status" value="Gate G2: Draft for Review" tone="bg-warning" />
-            <Telemetry label="Compute" value="$0 / $800 ceiling" tone="bg-success" />
-            <Telemetry label="Cal FP" value="6.06 / 10⁴ km²" tone="bg-radar" />
+            <Telemetry
+              label="Status"
+              value="Gate G2: Draft for Review"
+              shortValue="G2 Draft"
+              tone="bg-warning"
+            />
+            <Telemetry
+              label="Compute"
+              value="$0 / $800 ceiling"
+              shortValue="$0"
+              tone="bg-success"
+              className="hidden sm:flex"
+            />
+            <Telemetry
+              label="Cal FP"
+              value="6.06 / 10⁴ km²"
+              tone="bg-radar"
+              className="hidden md:flex"
+            />
             <button
               onClick={onOpenCommandPalette}
               className="flex items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground"

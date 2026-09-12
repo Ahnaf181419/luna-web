@@ -123,9 +123,9 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
 
         <div className="space-y-1.5 text-[11px] w-full">
           {axes.map((ax, idx) => (
-            <div key={idx} className="flex items-center justify-between bg-surface/60 px-2.5 py-1 rounded border border-border">
-              <span className="text-muted-foreground text-[10px] truncate max-w-[140px]">{ax.label}</span>
-              <span className="text-primary font-bold text-[10px]">
+            <div key={idx} className="flex items-center justify-between gap-2 bg-surface/60 px-2.5 py-1 rounded border border-border">
+              <span className="text-muted-foreground text-[10px] truncate flex-1">{ax.label}</span>
+              <span className="text-primary font-bold text-[10px] shrink-0">
                 {(ax.val * 100).toFixed(0)}%
               </span>
             </div>

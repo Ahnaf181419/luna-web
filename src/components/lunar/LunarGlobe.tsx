@@ -29,7 +29,7 @@ function vec3ToLatLon(v: THREE.Vector3) {
   return { lat, lon };
 }
 
-export function formatCursorCoord(lat: number, lon: number) {
+function formatCursorCoord(lat: number, lon: number) {
   const ns = lat >= 0 ? "N" : "S";
   const ew = lon >= 0 ? "E" : "W";
   return `${Math.abs(lat).toFixed(2)}°${ns} ${Math.abs(lon).toFixed(2)}°${ew}`;
@@ -310,11 +310,13 @@ export default function LunarGlobe({
           {autoRotate ? "Auto-rotate: ON" : "Auto-rotate: OFF"}
         </Button>
       </div>
-      <div className="label-mono pointer-events-none absolute bottom-3 left-3 rounded border border-border bg-background/70 px-2 py-1 text-foreground">
-        {cursor ? formatCursorCoord(cursor.lat, cursor.lon) : "—.—° —.—°"}
-      </div>
-      <div className="label-mono pointer-events-none absolute inset-x-0 bottom-0 p-3 text-center">
-        drag to rotate · scroll to zoom · click a pin to focus the site
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between p-3 gap-2">
+        <div className="label-mono rounded border border-border bg-background/70 px-2 py-1 text-foreground">
+          {cursor ? formatCursorCoord(cursor.lat, cursor.lon) : "—.—° —.—°"}
+        </div>
+        <div className="label-mono hidden sm:block text-muted-foreground text-center">
+          drag to rotate · scroll to zoom · click a pin to focus the site
+        </div>
       </div>
     </div>
   );
