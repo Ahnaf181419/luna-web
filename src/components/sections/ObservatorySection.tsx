@@ -34,26 +34,26 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
       </div>
 
       {/* Site quick switcher pills */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="label-mono mr-1">Select target</span>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="collar-ribbon text-[10px] mr-1">SELECT TARGET:</span>
         {SITES.map((site) => {
           const isSelected = selectedSite.id === site.id;
           return (
             <button
               key={site.id}
               onClick={() => onSelectSite(site.id)}
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[11px] tracking-widest transition-colors ${
+              className={`flex items-center gap-1.5 rounded-[2px] border px-2.5 py-1 font-mono text-[10px] tracking-widest transition-all ${
                 isSelected
-                  ? 'border-primary/60 bg-primary/15 text-primary'
-                  : 'border-border bg-surface/50 text-muted-foreground hover:text-foreground'
+                  ? 'border-primary/80 bg-primary/20 text-primary font-bold'
+                  : 'border-border/70 bg-surface/50 text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
               {site.primaryAnchor && (
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
               )}
               <span>{site.id}</span>
-              <span className="hidden text-[10px] text-muted-foreground sm:inline">
-                ({site.candidateCount})
+              <span className="hidden text-[9px] text-muted-foreground sm:inline">
+                [{site.candidateCount}]
               </span>
             </button>
           );
@@ -65,55 +65,55 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
         <GlobeClient activeSite={activeSite} onSelect={onSelectSite} />
 
         {/* Target dossier */}
-        <div className="panel flex flex-col justify-between gap-6 p-6">
-          <div className="space-y-5">
-            <div className="flex items-start justify-between border-b border-border pb-4">
+        <div className="workbench-panel flex flex-col justify-between gap-6 p-5 sm:p-6">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between border-b border-border/70 pb-3">
               <div>
-                <span className="label-mono block">Target dossier</span>
-                <h4 className="mt-1 text-xl font-bold text-foreground">{selectedSite.name}</h4>
+                <span className="collar-ribbon text-[9px]">TARGET DOSSIER // LROC NAC</span>
+                <h4 className="font-display mt-1 text-xl font-bold tracking-tight text-foreground">{selectedSite.name}</h4>
                 <span className="font-mono text-xs text-primary">{selectedSite.id}</span>
               </div>
               {selectedSite.primaryAnchor ? (
                 <Badge
                   variant="outline"
-                  className="border-success/50 bg-success/15 font-mono text-[10px] tracking-widest text-success"
+                  className="rounded-[2px] border-success/60 bg-success/15 font-mono text-[9px] tracking-widest text-success uppercase"
                 >
-                  BENCHMARK ANCHOR
+                  GROUND TRUTH ANCHOR
                 </Badge>
               ) : (
                 <Badge
                   variant="outline"
-                  className="border-border bg-muted font-mono text-[10px] tracking-widest text-muted-foreground"
+                  className="rounded-[2px] border-border/80 bg-muted/60 font-mono text-[9px] tracking-widest text-muted-foreground uppercase"
                 >
                   {selectedSite.geologicalUnit}
                 </Badge>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-md border border-border bg-surface/60 p-3.5">
-                <p className="label-mono">Lunar coordinates</p>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="rounded-[2px] border border-border/80 bg-surface/70 p-3">
+                <p className="collar-ribbon text-[9px]">COORDINATES</p>
                 <p className="mt-1 font-mono text-sm font-bold text-foreground">
                   {selectedSite.coordLabel}
                 </p>
               </div>
-              <div className="rounded-md border border-border bg-surface/60 p-3.5">
-                <p className="label-mono">NAC DTM resolution</p>
+              <div className="rounded-[2px] border border-border/80 bg-surface/70 p-3">
+                <p className="collar-ribbon text-[9px]">DTM RESOLUTION</p>
                 <p className="mt-1 font-mono text-sm font-bold text-accent">
                   {selectedSite.resolution}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <p className="label-mono">Morphological context & scientific value</p>
-              <p className="rounded-md border border-border bg-surface/60 p-4 text-xs leading-relaxed text-foreground/80">
+            <div className="space-y-1">
+              <p className="collar-ribbon text-[9px]">MORPHOLOGICAL & GEOPHYSICAL CONTEXT</p>
+              <p className="rounded-[2px] border border-border/80 bg-surface/60 p-3.5 font-sans text-xs leading-relaxed text-foreground/80">
                 {selectedSite.description}
               </p>
             </div>
 
-            <div className="flex items-center justify-between px-1 font-mono text-xs text-muted-foreground">
-              <span>Features cataloged at target</span>
+            <div className="flex items-center justify-between px-1 font-mono text-xs text-muted-foreground border-t border-border/50 pt-2">
+              <span>Cataloged Features:</span>
               <span className="font-bold text-foreground">
                 {selectedSite.candidateCount} candidates
               </span>
@@ -122,11 +122,11 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
 
           <Button
             onClick={() => onInspectInAtlas(selectedSite.id)}
-            className="w-full font-mono text-xs"
+            className="w-full rounded-[2px] font-mono text-xs"
           >
-            <MapPin className="h-4 w-4" />
+            <MapPin className="h-3.5 w-3.5 mr-1.5" />
             <span>Filter candidate atlas by {selectedSite.id}</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
           </Button>
         </div>
       </div>

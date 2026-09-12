@@ -17,9 +17,9 @@ function Telemetry({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center gap-1.5 sm:gap-2 rounded border border-border bg-surface/60 px-2 sm:px-2.5 py-1 sm:py-1.5 ${className}`}>
+    <div className={`flex items-center gap-1.5 sm:gap-2 rounded-[2px] border border-border/80 bg-surface/70 px-2 sm:px-2.5 py-1 sm:py-1.5 ${className}`}>
       <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${tone ?? "bg-muted-foreground"}`} />
-      <span className="label-mono">{label}</span>
+      <span className="collar-ribbon text-[9px]">{label}</span>
       <span className="font-mono text-[10px] sm:text-[11px] text-foreground">
         {shortValue ? (
           <>
@@ -48,15 +48,15 @@ const NAV_ITEMS: Array<{ value: string; label: string; badge?: string }> = [
 
 export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-col gap-2.5 px-4 py-3 lg:px-8">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded border border-primary/40 bg-primary/10">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[2px] border border-primary/50 bg-primary/10">
               <Compass className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h1 className="font-mono text-lg font-bold tracking-[0.22em] text-foreground">
+              <h1 className="font-display text-lg font-black tracking-[0.24em] text-foreground">
                 LUNARVOID
               </h1>
               <p className="text-xs text-muted-foreground">
@@ -100,11 +100,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
             <TabsTrigger
               key={item.value}
               value={item.value}
-              className="gap-2 rounded border border-border bg-surface/50 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest data-[state=active]:border-primary/50 data-[state=active]:bg-primary/15 data-[state=active]:text-primary"
+              className="gap-2 rounded-[2px] border border-border/70 bg-surface/40 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-all data-[state=active]:border-primary/70 data-[state=active]:bg-primary/15 data-[state=active]:text-primary"
             >
               {item.label}
               {item.badge && (
-                <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                <span className="rounded-[2px] bg-muted/80 px-1.5 py-0.5 text-[9px] text-muted-foreground font-mono">
                   {item.badge}
                 </span>
               )}

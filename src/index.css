@@ -59,9 +59,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Legacy space-* aliases — map old surface scale onto the new token set */
   --color-space-950: var(--background);
@@ -73,7 +74,7 @@
 }
 
 :root {
-  --radius: 0.35rem;
+  --radius: 0.2rem;
 
   --background: oklch(0.16 0.012 255);
   --foreground: oklch(0.93 0.008 250);
@@ -191,40 +192,29 @@
   color: var(--muted-foreground);
 }
 
-@utility glow-amber {
-  box-shadow: var(--glow-amber);
+@utility workbench-panel {
+  background-color: color-mix(in oklab, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px -8px oklch(0.04 0.015 260 / 95%);
+  backdrop-filter: blur(8px);
 }
 
-@utility glow-radar {
-  box-shadow: var(--glow-radar);
+@utility collar-ribbon {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-@utility scan-line {
-  position: relative;
-  overflow: hidden;
-  &::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in oklab, var(--accent) 70%, transparent),
-      transparent
-    );
-    animation: scan 5s linear infinite;
-  }
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(var(--scan-distance, 420px));
-  }
+@utility serif-thesis {
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: -0.01em;
 }
 
 /* Legacy archival-grid alias — now rides the same grid-line token */

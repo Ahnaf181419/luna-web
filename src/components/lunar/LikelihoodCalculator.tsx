@@ -84,13 +84,16 @@ export function LikelihoodCalculator() {
   }, [score]);
 
   return (
-    <div className="panel grid gap-6 p-5 lg:grid-cols-2">
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold">Interactive likelihood calculator</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Move the three evidence lines and watch the posterior — and its
-            false-positive cost — respond.
+    <div className="workbench-panel grid gap-6 p-5 lg:grid-cols-2 rounded-[2px]">
+      <div className="space-y-5">
+        <div className="border-b border-border/70 pb-3">
+          <span className="collar-ribbon text-[9px]">INTERACTIVE INFERENCE INSTRUMENT</span>
+          <h3 className="font-display text-lg font-bold tracking-tight text-foreground mt-0.5">
+            Bayesian Posterior Likelihood Calculator
+          </h3>
+          <p className="mt-1 font-sans text-xs text-muted-foreground">
+            Adjust the three empirical evidence sliders and watch the continuous posterior — and its
+            calibrated false-positive cost — respond in real time.
           </p>
         </div>
         <Control
@@ -131,15 +134,15 @@ export function LikelihoodCalculator() {
         />
       </div>
 
-      <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface/60 p-5">
+      <div className="flex flex-col gap-4 rounded-[2px] border border-border/80 bg-surface/60 p-5">
         <div>
-          <p className="label-mono">Inference score</p>
-          <p className="mt-1 font-mono text-6xl leading-none text-primary">
+          <span className="collar-ribbon text-[9px]">CALIBRATED POSTERIOR SCORE P(VOID | E)</span>
+          <p className="mt-1 font-mono text-5xl sm:text-6xl font-black leading-none text-primary">
             {score.toFixed(2)}
           </p>
-          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-[2px] bg-muted">
             <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
+              className="h-full bg-primary transition-all duration-300"
               style={{ width: `${score * 100}%` }}
             />
           </div>
@@ -178,25 +181,25 @@ export function LikelihoodCalculator() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-md border border-border bg-background/50 p-3">
-            <p className="label-mono">FP bound</p>
-            <p className="mt-1 font-mono text-lg text-foreground">
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="rounded-[2px] border border-border/80 bg-background/50 p-3">
+            <span className="collar-ribbon text-[9px]">FP BOUND</span>
+            <p className="mt-1 font-mono text-lg font-bold text-foreground">
               {fp.toFixed(2)}
             </p>
-            <p className="text-xs text-muted-foreground">per 10⁴ km²</p>
+            <p className="text-[10px] font-mono text-muted-foreground">per 10⁴ km²</p>
           </div>
-          <div className="rounded-md border border-border bg-background/50 p-3">
-            <p className="label-mono">Posterior odds</p>
-            <p className="mt-1 font-mono text-lg text-foreground">
+          <div className="rounded-[2px] border border-border/80 bg-background/50 p-3">
+            <span className="collar-ribbon text-[9px]">POSTERIOR ODDS</span>
+            <p className="mt-1 font-mono text-lg font-bold text-foreground">
               {(score / Math.max(1e-3, 1 - score)).toFixed(1)} : 1
             </p>
-            <p className="text-xs text-muted-foreground">void vs. no void</p>
+            <p className="text-[10px] font-mono text-muted-foreground">void vs. no void</p>
           </div>
         </div>
-        <div className="rounded-md border border-accent/30 bg-accent/5 p-3">
-          <p className="label-mono text-accent">Automated verdict</p>
-          <p className="mt-1 text-sm leading-relaxed text-foreground">
+        <div className="rounded-[2px] border border-accent/40 bg-accent/5 p-3">
+          <span className="collar-ribbon text-[9px] text-accent">AUTOMATED VERDICT</span>
+          <p className="mt-1 font-sans text-xs leading-relaxed text-foreground">
             {verdict(score)}
           </p>
         </div>

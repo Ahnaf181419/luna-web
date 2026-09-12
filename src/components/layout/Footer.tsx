@@ -29,19 +29,19 @@ export const Footer: React.FC = () => {
         {/* Top: Provenance & BibTeX */}
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
           <div className="space-y-4 lg:col-span-6">
-            <div className="label-mono flex items-center gap-2 text-foreground">
+            <div className="collar-ribbon text-foreground font-semibold">
               <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
-              <span>LUNARVOID open research initiative</span>
+              <span>LUNARVOID OPEN RESEARCH INITIATIVE</span>
             </div>
             <p className="font-sans text-xs leading-relaxed text-muted-foreground">
               This research portal documents the complete empirical pipeline, Bayesian
               inference mathematics, candidate registry, and milestone gate evidence for
               inferring subsurface basaltic conduits beneath the lunar mare.
             </p>
-            <div className="space-y-1.5 rounded-md border border-border bg-card/60 p-3.5">
-              <div className="label-mono flex items-center gap-2 text-warning">
-                <ShieldCheck className="h-4 w-4" />
-                <span>Epistemic governance notice</span>
+            <div className="workbench-panel space-y-1.5 p-3.5 rounded-[2px]">
+              <div className="collar-ribbon text-[9px] text-warning">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>EPISTEMIC GOVERNANCE NOTICE</span>
               </div>
               <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
                 Nothing subsurface on the Moon is verifiable today except the
@@ -54,22 +54,22 @@ export const Footer: React.FC = () => {
 
           <div className="space-y-2 lg:col-span-6">
             <div className="flex items-center justify-between">
-              <span className="label-mono">Academic citation (BibTeX)</span>
+              <span className="collar-ribbon text-[9px]">ACADEMIC CITATION (BIBTEX)</span>
               <Button
                 onClick={copyBibtex}
                 variant="outline"
                 size="sm"
-                className="h-7 px-2.5 font-mono text-[10px]"
+                className="h-6 px-2 font-mono text-[9px] rounded-[2px]"
               >
                 {copiedBib ? (
-                  <Check className="h-3.5 w-3.5 text-success" />
+                  <Check className="h-3 w-3 text-success" />
                 ) : (
-                  <Copy className="h-3.5 w-3.5" />
+                  <Copy className="h-3 w-3" />
                 )}
-                <span>{copiedBib ? 'Copied' : 'Copy BibTeX'}</span>
+                <span>{copiedBib ? 'COPIED' : 'COPY BIBTEX'}</span>
               </Button>
             </div>
-            <pre className="overflow-x-auto rounded-md border border-border bg-card/60 p-3.5 text-[10px] leading-relaxed text-foreground/80">
+            <pre className="overflow-x-auto rounded-[2px] border border-border/80 bg-card/60 p-3.5 font-mono text-[10px] leading-relaxed text-foreground/80">
               {bibtex}
             </pre>
           </div>

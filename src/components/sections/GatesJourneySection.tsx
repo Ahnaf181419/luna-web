@@ -49,10 +49,15 @@ export const GatesJourneySection: React.FC = () => {
   return (
     <section className="space-y-8">
       {/* Header */}
-      <div className="max-w-3xl">
-        <h2 className="text-2xl font-bold text-foreground">Gates & budget ledger</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Nothing advances without a gate review, and no gate opens spend it has not been
+      <div className="max-w-3xl border-b border-border/70 pb-3">
+        <span className="collar-ribbon text-[10px]">
+          <span>VERIFIABLE GOVERNANCE // NUMERICAL GATE CRITERIA</span>
+        </span>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground mt-1">
+          Milestone Gates & Frugal Compute Ledger
+        </h2>
+        <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
+          Nothing advances without a formal gate review, and no gate opens spend it has not been
           approved for. LUNARVOID progresses strictly across verifiable milestone gates
           with numerical pass criteria, explicit decision records, and complete budget
           transparency.
@@ -60,8 +65,8 @@ export const GatesJourneySection: React.FC = () => {
       </div>
 
       {/* 24-session roadmap */}
-      <div className="panel space-y-6 p-5 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+      <div className="workbench-panel space-y-6 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
           <div className="flex items-center gap-2">
             <GitBranch className="h-4 w-4 text-primary" />
             <h3 className="font-mono text-sm font-semibold text-foreground">
@@ -70,18 +75,18 @@ export const GatesJourneySection: React.FC = () => {
           </div>
           <Badge
             variant="outline"
-            className="border-success/50 bg-success/15 font-mono text-[10px] tracking-widest text-success"
+            className="rounded-[2px] border-success/60 bg-success/15 font-mono text-[9px] tracking-widest text-success uppercase"
           >
             Active session: 24 (Gate G2 review)
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 font-mono text-xs md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-4">
           {JOURNEY.map((j) => (
-            <div key={j.title} className={`rounded-md border border-border bg-surface/60 p-4 ${j.tone}`}>
+            <div key={j.title} className={`rounded-[2px] border border-border/80 bg-surface/60 p-4 ${j.tone}`}>
               <div className={`text-[10px] font-bold ${j.label}`}>{j.phase}</div>
               <div className="mt-1 text-sm font-bold text-foreground">{j.title}</div>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{j.body}</p>
+              <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">{j.body}</p>
             </div>
           ))}
         </div>
@@ -89,7 +94,7 @@ export const GatesJourneySection: React.FC = () => {
 
       {/* Milestone gates accordion */}
       <div className="space-y-4">
-        <p className="label-mono">Verifiable gate criteria matrices</p>
+        <span className="collar-ribbon text-[10px]">VERIFIABLE GATE CRITERIA MATRICES</span>
 
         {GATES.map((gate) => {
           const isExpanded = expandedGate === gate.id;
@@ -98,7 +103,7 @@ export const GatesJourneySection: React.FC = () => {
           return (
             <div
               key={gate.id}
-              className={`panel overflow-hidden ${isDraft ? 'border-primary/40' : ''}`}
+              className={`workbench-panel overflow-hidden ${isDraft ? 'border-primary/60' : ''}`}
             >
               <div
                 onClick={() => setExpandedGate(isExpanded ? '' : gate.id)}
@@ -106,7 +111,7 @@ export const GatesJourneySection: React.FC = () => {
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-md border ${
+                    className={`flex h-10 w-10 items-center justify-center rounded-[2px] border ${
                       gate.status === 'PASSED'
                         ? 'border-success/50 bg-success/15 text-success'
                         : 'border-primary/50 bg-primary/15 text-primary'
@@ -126,7 +131,7 @@ export const GatesJourneySection: React.FC = () => {
                       </h3>
                       <Badge
                         variant="outline"
-                        className={`font-mono text-[10px] tracking-widest ${
+                        className={`rounded-[2px] font-mono text-[9px] tracking-widest ${
                           gate.status === 'PASSED'
                             ? 'border-success/50 bg-success/15 text-success'
                             : 'border-warning/50 bg-warning/15 text-warning'

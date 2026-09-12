@@ -33,11 +33,14 @@ export const TheorySection: React.FC = () => {
   return (
     <section className="space-y-8">
       {/* Header */}
-      <div className="max-w-3xl">
-        <h2 className="text-2xl font-bold text-foreground">
-          The multi-evidence Bayesian fusion engine
+      <div className="max-w-3xl border-b border-border/70 pb-3">
+        <span className="collar-ribbon text-[10px]">
+          <span>BAYESIAN FUSION // ORTHOGONAL EVIDENCE LAYERS // LOG-LIKELIHOOD RATIO</span>
+        </span>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground mt-1">
+          The Multi-Evidence Bayesian Fusion Engine
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
           No individual orbital sensor can conclusively confirm a hollow subsurface void
           on the Moon. LUNARVOID unifies four orthogonal physics layers into a calibrated
           posterior log-likelihood formulation with observational confound penalties.
@@ -45,16 +48,16 @@ export const TheorySection: React.FC = () => {
       </div>
 
       {/* Four independent physics layers */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {LAYERS.map((layer, i) => (
-          <div key={layer.title} className="panel space-y-3 p-5">
-            <div className="label-mono flex items-center justify-between text-primary">
-              <span>Layer 0{i + 1}</span>
-              <layer.icon className="h-4 w-4" />
+          <div key={layer.title} className="workbench-panel space-y-2.5 p-4 rounded-[2px]">
+            <div className="collar-ribbon text-[9px] text-primary justify-between">
+              <span>LAYER 0{i + 1}</span>
+              <layer.icon className="h-3.5 w-3.5" />
             </div>
-            <h4 className="text-base font-semibold text-foreground">{layer.title}</h4>
-            <p className="text-xs leading-relaxed text-muted-foreground">{layer.body}</p>
-            <div className="border-t border-border pt-2 font-mono text-[10px] text-muted-foreground">
+            <h4 className="font-mono text-sm font-bold text-foreground">{layer.title}</h4>
+            <p className="font-sans text-xs leading-relaxed text-muted-foreground">{layer.body}</p>
+            <div className="border-t border-border/50 pt-2 font-mono text-[10px] text-muted-foreground">
               {layer.footer}
             </div>
           </div>

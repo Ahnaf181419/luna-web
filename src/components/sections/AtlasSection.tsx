@@ -61,36 +61,40 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
   return (
     <section className="space-y-6">
       {/* Header */}
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border/70 pb-3">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Candidate atlas & registry</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {CATALOG_SIZE} indexed candidates; {CANDIDATES.length} published in this public
-            working set.
+          <span className="collar-ribbon text-[10px]">
+            <span>CANDIDATE REGISTRY // STEREO BASELINE D1</span>
+          </span>
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground mt-1">
+            Candidate Atlas & Morphometry Registry
+          </h2>
+          <p className="mt-1 font-sans text-xs text-muted-foreground">
+            {CATALOG_SIZE} indexed candidates; {CANDIDATES.length} published in this public working set.
           </p>
         </div>
-        <Badge variant="outline" className="font-mono text-[10px] tracking-widest">
-          {filtered.length} SHOWN
+        <Badge variant="outline" className="rounded-[2px] font-mono text-[10px] tracking-widest border-primary/50 text-primary">
+          {filtered.length} / {CANDIDATES.length} ACTIVE
         </Badge>
       </div>
 
       {/* Search & filter panel */}
-      <div className="panel space-y-4 p-4">
+      <div className="workbench-panel space-y-3 p-4">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search candidate ID, site name, or feature type…"
-              className="pl-9 font-mono text-sm"
+              className="pl-9 font-mono text-xs rounded-[2px]"
             />
           </div>
           <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full sm:w-56">
+            <SelectTrigger className="w-full sm:w-56 font-mono text-xs rounded-[2px]">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-[2px] font-mono text-xs">
               {['All', 'Primary Pits', 'Collapse Sags', 'Inspection Backlog'].map((c) => (
                 <SelectItem key={c} value={c}>
                   {c}
@@ -100,15 +104,16 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
           </Select>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          <span className="collar-ribbon text-[9px] mr-1">FILTER TARGET:</span>
           {(['ALL', ...SITES.map((s) => s.id)] as const).map((id) => (
             <button
               key={id}
               onClick={() => onSetSiteFilter(id)}
-              className={`rounded-full border px-3 py-1 font-mono text-[11px] tracking-widest transition-colors ${
+              className={`rounded-[2px] border px-2.5 py-1 font-mono text-[10px] tracking-widest transition-all ${
                 siteFilter === id
-                  ? 'border-primary/60 bg-primary/15 text-primary'
-                  : 'border-border bg-surface/50 text-muted-foreground hover:text-foreground'
+                  ? 'border-primary/80 bg-primary/20 text-primary font-bold'
+                  : 'border-border/70 bg-surface/50 text-muted-foreground hover:text-foreground hover:border-border'
               }`}
             >
               {id}
@@ -118,10 +123,10 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
       </div>
 
       {/* Data table */}
-      <div className="panel overflow-x-auto">
+      <div className="workbench-panel overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="hover:bg-transparent border-b border-border/80">
               {[
                 'Candidate ID',
                 'Target site',
@@ -131,7 +136,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
                 'Status',
                 '',
               ].map((h) => (
-                <TableHead key={h} className="label-mono">
+                <TableHead key={h} className="collar-ribbon text-[9px]">
                   {h}
                 </TableHead>
               ))}
@@ -142,31 +147,31 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               <TableRow
                 key={c.id}
                 onClick={() => onSelectCandidate(c)}
-                className="cursor-pointer"
+                className="cursor-pointer transition-colors hover:bg-surface/50 border-b border-border/40"
               >
-                <TableCell className="font-mono text-xs text-primary">{c.id}</TableCell>
+                <TableCell className="font-mono text-xs font-bold text-primary">{c.id}</TableCell>
                 <TableCell className="font-mono text-xs">{c.site}</TableCell>
                 <TableCell className="font-mono text-xs text-muted-foreground">
                   {c.coordLabel}
                 </TableCell>
-                <TableCell className="text-sm">{c.morphology}</TableCell>
+                <TableCell className="font-sans text-xs">{c.morphology}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm">{c.score.toFixed(2)}</span>
-                    <Progress value={c.score * 100} className="h-1 w-16" />
+                    <span className="font-mono text-xs font-bold">{c.score.toFixed(2)}</span>
+                    <Progress value={c.score * 100} className="h-1 w-14 rounded-[2px]" />
                   </div>
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
-                    className={`font-mono text-[10px] tracking-widest ${STATUS_TONE[c.status]}`}
+                    className={`rounded-[2px] font-mono text-[9px] tracking-widest uppercase ${STATUS_TONE[c.status]}`}
                   >
                     {c.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button size="sm" variant="ghost" className="font-mono text-[11px]">
-                    <Binoculars className="mr-1 h-3.5 w-3.5" />
+                  <Button size="sm" variant="ghost" className="font-mono text-[10px] h-7 px-2">
+                    <Binoculars className="mr-1 h-3 w-3" />
                     Inspect
                   </Button>
                 </TableCell>
@@ -176,7 +181,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="py-10 text-center text-sm text-muted-foreground"
+                  className="py-10 text-center font-mono text-xs text-muted-foreground"
                 >
                   No candidates match this query.
                 </TableCell>

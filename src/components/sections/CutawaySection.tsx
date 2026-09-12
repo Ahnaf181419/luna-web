@@ -33,15 +33,19 @@ export const CutawaySection: React.FC = () => {
   return (
     <section className="space-y-6">
       {/* Header */}
-      <div className="max-w-3xl">
-        <h2 className="text-2xl font-bold text-foreground">Evidence fusion & subsurface cutaway</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          The schematic below is what the likelihood is actually about: a rimless skylight
-          opening into a hollow basalt conduit, and orbital radar pulses that return
-          twice — once from the conduit ceiling, once from its floor. The separation
-          between those two returns is the observable; the void is the inference. Under
-          1/6 lunar gravity, structural basalt beam stability allows spans of 80 to 200
-          meters without roof collapse.
+      <div className="max-w-3xl border-b border-border/70 pb-3">
+        <span className="collar-ribbon text-[10px]">
+          <span>SUBSURFACE SONAR // DUAL-HORIZON RADAR SIGNATURE</span>
+        </span>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground mt-1">
+          Evidence Fusion & Subsurface Cutaway
+        </h2>
+        <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
+          The schematic below models the physical observable: a rimless skylight opening into a
+          hollow basalt conduit, and orbital radar pulses that return twice — once from the conduit
+          ceiling, once from its floor. The separation between those two returns is the observable;
+          the void is the inference. Under 1/6 lunar gravity, structural basalt beam stability allows
+          spans of 80 to 200 meters without roof collapse.
         </p>
       </div>
 
@@ -49,38 +53,38 @@ export const CutawaySection: React.FC = () => {
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <StratigraphyOverlay />
-          <div className="flex items-center justify-between px-1 pt-3 font-mono text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between px-1 pt-3 font-mono text-[10px] text-muted-foreground">
             <span>● Interactive WebGL model · drag to orbit</span>
             <span>1/6 g lunar basalt mechanics</span>
           </div>
         </div>
 
         <div className="space-y-4 lg:col-span-5">
-          <div className="panel space-y-3 p-5">
-            <div className="label-mono flex items-center gap-2 text-primary">
-              <Layers className="h-4 w-4" />
-              <span>Geological strata identification</span>
+          <div className="workbench-panel space-y-3 p-5">
+            <div className="collar-ribbon text-[9px] text-primary">
+              <Layers className="h-3.5 w-3.5" />
+              <span>GEOLOGICAL STRATA IDENTIFICATION</span>
             </div>
 
             <div className="space-y-3 font-mono text-xs">
               {STRATA.map((s) => (
-                <div key={s.title} className="border-t border-border pt-3 first:border-t-0 first:pt-0">
+                <div key={s.title} className="border-t border-border/60 pt-3 first:border-t-0 first:pt-0">
                   <div className={`${s.tone} flex items-center justify-between font-semibold`}>
                     <span>{s.title}</span>
                     <span className="text-[10px] text-muted-foreground">{s.depth}</span>
                   </div>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.body}</p>
+                  <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">{s.body}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="panel space-y-2 p-4">
-            <div className="label-mono flex items-center gap-2 text-radar">
+          <div className="workbench-panel space-y-2 p-4">
+            <div className="collar-ribbon text-[9px] text-radar">
               <Radio className="h-3.5 w-3.5" />
-              <span>Radar sounding reflection signature</span>
+              <span>RADAR SOUNDING REFLECTION SIGNATURE</span>
             </div>
-            <p className="text-[11px] leading-relaxed text-muted-foreground">
+            <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
               Mini-RF and Kaguya LRS radar waves penetrate the low-loss lunar regolith. A
               dielectric impedance contrast between solid basalt and the hollow void
               generates distinctive dual-horizon return echoes.
