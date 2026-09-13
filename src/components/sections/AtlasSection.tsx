@@ -1,6 +1,7 @@
 import { SitePills } from '@/components/instruments/SitePills';
+import { downloadWorkingSet } from '@/lib/registry-export';
 import React, { useMemo, useState } from 'react';
-import { Search, Binoculars } from 'lucide-react';
+import { Search, Binoculars, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,9 +74,33 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
             {CATALOG_SIZE} indexed candidates; {CANDIDATES.length} published in this public working set.
           </p>
         </div>
-        <Badge variant="outline" className="rounded-[2px] font-mono text-[10px] tracking-widest border-primary/50 text-primary">
-          {filtered.length} / {CANDIDATES.length} ACTIVE
-        </Badge>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest"
+              onClick={() => downloadWorkingSet('csv')}
+            >
+              <Download className="h-3 w-3" />
+              CSV
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest"
+              onClick={() => downloadWorkingSet('json')}
+            >
+              <Download className="h-3 w-3" />
+              JSON
+            </Button>
+          </div>
+          <Badge variant="outline" className="rounded-[2px] font-mono text-[10px] tracking-widest border-primary/50 text-primary">
+            {filtered.length} / {CANDIDATES.length} ACTIVE
+          </Badge>
+        </div>
       </div>
 
       {/* Search & filter panel */}

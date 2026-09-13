@@ -14,6 +14,7 @@ import { KnowledgeVaultSection } from "./components/sections/KnowledgeVaultSecti
 import { CandidateDrawer } from "./components/lunar/CandidateDrawer";
 import { CommandPalette } from "./components/instruments/CommandPalette";
 import { CANDIDATES, isSiteId, type Candidate, type SiteId } from "./lib/lunarvoid-data";
+import { downloadWorkingSet } from "./lib/registry-export";
 
 export type TabId = "overview" | "atlas" | "fusion" | "gates" | "knowledge";
 
@@ -188,6 +189,7 @@ export const App: React.FC = () => {
         }}
         onSelectCandidate={(c) => inspectCandidateInAtlas(c)}
         onNavigate={(t) => setTab(t)}
+        onDownloadRegistry={() => downloadWorkingSet('csv')}
       />
     </Tabs>
   );

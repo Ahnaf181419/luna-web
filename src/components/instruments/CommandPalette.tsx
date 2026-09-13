@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Database, ShieldCheck, BookOpen } from 'lucide-react';
+import { Compass, Database, Download, ShieldCheck, BookOpen } from 'lucide-react';
 import {
   CommandDialog,
   CommandEmpty,
@@ -25,6 +25,7 @@ export interface CommandPaletteProps {
   onSelectSite: (siteId: 'ALL' | SiteId) => void;
   onSelectCandidate: (candidate: Candidate) => void;
   onNavigate: (tab: TabId) => void;
+  onDownloadRegistry?: () => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
@@ -33,6 +34,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onSelectSite,
   onSelectCandidate,
   onNavigate,
+  onDownloadRegistry,
 }) => {
   const TABS: Array<{ value: TabId; title: string; subtitle: string }> = [
     {
@@ -132,6 +134,25 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </CommandGroup>
 
         <CommandSeparator />
+
+        <CommandGroup heading="Actions">
+          <CommandItem
+            value="download registry csv export working set"
+            onSelect={() => {
+              onDownloadRegistry?.();
+              onClose();
+            }}
+            className="font-mono text-xs"
+          >
+            <Download className="mr-2 h-4 w-4 text-primary" />
+            <span className="truncate font-semibold text-foreground">
+              Download working set (CSV)
+            </span>
+            <span className="ml-2 text-[10px] text-muted-foreground">
+              {CANDIDATES.length} published · provenance-labeled
+            </span>
+          </CommandItem>
+        </CommandGroup>
 
         <CommandGroup heading="Gates">
           {GATES.map((g) => (
