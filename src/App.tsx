@@ -13,7 +13,7 @@ import { KnowledgePreviewSection } from "./components/sections/KnowledgePreviewS
 import { KnowledgeVaultSection } from "./components/sections/KnowledgeVaultSection";
 import { CandidateDrawer } from "./components/lunar/CandidateDrawer";
 import { CommandPalette } from "./components/instruments/CommandPalette";
-import { CANDIDATES, type Candidate, type SiteId } from "./lib/lunarvoid-data";
+import { CANDIDATES, isSiteId, type Candidate, type SiteId } from "./lib/lunarvoid-data";
 
 export type TabId = "overview" | "atlas" | "fusion" | "gates" | "knowledge";
 
@@ -32,8 +32,8 @@ export const App: React.FC = () => {
   const [activeSite, setActiveSite] = useState<SiteId | null>(() => {
     if (typeof window === "undefined") return "TRANQPIT1";
     const params = new URLSearchParams(window.location.search);
-    const s = params.get("site") as SiteId | null;
-    return s ?? "TRANQPIT1";
+    const s = params.get("site");
+    return isSiteId(s) ? s : "TRANQPIT1";
   });
 
   const [selected, setSelected] = useState<Candidate | null>(() => {
@@ -49,8 +49,8 @@ export const App: React.FC = () => {
   const [siteFilter, setSiteFilter] = useState<"ALL" | SiteId>(() => {
     if (typeof window === "undefined") return "ALL";
     const params = new URLSearchParams(window.location.search);
-    const s = params.get("site") as SiteId | null;
-    return s ?? "ALL";
+    const s = params.get("site");
+    return isSiteId(s) ? s : "ALL";
   });
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -74,11 +74,16 @@ export const App: React.FC = () => {
       const t = params.get("tab") as TabId | null;
       if (t && ["overview", "atlas", "fusion", "gates", "knowledge"].includes(t)) {
         setTab(t);
+      } else {
+        setTab("overview");
       }
-      const s = params.get("site") as SiteId | null;
-      if (s) {
+      const s = params.get("site");
+      if (isSiteId(s)) {
         setActiveSite(s);
         setSiteFilter(s);
+      } else {
+        setActiveSite("TRANQPIT1");
+        setSiteFilter("ALL");
       }
       const candId = params.get("candidate");
       if (candId) {
@@ -178,6 +183,7 @@ export const App: React.FC = () => {
         onClose={() => setIsCommandPaletteOpen(false)}
         onSelectSite={(siteId) => {
           setSiteFilter(siteId);
+          if (isSiteId(siteId)) setActiveSite(siteId);
           setTab("atlas");
         }}
         onSelectCandidate={(c) => inspectCandidateInAtlas(c)}
