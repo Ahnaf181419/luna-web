@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +42,9 @@ function SectionBlock() {
     g.translate(0, 0, -DEPTH);
     return g;
   }, []);
+
+  // Imperatively-built geometry passed as a prop is not auto-disposed by R3F.
+  useEffect(() => () => geom.dispose(), [geom]);
 
   return (
     <mesh geometry={geom}>
@@ -173,7 +176,11 @@ export default function TubeCutaway() {
 
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border border-border bg-background/60 sm:h-[560px]">
-      <Canvas camera={{ position: [3.2, 1.6, 12.5], fov: 42 }} dpr={[1, 2]}>
+      <Canvas
+        camera={{ position: [3.2, 1.6, 12.5], fov: 42 }}
+        dpr={[1, 2]}
+        frameloop={running ? "always" : "demand"}
+      >
         <color attach="background" args={["#0c0e13"]} />
         <ambientLight intensity={0.5} />
         <directionalLight position={[6, 10, 12]} intensity={2.1} />
