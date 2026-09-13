@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls, Stars } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { SITES, type SiteId } from "@/lib/lunarvoid-data";
 import { Button } from "@/components/ui/button";
@@ -35,11 +35,18 @@ function formatCursorCoord(lat: number, lon: number) {
   return `${Math.abs(lat).toFixed(2)}°${ns} ${Math.abs(lon).toFixed(2)}°${ew}`;
 }
 
+/** Module-scope marker data — stable Vector3 identity so Marker memos hold. */
+const SITE_MARKERS = SITES.map((s) => ({
+  id: s.id,
+  label: `${s.id} · ${s.coordLabel}`,
+  position: latLonToVec3(s.lat, s.lon),
+}));
+
 /** Procedural regolith texture: noise base + randomly scattered craters. */
 function useMoonTextures() {
   return useMemo(() => {
-    const w = 2048;
-    const h = 1024;
+    const w = 1024;
+    const h = 512;
     const canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;
@@ -69,10 +76,10 @@ function useMoonTextures() {
     }
 
     // craters
-    for (let i = 0; i < 1400; i++) {
+    for (let i = 0; i < 700; i++) {
       const x = rnd() * w;
       const y = rnd() * h;
-      const r = 1.5 + Math.pow(rnd(), 3) * 34;
+      const r = 3 + Math.pow(rnd(), 3) * 68;
       const shade = 40 + rnd() * 40;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -85,17 +92,6 @@ function useMoonTextures() {
       ctx.stroke();
     }
 
-    // fine grain
-    const img = ctx.getImageData(0, 0, w, h);
-    const d = img.data;
-    for (let i = 0; i < d.length; i += 4) {
-      const n = (rnd() - 0.5) * 26;
-      d[i] = (d[i] ?? 0) + n;
-      d[i + 1] = (d[i + 1] ?? 0) + n;
-      d[i + 2] = (d[i + 2] ?? 0) + n;
-    }
-    ctx.putImageData(img, 0, 0);
-
     const map = new THREE.CanvasTexture(canvas);
     map.colorSpace = THREE.SRGBColorSpace;
     map.anisotropy = 4;
@@ -105,16 +101,18 @@ function useMoonTextures() {
   }, []);
 }
 
-function Marker({
+const Marker = memo(function Marker({
+  siteId,
   position,
   active,
   label,
   onSelect,
 }: {
+  siteId: SiteId;
   position: THREE.Vector3;
   active: boolean;
   label: string;
-  onSelect: () => void;
+  onSelect: (id: SiteId) => void;
 }) {
   const [hovered, setHovered] = useState(false);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -148,7 +146,7 @@ function Marker({
       quaternion={quat}
       onClick={(e) => {
         e.stopPropagation();
-        onSelect();
+        onSelect(siteId);
       }}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -181,9 +179,9 @@ function Marker({
       )}
     </group>
   );
-}
+});
 
-function Moon({
+const Moon = memo(function Moon({
   activeSite,
   autoRotate,
   onSelect,
@@ -251,18 +249,19 @@ function Moon({
           metalness={0}
         />
       </mesh>
-      {SITES.map((s) => (
+      {SITE_MARKERS.map((m) => (
         <Marker
-          key={s.id}
-          position={latLonToVec3(s.lat, s.lon)}
-          active={activeSite === s.id}
-          label={`${s.id} · ${s.coordLabel}`}
-          onSelect={() => onSelect(s.id)}
+          key={m.id}
+          siteId={m.id}
+          position={m.position}
+          active={activeSite === m.id}
+          label={m.label}
+          onSelect={onSelect}
         />
       ))}
     </group>
   );
-}
+});
 
 export default function LunarGlobe({
   activeSite,
@@ -272,7 +271,11 @@ export default function LunarGlobe({
   onSelect: (id: SiteId) => void;
 }) {
   const [autoRotate, setAutoRotate] = useState(true);
-  const [cursor, setCursor] = useState<{ lat: number; lon: number } | null>(null);
+  const readoutRef = useRef<HTMLDivElement>(null);
+  const updateReadout = useCallback((coord: { lat: number; lon: number } | null) => {
+    const el = readoutRef.current;
+    if (el) el.textContent = coord ? formatCursorCoord(coord.lat, coord.lon) : "—.—° —.—°";
+  }, []);
 
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border border-border bg-background/60 sm:h-[540px]">
@@ -286,7 +289,7 @@ export default function LunarGlobe({
           activeSite={activeSite}
           autoRotate={autoRotate}
           onSelect={onSelect}
-          onCursor={setCursor}
+          onCursor={updateReadout}
         />
         <OrbitControls
           enablePan={false}
@@ -311,8 +314,11 @@ export default function LunarGlobe({
         </Button>
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between p-3 gap-2">
-        <div className="label-mono rounded border border-border bg-background/70 px-2 py-1 text-foreground">
-          {cursor ? formatCursorCoord(cursor.lat, cursor.lon) : "—.—° —.—°"}
+        <div
+          ref={readoutRef}
+          className="label-mono rounded border border-border bg-background/70 px-2 py-1 text-foreground"
+        >
+          —.—° —.—°
         </div>
         <div className="label-mono hidden sm:block text-muted-foreground text-center">
           drag to rotate · scroll to zoom · click a pin to focus the site
