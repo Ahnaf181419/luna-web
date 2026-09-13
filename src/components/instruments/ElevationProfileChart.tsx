@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TRANSECT_LENGTH, buildTransectPoints } from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface ElevationProfileChartProps {
@@ -16,38 +17,9 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
 }) => {
   const [hoverPoint, setHoverPoint] = useState<{ x: number; z: number; label: string } | null>(null);
 
-  const totalLength = 260; // meters
-  const center = 130; // meters
-  const halfSpan = Math.max(20, spanMeters / 2);
   const maxDepth = Math.max(25, depthMeters);
-
-  const points: { x: number; z: number; label: string }[] = [];
-  const steps = 60;
-  for (let i = 0; i <= steps; i++) {
-    const x = (i / steps) * totalLength;
-    let z = 0;
-    let label = 'Surface Regolith';
-
-    const distFromCenter = Math.abs(x - center);
-    if (distFromCenter > halfSpan + 15) {
-      z = Math.sin(x * 0.15) * 0.4;
-      label = 'Undisturbed Mare Surface';
-    } else if (distFromCenter > halfSpan) {
-      const sagProgress = 1 - (distFromCenter - halfSpan) / 15;
-      z = -sagProgress * 3.5;
-      label = 'Rim Tension Sag';
-    } else if (distFromCenter > halfSpan - 5) {
-      const dropProgress = 1 - (distFromCenter - (halfSpan - 5)) / 5;
-      z = -3.5 - dropProgress * (maxDepth * 0.7);
-      label = 'Vertical Basalt Cliff Lip';
-    } else {
-      const talusRatio = 1 - distFromCenter / (halfSpan - 5);
-      z = -maxDepth + talusRatio * (maxDepth * 0.18);
-      label = distFromCenter < 12 ? 'Central Rubble Talus Mound' : 'Subsurface Talus Floor';
-    }
-
-    points.push({ x, z, label });
-  }
+  const points = buildTransectPoints(depthMeters, spanMeters);
+  const totalLength = TRANSECT_LENGTH;
 
   const svgWidth = 540;
   const svgHeight = 160;

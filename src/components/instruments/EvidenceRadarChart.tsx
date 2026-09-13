@@ -1,4 +1,9 @@
 import React from 'react';
+import {
+  RADAR_SIZE,
+  getRadarCoordinates,
+  radarAxisValues,
+} from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface EvidenceRadarChartProps {
@@ -14,34 +19,22 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
   bouguerMGal,
   depthMeters = 50,
 }) => {
-  const morphAxis = Math.min(1.0, Math.max(0.15, depthMeters / 105));
-  const radarAxis = Math.min(1.0, Math.max(0.15, (cprRatio - 0.5) / 2.0));
-  const gravAxis = Math.min(1.0, Math.max(0.15, Math.abs(bouguerMGal) / 14.0));
-  const geomechAxis = Math.min(1.0, Math.max(0.2, score * 0.95));
-
   const axes = [
-    { label: 'Morphometry (Depth/Span)', val: morphAxis },
-    { label: 'Radar CPR Contrast', val: radarAxis },
-    { label: 'GRAIL Bouguer Deficit', val: gravAxis },
-    { label: 'Geomechanical Stability', val: geomechAxis },
-  ];
+    { label: 'Morphometry (Depth/Span)', val: 0 },
+    { label: 'Radar CPR Contrast', val: 0 },
+    { label: 'GRAIL Bouguer Deficit', val: 0 },
+    { label: 'Geomechanical Stability', val: 0 },
+  ].map((axis, i) => ({
+    ...axis,
+    val: radarAxisValues({ score, cprRatio, bouguerMGal, depthMeters })[i] ?? 0,
+  }));
 
-  const size = 220;
+  const size = RADAR_SIZE;
   const center = size / 2;
-  const radius = 80;
-
-  const getCoordinates = (index: number, total: number, normVal: number) => {
-    const angle = (Math.PI * 2 * index) / total - Math.PI / 2;
-    const r = normVal * radius;
-    return {
-      x: center + r * Math.cos(angle),
-      y: center + r * Math.sin(angle),
-    };
-  };
 
   const polygonPoints = axes
     .map((axis, i) => {
-      const { x, y } = getCoordinates(i, axes.length, axis.val);
+      const { x, y } = getRadarCoordinates(i, axes.length, axis.val);
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
@@ -65,7 +58,7 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
             {[0.25, 0.5, 0.75, 1.0].map((ringLevel, rIdx) => {
               const ringPoints = axes
                 .map((_, i) => {
-                  const { x, y } = getCoordinates(i, axes.length, ringLevel);
+                  const { x, y } = getRadarCoordinates(i, axes.length, ringLevel);
                   return `${x.toFixed(1)},${y.toFixed(1)}`;
                 })
                 .join(' ');
@@ -82,7 +75,7 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
             })}
 
             {axes.map((_, i) => {
-              const { x, y } = getCoordinates(i, axes.length, 1.0);
+              const { x, y } = getRadarCoordinates(i, axes.length, 1.0);
               return (
                 <line
                   key={i}
@@ -105,7 +98,7 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
             />
 
             {axes.map((axis, i) => {
-              const { x, y } = getCoordinates(i, axes.length, axis.val);
+              const { x, y } = getRadarCoordinates(i, axes.length, axis.val);
               return (
                 <circle
                   key={i}
