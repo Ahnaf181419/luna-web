@@ -1,138 +1,98 @@
-# LUNARVOID Web Application: Architectural & Design Plan
+# LUNARVOID Portal — As-Built Architecture
 
-## 1. Project Overview & Aesthetic Direction
+> **Status**: As-built (rewritten 2026-09-13). This document describes the system
+> as it exists in the repository. The original pre-build design plan is preserved
+> in the appendix (superseded).
 
-### The "Deep Lunar Observatory" Design System
-Unlike generic SaaS templates, the LUNARVOID portal is engineered around an **aerospace observatory / NASA JPL mission-control aesthetic**:
-- **Palette & Surfaces:**
-  - Backgrounds: Deep Obsidian Void (`#070a0f`), Cosmic Charcoal (`#0b0f17`), and Mare Basalt (`#0e1420`).
-  - Structural Reticles: Hairline sub-pixel grid lines (`rgba(255, 255, 255, 0.05)`) and technical crosshairs.
-  - Scientific Accents: Neon Lunar Cyan (`#06b6d4`), Subsurface Radar Indigo (`#6366f1`), Bouguer Gravity Violet (`#a855f7`), Active Telemetry Green (`#10b981`), and Visual Inspection Amber (`#f59e0b`).
-- **Typography:**
-  - Primary UI & Prose: Clean geometric sans-serif (Inter / Geist).
-  - Scientific Telemetry: Crisp tabular monospace (JetBrains Mono / Space Mono) for lunar coordinates ($\text{Lat/Lon}$), physical quantities ($\text{mGal}$, $\text{m/px}$, $\text{CPR}$), candidate IDs, and confidence intervals.
-- **Micro-Interactions:** Subtle glow states, crisp card borders, telemetry pulse indicators, and smooth camera transitions.
+## 1. Stack
 
----
-
-## 2. Technical Stack Specification
-
-The application will be initialized in `/home/frostflux/Ahnaf_Shafin/Projects/lunar-lavatube`:
-
-| Layer | Technology | Purpose |
+| Layer | Choice | Notes |
 |---|---|---|
-| **Runtime & Bundler** | Vite + React 18 + TypeScript | Instant HMR, strict type safety, zero bloat. |
-| **Styling & Design System** | Tailwind CSS + PostCSS | Custom observatory tokens, glassmorphism, responsive layouts. |
-| **3D Graphics Engine** | Three.js + `@react-three/fiber` + `@react-three/drei` | High-performance interactive 3D WebGL rendering. |
-| **Iconography** | `lucide-react` | Crisp, modern technical icons. |
-| **Data Visualization** | Custom Canvas / SVG + Three.js | Real-time Bayesian inference plots and graph networks. |
+| Runtime | React `~19.2.8` + react-dom `~19.2.8` | **Pinned** — `@react-three/fiber` peer range requires `react <19.3`; check peer ranges before any bump |
+| Bundler | Vite 8 | `base: '/luna-web/'` (GitHub Pages subpath) — load-bearing |
+| Language | TypeScript ~6.0 | `verbatimModuleSyntax`, `noUncheckedIndexedAccess` on; `strict` deliberately off |
+| Styling | Tailwind v4 via `@tailwindcss/vite` | CSS-first: tokens in `src/index.css` (`@theme inline`, oklch); no `tailwind.config` |
+| 3D | `@react-three/fiber` v9, `@react-three/drei` v10, `three` 0.185 | Lazy-loaded via `React.lazy` (see `Client3D.tsx`, `StratigraphyOverlay.tsx`) |
+| UI kit | shadcn/ui, new-york style — **11 vendored primitives** in `src/components/ui/` | verbatim by design; re-add via `npx shadcn@latest add <name>` |
+| Charts | Hand-rolled SVG | math in `src/lib/chart-math.ts`, colors in `src/lib/chart-theme.ts` — no charting library |
+| Lint | oxlint (`.oxlintrc.json`) | not eslint |
+| Tests | vitest + @testing-library + happy-dom | `npm test`; suites in `src/**/__tests__` + `src/App.test.tsx` |
+| Deploy | GitHub Actions → GitHub Pages | push to `main` = live. https://ahnaf181419.github.io/luna-web/ |
 
----
+Fonts (Google Fonts, `index.html`): Instrument Sans (body), JetBrains Mono
+(telemetry/mono), Newsreader (serif accents), Syne (display).
 
-## 3. Core Modules & Component Architecture
+## 2. Module tree
 
 ```
 src/
+├── App.tsx                  # 5-tab root; URL deep-linking (?tab/?site/?candidate)
+├── main.tsx                 # StrictMode mount
+├── index.css                # design tokens (oklch), utilities, legacy aliases
+├── test/setup.ts            # vitest setup (jest-dom)
+├── lib/
+│   ├── lunarvoid-data.ts    # SITES(8), CANDIDATES(12/257), GATES, BUDGET, math
+│   ├── chart-math.ts        # pure chart geometry (radar, transect, PDF curve)
+│   ├── chart-theme.ts       # CHART oklch tokens for SVG attributes
+│   ├── registry-export.ts   # CSV/JSON working-set export
+│   ├── knowledge.ts         # knowledge-vault MOCs + concept dossiers
+│   └── utils.ts             # cn() helper
+├── hooks/                   # (none — use-mobile removed with sidebar)
 ├── components/
-│   ├── layout/
-│   │   ├── Header.tsx             <- Global navigation, telemetry pills, gate state
-│   │   └── Footer.tsx             <- Scientific citation, data sources, source-of-truth links
-│   ├── 3d/
-│   │   ├── LunarGlobe3D.tsx       <- Interactive 3D Moon sphere with real candidate pins & slerp camera
-│   │   └── LavaTubeCutaway3D.tsx  <- 3D geological cutaway with animated radar sounding waves
-│   ├── overview/
-│   │   ├── ManifestoBanner.tsx    <- "We do not detect... we infer, with error bars"
-│   │   ├── StatCounters.tsx       <- Calibration FP rate, sample space, benchmark anchor
-│   │   └── PillarCards.tsx        <- Claim discipline, terrestrial analogs, frugal science
-│   ├── atlas/
-│   │   ├── CandidateTable.tsx     <- Searchable, sortable 257 candidate table
-│   │   ├── FilterToolbar.tsx      <- Site pills (TRANQ, MARIUS, INGENII...), feature dropdown
-│   │   └── CandidateDrawer.tsx    <- Slide-over panel with DTM, radar, and gravity breakdown
-│   ├── fusion/
-│   │   ├── PipelineStages.tsx     <- 4-layer methodology (Morphometry, Radar, Gravity, Analogs)
-│   │   └── InferenceCalculator.tsx<- Interactive toy likelihood calculator with real-time FP envelope
-│   ├── gates/
-│   │   ├── GateTimeline.tsx       <- Verifiable milestones (G0', G1, G2 criteria & status)
-│   │   └── BudgetLedger.tsx       <- Frugal science tracker ($0 spend, AX52 roadmap, $800 ceiling)
-│   └── graph/
-│       └── KnowledgeGraph.tsx     <- Visual representation of the Obsidian vault & MOC nodes
-├── data/
-│   ├── candidates.ts              <- Typed database of lunar candidates across 21 DTM sites
-│   ├── sites.ts                   <- DTM site dossiers (coordinates, resolutions, geology)
-│   └── gates.ts                   <- Verifiable gate specifications and pass/partial criteria
-├── types/
-│   └── index.ts                   <- Candidate, Site, EvidenceLayer, Gate, and Budget interfaces
-├── App.tsx                        <- Main tab orchestration and global state
-└── main.tsx                       <- Application mount point
+│   ├── lunar/               # 3D + inspector: LunarGlobe, TubeCutaway,
+│   │                        #   StratigraphyOverlay, Client3D (lazy loaders),
+│   │                        #   CandidateDrawer, LikelihoodCalculator
+│   ├── instruments/         # ElevationProfileChart, EvidenceRadarChart,
+│   │                        #   CommandPalette, SitePills
+│   ├── sections/            # tab content: Hero, EpistemicThesis, Observatory,
+│   │                        #   Atlas, Cutaway, Theory, GatesJourney,
+│   │                        #   KnowledgePreview, KnowledgeVault
+│   ├── layout/              # Header, Footer
+│   └── ui/                  # 11 vendored shadcn primitives (verbatim)
+└── App.test.tsx             # URL state machine tests
 ```
 
----
+Tabs: `overview` (globe + dossier) · `atlas` (candidate table + drawer) ·
+`fusion` (3D cutaway + likelihood calculator) · `gates` (milestones + knowledge
+preview) · `knowledge` (vault).
 
-## 4. Detailed Feature Specifications
+## 3. Data model
 
-### A. Interactive 3D Visualizations
-1. **Interactive 3D Lunar Globe (`LunarGlobe3D.tsx`):**
-   - Procedural or texture-mapped lunar sphere with authentic crater relief shading and customizable lighting terminator.
-   - 3D interactive coordinate pins placed at exact lunar coordinates using spherical trigonometry:
-     $$\begin{cases} x = R \cos(\text{lat}) \cos(\text{lon}) \\ y = R \sin(\text{lat}) \\ z = -R \cos(\text{lat}) \sin(\text{lon}) \end{cases}$$
-   - Clicking a pin or selecting a row in the Candidate Atlas triggers a smooth camera orbit (`slerp`) to focus directly on that crater/pit site.
-   - Orbit controls with auto-rotation, tilt constraints, and zoom limits.
+- `SITES` — 8 of 21 DTM targets modeled; `siteById` falls back to the first site.
+- `CANDIDATES` — 12 published of `CATALOG_SIZE = 257`; site `candidateCount`s sum
+  to 190 — deliberate fuzziness of the fictional registry, not a bug.
+- Math (load-bearing, test-pinned): `targetWeightedScore` (0.4/0.35/0.25 fusion,
+  clamped [0.05, 0.99]), `calibratedFpRate` (floor 1.8/10⁴ km²), `verdict`
+  (thresholds 0.85/0.65/0.4). Chart geometry: `src/lib/chart-math.ts`.
+- Statuses: CONFIRMED ANCHOR · HIGH CONFIDENCE · INSPECTION BACKLOG · PLAUSIBLE
+  SAG · DEFERRED DTM GAP (`STATUS_TONE` map).
 
-2. **Interactive 3D Subsurface Lava Tube Cutaway (`LavaTubeCutaway3D.tsx`):**
-   - 3D geological block cutaway illustrating:
-     - Lunar surface regolith with a vertical rimless pit skylight.
-     - Hollow basalt conduit cylinder extending underground.
-     - Animated radar sounding rays emitting from an orbital beacon, penetrating down, and reflecting off the conduit ceiling and floor.
-   - Controls to toggle radar animation, inspect cross-section dimensions, and rotate the block.
+## 4. Design system
 
-### B. Interactive Candidate Atlas & Registry
-- Complete typed dataset reflecting the 257 candidates across 21 DTM sites:
-  - `TRANQPIT1` (Mare Tranquillitatis Pit: 8.33°N, 33.22°E) — the sole confirmed anchor.
-  - `MARIUS` (Marius Hills pit and sinuous rille sags: 14.09°N, 303.23°E).
-  - `INGENIIPIT` (Mare Ingenii farside swirl-adjacent pit: 35.95°S, 166.06°E).
-  - `PHILOLAUS` (High-latitude polar pit target: 72.10°N, 327.50°E).
-  - `FECUNPIT` (Mare Fecunditatis candidate cluster: 0.92°S, 48.66°E).
-- Real-time instant search by site name, ID, or morphological feature.
-- Slide-over detail drawer displaying:
-  - Target DTM metadata (product ID, resolution in $\text{m/px}$, stereo solar angle).
-  - Radar layer status (Mini-RF CPR anomaly, Kaguya LRS reflector).
-  - Bouguer mass deficit anomaly (GRAIL degree-1200 Bouguer reading).
-  - Visual inspection backlog notes.
+- Palette: oklch tokens in `src/index.css` — telemetry-amber `--primary`,
+  radar-cyan `--radar`/`--accent`, gravity, surface/regolith greys, plus legacy
+  `space-*` aliases kept for compat. **Never hardcode hex/oklch in components**;
+  SVG attributes use `CHART` from `chart-theme.ts`.
+- Signature utilities: `.panel`/`.workbench-panel`, `.collar-ribbon`,
+  `.label-mono`, `.font-display`, archival-grid background.
+- Aesthetic: "planetary cartography & sonar workbench" — flat, instrument-panel;
+  gradients/glassmorphism explicitly purged (commit `6f6856b`).
 
-### C. Multi-Evidence Fusion & Interactive Calculator
-- **Four Core Evidence Pillars:**
-  1. *Surface Photogrammetry:* Stereo NAC pairs through USGS ISIS3 + NASA Ames Stereo Pipeline.
-  2. *Radar CPR & Sounding:* Mini-RF circularly polarized ratio anomalies + Kaguya LRS echoes.
-  3. *Bouguer Gravity:* GRAIL GL1200A mass-deficit bounds.
-  4. *Terrestrial Analogs:* Structural geomechanics from Hawai'i and Valentine Cave LiDAR.
-- **Interactive Calculator:**
-  - Interactive sliders for *Depth/Span Ratio*, *Radar CPR Anomaly*, and *GRAIL Mass Deficit*.
-  - Real-time recalculation of the calibrated likelihood score and estimated false-positive envelope per $10^4\text{ km}^2$.
+## 5. Deployment
 
-### D. Gate Engine & Frugal Science Ledger
-- **Gate Status:**
-  - `Gate G0′` (Passed): Tier-0 environment, TRANQPIT1 stereo pipeline baseline.
-  - `Gate G1` (Passed): 21 DTM sites processed, 257 candidates indexed.
-  - `Gate G2` (Draft for Review): Multi-evidence calibration, Hetzner AX52 burst roadmap.
-- **Transparent Budget Tracking:**
-  - Interactive spend meters: $0.00 spent to date across 24 research sessions / $150 interim cap / $800 master-plan ceiling.
+- `.github/workflows/deploy.yml`: `validate` job (lint → typecheck → test →
+  build; runs on push to `main` AND pull requests) gates the `deploy` job
+  (Pages artifact, Pages API). Only `main`/manual deploys.
+- Node 22 in CI. Local parity: Node ≥ 20.19.
+- `vite.config.ts` `base: '/luna-web/'` — local `npm run preview` also serves
+  under `/luna-web/`.
 
----
+## Appendix: superseded decisions (historical)
 
-## 5. Phased Implementation Steps
-
-```mermaid
-flowchart LR
-    P1["Phase 1: Project Scaffolding<br/>(Vite + React + TS + Tailwind + Three.js)"] --> P2["Phase 2: Design Tokens & Layout<br/>(Observatory theme, Header, Telemetry)"]
-    P2 --> P3["Phase 3: Data Models & Registry<br/>(Candidates, Sites, Gate Criteria)"]
-    P3 --> P4["Phase 4: 3D Visualizations<br/>(Lunar Globe & Subsurface Cutaway)"]
-    P4 --> P5["Phase 5: Interactive Views<br/>(Atlas Table, Calculator, Ledger)"]
-    P5 --> P6["Phase 6: Verification & Dev Server<br/>(Build test, responsive validation)"]
-```
-
-1. **Phase 1 — Scaffolding:** Initialize Vite + React (TypeScript) in `/home/frostflux/Ahnaf_Shafin/Projects/lunar-lavatube`, install Tailwind, Three.js, `@react-three/fiber`, `@react-three/drei`, and `lucide-react`.
-2. **Phase 2 — Design System & Layout:** Configure Tailwind theme, technical fonts, reticle grid utilities, global header, and telemetry indicators.
-3. **Phase 3 — Data Models & Schemas:** Implement comprehensive candidate and site databases with authentic lunar coordinates and evidence scores.
-4. **Phase 4 — 3D Components:** Build `LunarGlobe3D` with coordinate pins and `LavaTubeCutaway3D` with animated radar waves.
-5. **Phase 5 — Interactive Feature Tabs:** Build Candidate Atlas with slide-over drawer, Bayesian inference calculator, and Gate/Budget ledger.
-6. **Phase 6 — Testing & Build Validation:** Run TypeScript compilation, lint checks, and launch the dev server for verification.
+The original plan (initial commit era) specified React 18, Tailwind+PostCSS
+"glassmorphism", Inter/Geist/Space Mono fonts, a `src/data/` + `components/3d|`
+`overview|atlas|fusion|gates|graph/` tree, and a `KnowledgeGraph.tsx`. All
+superseded by the portal migration (commit `05e66e1`) and the design overhaul
+(`6f6856b`, "planetary cartography & sonar workbench"). Retained here only as
+the record of the pivot rationale; nothing in this appendix describes the
+current system.
