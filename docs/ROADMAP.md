@@ -71,8 +71,13 @@ Ordered by leverage; each needs a design pass before implementation:
 1. **Zenodo + DOI closure of the G3 promise** — the export (plan 014) is the
    artifact; archiving it + linking the DOI next to the BibTeX completes the
    "open artifact" story. Small effort, high credibility.
-2. **Drive the cutaway selector from `?candidate=` deep links** (spike follow-up,
-   recorded in `docs/cutaway-spike-findings.md`) — atlas → 3D comparison in one click.
+2. **Optional NASA moon basemap** (commit `c47f482`, 2026-09-13) — DONE in-session.
+   Drop `public/moon/ldam_4k.jpg` from NASA's CGI Moon Kit (SVS #4720,
+   public-domain LROC WAC color map) and the 3D globe upgrades automatically;
+   bump `MOON_ASSET_VERSION` in `LunarGlobe.tsx` to defeat stale caches. The
+   embedsolar system.nasa.gov/gltf_embed/2366 URL is dead (maintenance page
+   since the site's 2024 migration to science.nasa.gov); the right NASA asset
+   for our sphere is the public-domain color map, not the 3D viewer.
 3. **Content reconciliation** — the registry's numeric story has known deliberate
    fuzziness (candidateCount sum 190 vs CATALOG_SIZE 257; G1 "17 targets" vs C1-1
    "21 sites"): pick the canon, update data + export together.
@@ -129,3 +134,15 @@ Ordered by leverage; each needs a design pass before implementation:
 10. **Small clamps beat camera rework.** The cutaway spike's geometry clamps
     (sqrt-span radius, depth-ratio floor, shaft-width cap) made all 12 candidates
     readable under the existing fixed camera — zero scene-layout changes needed.
+11. **Bust the cache when the asset's later arrival must be observable.** A page that
+    loads a not-yet-present asset (404/HTML fallback cached) will keep showing the
+    stale fallback indefinitely once the file appears, unless the URL itself
+    changes. A small `?v=` constant in code — bumped when the asset changes —
+    turns this from a sticky bug into a deploy-time signal (`MOON_ASSET_VERSION`
+    in `LunarGlobe.tsx`).
+12. **MIME matters even when bytes are decodable.** Browsers vary on whether they
+    decode an image via magic bytes when `Content-Type` disagrees with the
+    extension. Our test fixture (PNG bytes served via `.jpg` extension with
+    `Content-Type: image/jpeg`) decoded in `curl` and `Pillow` but tripped some
+    Image-decoder paths in Chromium. Always match the file's extension to its real
+    format and verify with a real browser before claiming "the texture loads".
