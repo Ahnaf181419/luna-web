@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   RADAR_CENTER,
   RADAR_SIZE,
+  buildPdfCurve,
   buildTransectPoints,
   getRadarCoordinates,
   radarAxisValues,
@@ -51,6 +52,34 @@ describe('getRadarCoordinates', () => {
       expect(y).toBeGreaterThanOrEqual(0)
       expect(y).toBeLessThanOrEqual(RADAR_SIZE)
     }
+  })
+})
+
+describe('buildPdfCurve', () => {
+  const W = 420
+  const H = 100
+
+  const yValues = (d: string) =>
+    [...d.matchAll(/[ML] [-\d.]+ ([-\d.]+)/g)].map((m) => parseFloat(m[1]!))
+
+  it.each([0.05, 0.5, 0.7, 0.9, 0.99])('keeps every point inside the viewBox at score %s', (score) => {
+    const ys = yValues(buildPdfCurve(score, W, H).d)
+    expect(ys.length).toBe(81)
+    for (const y of ys) {
+      expect(y).toBeGreaterThanOrEqual(0)
+      expect(y).toBeLessThanOrEqual(H)
+    }
+  })
+
+  it('peaks at 85% of the chart height (mode at y = 0.15 * H)', () => {
+    const ys = yValues(buildPdfCurve(0.5, W, H).d)
+    expect(Math.min(...ys)).toBeCloseTo(H * 0.15, 1)
+  })
+
+  it('closes the fill path along the baseline', () => {
+    const { fill } = buildPdfCurve(0.6, W, H)
+    expect(fill).toContain(`L ${W} ${H}`)
+    expect(fill).toContain(`L 0 ${H} Z`)
   })
 })
 

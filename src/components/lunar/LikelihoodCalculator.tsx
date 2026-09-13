@@ -6,6 +6,7 @@ import {
   verdict,
 } from "@/lib/lunarvoid-data";
 import { EvidenceRadarChart } from "@/components/instruments/EvidenceRadarChart";
+import { buildPdfCurve } from "@/lib/chart-math";
 import { CHART } from "@/lib/chart-theme";
 
 const SVG_W = 420;
@@ -62,26 +63,10 @@ export function LikelihoodCalculator() {
   const fp = calibratedFpRate(score);
 
   /* Live Bayesian posterior density curve (Gaussian around the score) */
-  const { pdfD, pdfFill } = useMemo(() => {
-    const mu = score;
-    const sigma = 0.12 - score * 0.05;
-    const pts: Array<{ x: number; y: number }> = [];
-    for (let i = 0; i <= 80; i++) {
-      const val = i / 80;
-      const gaussian =
-        (1 / (sigma * Math.sqrt(2 * Math.PI))) *
-        Math.exp(-0.5 * Math.pow((val - mu) / sigma, 2));
-      pts.push({
-        x: (i / 80) * SVG_W,
-        y: SVG_H - (gaussian / 4.0) * (SVG_H * 0.85),
-      });
-    }
-    const d = pts.reduce(
-      (acc, p, idx) => (idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`),
-      "",
-    );
-    return { pdfD: d, pdfFill: `${d} L ${SVG_W} ${SVG_H} L 0 ${SVG_H} Z` };
-  }, [score]);
+  const { d: pdfD, fill: pdfFill } = useMemo(
+    () => buildPdfCurve(score, SVG_W, SVG_H),
+    [score],
+  );
 
   return (
     <div className="workbench-panel grid gap-6 p-5 lg:grid-cols-2 rounded-[2px]">

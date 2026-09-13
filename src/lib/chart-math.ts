@@ -33,6 +33,30 @@ export function getRadarCoordinates(index: number, total: number, normVal: numbe
   };
 }
 
+/* --------------------------------- pdf ------------------------------------ */
+
+/**
+ * Gaussian posterior-density curve for the likelihood calculator, normalized
+ * to its own peak so the mode always sits at 85% of the chart height — the
+ * legacy `gaussian / 4.0` scale clipped above the viewBox once sigma shrank
+ * past ~0.085 (score > ~0.70).
+ */
+export function buildPdfCurve(score: number, width: number, height: number, steps = 80) {
+  const mu = score;
+  const sigma = 0.12 - score * 0.05;
+  const peak = 1 / (sigma * Math.sqrt(2 * Math.PI));
+  const pts: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i <= steps; i++) {
+    const val = i / steps;
+    const gaussian = peak * Math.exp(-0.5 * Math.pow((val - mu) / sigma, 2));
+    pts.push({ x: (i / steps) * width, y: height - (gaussian / peak) * (height * 0.85) });
+  }
+  const d = pts
+    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
+    .join(' ');
+  return { d, fill: `${d} L ${width} ${height} L 0 ${height} Z` };
+}
+
 /* ------------------------------ transect ---------------------------------- */
 
 export const TRANSECT_LENGTH = 260;
