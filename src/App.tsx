@@ -58,22 +58,24 @@ export const App: React.FC = () => {
   const [calcSeed, setCalcSeed] = useState<CalcSeed | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
-    const m = Number(params.get("m"));
-    const c = Number(params.get("c"));
-    const b = Number(params.get("b"));
+    const mRaw = params.get("m");
+    const cRaw = params.get("c");
+    const bRaw = params.get("b");
+    if (mRaw === null || cRaw === null || bRaw === null) return null;
+    const m = Number(mRaw);
+    const c = Number(cRaw);
+    const b = Number(bRaw);
+    if (![m, c, b].every(Number.isFinite)) return null;
     const src = params.get("src");
     const fromCandidate = src ? CANDIDATES.find((x) => x.id === src) : undefined;
-    if ([m, c, b].every(Number.isFinite)) {
-      return {
-        morphRatio: m,
-        radarCpr: c,
-        bouguer: b,
-        label: fromCandidate?.id,
-        publishedScore: fromCandidate?.score,
-        morphIsDefault: fromCandidate !== undefined,
-      };
-    }
-    return null;
+    return {
+      morphRatio: m,
+      radarCpr: c,
+      bouguer: b,
+      label: fromCandidate?.id,
+      publishedScore: fromCandidate?.score,
+      morphIsDefault: fromCandidate !== undefined,
+    };
   });
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -121,20 +123,27 @@ export const App: React.FC = () => {
       } else {
         setSelected(null);
       }
-      const m = Number(params.get("m"));
-      const c = Number(params.get("c"));
-      const b = Number(params.get("b"));
+      const mRaw = params.get("m");
+      const cRaw = params.get("c");
+      const bRaw = params.get("b");
       const src = params.get("src");
       const fromCandidate = src ? CANDIDATES.find((x) => x.id === src) : undefined;
-      if ([m, c, b].every(Number.isFinite)) {
-        setCalcSeed({
-          morphRatio: m,
-          radarCpr: c,
-          bouguer: b,
-          label: fromCandidate?.id,
-          publishedScore: fromCandidate?.score,
-          morphIsDefault: fromCandidate !== undefined,
-        });
+      if (mRaw !== null && cRaw !== null && bRaw !== null) {
+        const m = Number(mRaw);
+        const c = Number(cRaw);
+        const b = Number(bRaw);
+        setCalcSeed(
+          [m, c, b].every(Number.isFinite)
+            ? {
+                morphRatio: m,
+                radarCpr: c,
+                bouguer: b,
+                label: fromCandidate?.id,
+                publishedScore: fromCandidate?.score,
+                morphIsDefault: fromCandidate !== undefined,
+              }
+            : null,
+        );
       } else {
         setCalcSeed(null);
       }

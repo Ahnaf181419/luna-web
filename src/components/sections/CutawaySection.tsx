@@ -1,35 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layers, Radio } from 'lucide-react';
 import { StratigraphyOverlay } from '@/components/lunar/StratigraphyOverlay';
-
-const STRATA = [
-  {
-    title: '1. Surface regolith blanket',
-    depth: 'Depth ~5–15 m',
-    tone: 'text-foreground',
-    body: 'Fine impact ejecta dust and micro-breccia with high dielectric loss tangent, dampening superficial radar reflections.',
-  },
-  {
-    title: '2. Vertical skylight pit drop',
-    depth: '−105 m depth',
-    tone: 'text-radar',
-    body: 'Vertical collapse entrance created when molten lava evacuated the conduit, leaving an unreinforced basalt ceiling segment that subsequently breached.',
-  },
-  {
-    title: '3. Intact subterranean conduit',
-    depth: 'Span ~80 m',
-    tone: 'text-primary',
-    body: 'Hollow, continuous basalt conduit. Natural thermal equilibrium maintains a steady −20°C shielded from surface diurnal swings (−130°C to +120°C).',
-  },
-  {
-    title: '4. Talus collapse mound',
-    depth: 'Debris cone',
-    tone: 'text-muted-foreground',
-    body: 'Fallen basalt ceiling blocks forming a boulder cone on the tube floor directly beneath the skylight rim.',
-  },
-];
+import { CANDIDATES } from '@/lib/lunarvoid-data';
 
 export const CutawaySection: React.FC = () => {
+  const [candidateId, setCandidateId] = useState<string>('ANCHOR');
+  const candidate =
+    candidateId === 'ANCHOR' ? null : CANDIDATES.find((c) => c.id === candidateId) ?? null;
+  const depth = candidate?.depthMeters ?? 105;
+  const span = candidate?.spanMeters ?? 80;
+
+  const STRATA = [
+    {
+      title: '1. Surface regolith blanket',
+      depth: 'Depth ~5–15 m',
+      tone: 'text-foreground',
+      body: 'Fine impact ejecta dust and micro-breccia with high dielectric loss tangent, dampening superficial radar reflections.',
+    },
+    {
+      title: '2. Vertical skylight pit drop',
+      depth: `−${depth} m depth`,
+      tone: 'text-radar',
+      body: 'Vertical collapse entrance created when molten lava evacuated the conduit, leaving an unreinforced basalt ceiling segment that subsequently breached.',
+    },
+    {
+      title: '3. Intact subterranean conduit',
+      depth: `Span ~${span} m`,
+      tone: 'text-primary',
+      body: 'Hollow, continuous basalt conduit. Natural thermal equilibrium maintains a steady −20°C shielded from surface diurnal swings (−130°C to +120°C).',
+    },
+    {
+      title: '4. Talus collapse mound',
+      depth: 'Debris cone',
+      tone: 'text-muted-foreground',
+      body: 'Fallen basalt ceiling blocks forming a boulder cone on the tube floor directly beneath the skylight rim.',
+    },
+  ];
+
   return (
     <section className="space-y-6">
       {/* Header */}
@@ -49,10 +56,32 @@ export const CutawaySection: React.FC = () => {
         </p>
       </div>
 
+      {/* Geometry source selector: TRANQ anchor or any published candidate */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="collar-ribbon mr-1 text-[10px]">GEOMETRY SOURCE:</span>
+        {['ANCHOR', ...CANDIDATES.map((c) => c.id)].map((id) => {
+          const isSelected = (candidate?.id ?? 'ANCHOR') === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setCandidateId(id)}
+              className={`rounded-[2px] border px-2.5 py-1 font-mono text-[10px] tracking-widest transition-all ${
+                isSelected
+                  ? 'border-primary/80 bg-primary/20 text-primary font-bold'
+                  : 'border-border/70 bg-surface/50 text-muted-foreground hover:border-border hover:text-foreground'
+              }`}
+            >
+              {id}
+            </button>
+          );
+        })}
+      </div>
+
       {/* 3D cutaway + stratigraphy legend */}
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7">
-          <StratigraphyOverlay />
+          <StratigraphyOverlay candidate={candidate} />
           <div className="flex items-center justify-between px-1 pt-3 font-mono text-[10px] text-muted-foreground">
             <span>● Interactive WebGL model · drag to orbit</span>
             <span>1/6 g lunar basalt mechanics</span>

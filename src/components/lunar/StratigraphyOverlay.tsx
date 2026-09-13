@@ -1,12 +1,17 @@
 import { lazy, Suspense, type ComponentType } from "react";
+import type { Candidate } from "@/lib/lunarvoid-data";
 
-const TubeCutaway = lazy(() => import("./TubeCutaway")) as ComponentType;
+const TubeCutaway = lazy(() => import("./TubeCutaway")) as ComponentType<{
+  depthMeters?: number;
+  spanMeters?: number;
+}>;
 
 /**
  * Cutaway instrument: source's 3D cross-section with target's stratigraphy
  * badges overlaid on the right edge (surface / skylight / conduit depths).
+ * Optionally driven by a candidate's own depth/span geometry.
  */
-export function StratigraphyOverlay() {
+export function StratigraphyOverlay({ candidate }: { candidate?: Candidate | null }) {
   return (
     <div className="relative h-[460px] w-full sm:h-[560px]">
       <Suspense
@@ -16,7 +21,10 @@ export function StratigraphyOverlay() {
           </div>
         }
       >
-        <TubeCutaway />
+        <TubeCutaway
+          depthMeters={candidate?.depthMeters ?? 105}
+          spanMeters={candidate?.spanMeters ?? 80}
+        />
       </Suspense>
 
       {/* Geological layer badges positioned below the top controls bar */}
@@ -25,10 +33,10 @@ export function StratigraphyOverlay() {
           ● Surface regolith (~5–15 m)
         </div>
         <div className="rounded border border-radar/40 bg-background/80 px-2 py-0.5 text-radar backdrop-blur-md">
-          ● Vertical pit skylight (−105 m)
+          ● Vertical pit skylight (−{candidate?.depthMeters ?? 105} m)
         </div>
         <div className="rounded border border-primary/40 bg-background/80 px-2 py-0.5 text-primary backdrop-blur-md">
-          ● Intact basalt conduit (span ~80 m)
+          ● Intact basalt conduit (span ~{candidate?.spanMeters ?? 80} m)
         </div>
       </div>
     </div>
