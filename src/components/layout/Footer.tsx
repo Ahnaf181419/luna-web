@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Copy, Check, ShieldCheck, ExternalLink } from 'lucide-react';
+import { Copy, Check, ShieldCheck, ExternalLink, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const Footer: React.FC = () => {
   const [copiedBib, setCopiedBib] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
   const resetTimer = React.useRef<number | undefined>(undefined);
 
   React.useEffect(() => () => window.clearTimeout(resetTimer.current), []);
@@ -16,11 +17,19 @@ export const Footer: React.FC = () => {
   note={Gate G2 Reproducibility Milestone, 257 Candidate Catalog}
 }`;
 
-  const copyBibtex = () => {
-    navigator.clipboard.writeText(bibtex);
-    setCopiedBib(true);
-    window.clearTimeout(resetTimer.current);
-    resetTimer.current = window.setTimeout(() => setCopiedBib(false), 2000);
+  const copyBibtex = async () => {
+    setCopyFailed(false);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
+      await navigator.clipboard.writeText(bibtex);
+      setCopiedBib(true);
+      window.clearTimeout(resetTimer.current);
+      resetTimer.current = window.setTimeout(() => setCopiedBib(false), 2000);
+    } catch {
+      setCopyFailed(true);
+      window.clearTimeout(resetTimer.current);
+      resetTimer.current = window.setTimeout(() => setCopyFailed(false), 2500);
+    }
   };
 
   return (
@@ -59,14 +68,17 @@ export const Footer: React.FC = () => {
                 onClick={copyBibtex}
                 variant="outline"
                 size="sm"
+                type="button"
                 className="h-6 px-2 font-mono text-[9px] rounded-[2px]"
               >
-                {copiedBib ? (
+                {copyFailed ? (
+                  <X className="h-3 w-3 text-destructive" />
+                ) : copiedBib ? (
                   <Check className="h-3 w-3 text-success" />
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}
-                <span>{copiedBib ? 'COPIED' : 'COPY BIBTEX'}</span>
+                <span>{copyFailed ? 'COPY FAILED' : copiedBib ? 'COPIED' : 'COPY BIBTEX'}</span>
               </Button>
             </div>
             <pre className="overflow-x-auto rounded-[2px] border border-border/80 bg-card/60 p-3.5 font-mono text-[10px] leading-relaxed text-foreground/80">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Layers, GitBranch, Cpu, Compass, ArrowRight } from 'lucide-react';
+import { BookOpen, Layers, GitBranch, Cpu, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface MOCItem {
@@ -146,10 +146,9 @@ export const KnowledgeVaultSection: React.FC = () => {
             {activeMoc.keyConcepts.map((concept) => (
               <div
                 key={concept}
-                className="group flex cursor-pointer items-center justify-between rounded-[2px] border border-border/70 bg-surface/60 p-3 transition-colors hover:border-accent/50 hover:bg-surface/90"
+                className="flex items-center justify-between rounded-[2px] border border-border/70 bg-surface/60 p-3"
               >
-                <span className="text-foreground/80 group-hover:text-foreground text-xs">[[{concept}]]</span>
-                <ArrowRight className="h-3 w-3 text-muted-foreground transition group-hover:text-accent" />
+                <span className="text-foreground/80 text-xs">[[{concept}]]</span>
               </div>
             ))}
           </div>

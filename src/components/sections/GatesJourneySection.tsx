@@ -105,9 +105,11 @@ export const GatesJourneySection: React.FC = () => {
               key={gate.id}
               className={`workbench-panel overflow-hidden ${isDraft ? 'border-primary/60' : ''}`}
             >
-              <div
+              <button
+                type="button"
+                aria-expanded={isExpanded}
                 onClick={() => setExpandedGate(isExpanded ? '' : gate.id)}
-                className="flex cursor-pointer items-center justify-between p-5 transition-colors hover:bg-surface/40"
+                className="flex w-full cursor-pointer items-center justify-between p-5 text-left transition-colors hover:bg-surface/40"
               >
                 <div className="flex items-center gap-4">
                   <div
@@ -152,7 +154,7 @@ export const GatesJourneySection: React.FC = () => {
                 <div className="text-muted-foreground">
                   {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </div>
-              </div>
+              </button>
 
               {isExpanded && (
                 <div className="space-y-4 border-t border-border bg-background/40 px-5 pb-5 pt-4">
