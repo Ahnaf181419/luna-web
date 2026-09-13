@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TRANSECT_LENGTH, buildTransectPoints } from '@/lib/chart-math';
+import { TRANSECT_LENGTH, buildTransectPoints, toPolylinePath } from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface ElevationProfileChartProps {
@@ -37,11 +37,9 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
   const scaleX = (x: number) => padLeft + (x / totalLength) * plotWidth;
   const scaleY = (z: number) => padTop + ((maxZ - z) / (maxZ - minZ)) * plotHeight;
 
-  const pathD = points.reduce((acc, p, idx) => {
-    const sx = scaleX(p.x).toFixed(1);
-    const sy = scaleY(p.z).toFixed(1);
-    return idx === 0 ? `M ${sx} ${sy}` : `${acc} L ${sx} ${sy}`;
-  }, '');
+  const pathD = toPolylinePath(
+    points.map((p) => ({ x: scaleX(p.x).toFixed(1), y: scaleY(p.z).toFixed(1) })),
+  );
 
   const firstPoint = points[0];
   const lastPoint = points[points.length - 1];

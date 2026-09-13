@@ -57,6 +57,14 @@ export function buildPdfCurve(score: number, width: number, height: number, step
   return { d, fill: `${d} L ${width} ${height} L 0 ${height} Z` };
 }
 
+/* ------------------------------ polyline ---------------------------------- */
+
+export function toPolylinePath(points: Array<{ x: number | string; y: number | string }>): string {
+  return points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
+    .join(' ');
+}
+
 /* ------------------------------ transect ---------------------------------- */
 
 export const TRANSECT_LENGTH = 260;

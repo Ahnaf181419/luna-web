@@ -2,7 +2,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls, Stars } from "@react-three/drei";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { SITES, type SiteId } from "@/lib/lunarvoid-data";
+import { formatCoord, SITES, type SiteId } from "@/lib/lunarvoid-data";
 import { Button } from "@/components/ui/button";
 
 const RADIUS = 2;
@@ -30,9 +30,7 @@ function vec3ToLatLon(v: THREE.Vector3) {
 }
 
 function formatCursorCoord(lat: number, lon: number) {
-  const ns = lat >= 0 ? "N" : "S";
-  const ew = lon >= 0 ? "E" : "W";
-  return `${Math.abs(lat).toFixed(2)}°${ns} ${Math.abs(lon).toFixed(2)}°${ew}`;
+  return formatCoord(lat, lon, " ");
 }
 
 /** Module-scope marker data — stable Vector3 identity so Marker memos hold. */

@@ -6,7 +6,34 @@ import {
   buildTransectPoints,
   getRadarCoordinates,
   radarAxisValues,
+  toPolylinePath,
 } from '@/lib/chart-math'
+import { formatCoord } from '@/lib/lunarvoid-data'
+
+describe('toPolylinePath', () => {
+  it('builds an SVG path from points', () => {
+    expect(toPolylinePath([{ x: 0, y: 1 }, { x: 2, y: 3 }])).toBe('M 0 1 L 2 3')
+  })
+
+  it('returns an empty string for no points', () => {
+    expect(toPolylinePath([])).toBe('')
+  })
+})
+
+describe('formatCoord', () => {
+  it('formats with comma separator by default', () => {
+    expect(formatCoord(8.33, 33.22)).toBe('8.33°N, 33.22°E')
+  })
+
+  it('supports a custom separator (globe cursor readout)', () => {
+    expect(formatCoord(8.33, 33.22, ' ')).toBe('8.33°N 33.22°E')
+  })
+
+  it('maps negatives to S/W', () => {
+    expect(formatCoord(-14.09, 303.23)).toContain('°S,')
+    expect(formatCoord(-14.09, -30)).toContain('°W')
+  })
+})
 
 describe('radarAxisValues', () => {
   it('keeps every axis within its clamp floor and 1.0', () => {

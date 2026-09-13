@@ -1,3 +1,4 @@
+import { SitePills } from '@/components/instruments/SitePills';
 import React from 'react';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { GlobeClient } from '@/components/lunar/Client3D';
@@ -34,31 +35,13 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
       </div>
 
       {/* Site quick switcher pills */}
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="collar-ribbon text-[10px] mr-1">SELECT TARGET:</span>
-        {SITES.map((site) => {
-          const isSelected = selectedSite.id === site.id;
-          return (
-            <button
-              key={site.id}
-              onClick={() => onSelectSite(site.id)}
-              className={`flex items-center gap-1.5 rounded-[2px] border px-2.5 py-1 font-mono text-[10px] tracking-widest transition-all ${
-                isSelected
-                  ? 'border-primary/80 bg-primary/20 text-primary font-bold'
-                  : 'border-border/70 bg-surface/50 text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
-            >
-              {site.primaryAnchor && (
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
-              )}
-              <span>{site.id}</span>
-              <span className="hidden text-[9px] text-muted-foreground sm:inline">
-                [{site.candidateCount}]
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      <SitePills
+        label="SELECT TARGET:"
+        selectedId={selectedSite.id}
+        onSelect={(id) => {
+          if (id !== 'ALL') onSelectSite(id);
+        }}
+      />
 
       {/* Split screen: globe + dossier */}
       <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1.35fr_1fr]">

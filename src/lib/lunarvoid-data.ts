@@ -40,10 +40,10 @@ export interface Site {
   description: string;
 }
 
-function formatCoord(lat: number, lon: number) {
+export function formatCoord(lat: number, lon: number, sep = ", ") {
   const ns = lat >= 0 ? "N" : "S";
   const ew = lon >= 0 ? "E" : "W";
-  return `${Math.abs(lat).toFixed(2)}°${ns}, ${Math.abs(lon).toFixed(2)}°${ew}`;
+  return `${Math.abs(lat).toFixed(2)}°${ns}${sep}${Math.abs(lon).toFixed(2)}°${ew}`;
 }
 
 export const SITES: Site[] = [

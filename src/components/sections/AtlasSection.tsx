@@ -1,3 +1,4 @@
+import { SitePills } from '@/components/instruments/SitePills';
 import React, { useMemo, useState } from 'react';
 import { Search, Binoculars } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +23,6 @@ import {
 import {
   CANDIDATES,
   CATALOG_SIZE,
-  SITES,
   STATUS_TONE,
   siteById,
   type Candidate,
@@ -104,22 +104,13 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
           </Select>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 pt-1">
-          <span className="collar-ribbon text-[9px] mr-1">FILTER TARGET:</span>
-          {(['ALL', ...SITES.map((s) => s.id)] as const).map((id) => (
-            <button
-              key={id}
-              onClick={() => onSetSiteFilter(id)}
-              className={`rounded-[2px] border px-2.5 py-1 font-mono text-[10px] tracking-widest transition-all ${
-                siteFilter === id
-                  ? 'border-primary/80 bg-primary/20 text-primary font-bold'
-                  : 'border-border/70 bg-surface/50 text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
-            >
-              {id}
-            </button>
-          ))}
-        </div>
+        <SitePills
+          label="FILTER TARGET:"
+          labelClassName="collar-ribbon text-[9px] mr-1"
+          selectedId={siteFilter}
+          onSelect={onSetSiteFilter}
+          includeAll
+        />
       </div>
 
       {/* Data table */}
