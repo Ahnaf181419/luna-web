@@ -1,14 +1,15 @@
 import React from 'react';
 import { ArrowRight, GitBranch, Compass, BookOpen, Layers, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DOSSIER_COUNT, MOCS } from '@/lib/knowledge';
 
-const MOC_SUMMARY = [
-  { icon: GitBranch, title: 'Gates & decisions', notes: 14 },
-  { icon: Compass, title: 'Sites & candidates', notes: 28 },
-  { icon: BookOpen, title: 'Concepts & methods', notes: 22 },
-  { icon: Layers, title: 'Data & code', notes: 19 },
-  { icon: Cpu, title: 'Sessions & ops', notes: 24 },
-];
+const MOC_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  'moc-gates': GitBranch,
+  'moc-sites': Compass,
+  'moc-concepts': BookOpen,
+  'moc-data': Layers,
+  'moc-sessions': Cpu,
+};
 
 interface KnowledgePreviewSectionProps {
   onOpenKnowledge: () => void;
@@ -23,7 +24,7 @@ export const KnowledgePreviewSection: React.FC<KnowledgePreviewSectionProps> = (
         <div>
           <p className="label-mono">Obsidian knowledge vault</p>
           <h3 className="mt-1 text-lg font-semibold text-foreground">
-            Maps of content — 107 atomic notes
+            Maps of content — {DOSSIER_COUNT} curated concept dossiers
           </h3>
         </div>
         <Button onClick={onOpenKnowledge} variant="outline" size="sm" className="font-mono text-[11px]">
@@ -33,17 +34,24 @@ export const KnowledgePreviewSection: React.FC<KnowledgePreviewSectionProps> = (
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {MOC_SUMMARY.map((moc) => (
-          <button
-            key={moc.title}
-            onClick={onOpenKnowledge}
-            className="space-y-2 rounded-md border border-border bg-surface/60 p-3 text-left transition-colors hover:border-primary/40"
-          >
-            <moc.icon className="h-4 w-4 text-accent" />
-            <div className="font-mono text-xs font-semibold text-foreground">{moc.title}</div>
-            <div className="label-mono">{moc.notes} atomic notes</div>
-          </button>
-        ))}
+        {MOCS.map((moc) => {
+          const Icon = MOC_ICONS[moc.id] ?? BookOpen;
+          return (
+            <button
+              key={moc.id}
+              onClick={onOpenKnowledge}
+              className="space-y-2 rounded-md border border-border bg-surface/60 p-3 text-left transition-colors hover:border-primary/40"
+            >
+              <div className="flex items-center justify-between">
+                <Icon className="h-4 w-4 text-accent" />
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  {Object.keys(moc.dossiers).length} dossiers
+                </span>
+              </div>
+              <p className="text-xs font-medium text-foreground">{moc.shortTitle}</p>
+            </button>
+          );
+        })}
       </div>
     </section>
   );

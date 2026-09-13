@@ -1,72 +1,29 @@
 import React, { useState } from 'react';
-import { BookOpen, Layers, GitBranch, Cpu, Compass } from 'lucide-react';
+import { BookOpen, Layers, GitBranch, Cpu, Compass, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-interface MOCItem {
-  id: string;
-  title: string;
-  category: string;
-  icon: React.FC<{ className?: string }>;
-  notesCount: number;
-  summary: string;
-  keyConcepts: string[];
-}
+import { DOSSIER_COUNT, MOCS, dossierFor } from '@/lib/knowledge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
-const MOCS: MOCItem[] = [
-  {
-    id: 'moc-gates',
-    title: 'MOC Gates & Decisions',
-    category: 'Governance & Criteria',
-    icon: GitBranch,
-    notesCount: 14,
-    summary:
-      'Decision logs D1/D2, gate specifications G0′/G1/G2, and the 27-item visual inspection backlog triage protocol.',
-    keyConcepts: ['Gate G2 Criteria', 'Decision D1: Stereo Baseline', 'Visual Backlog Triage', 'AX52 Burst Scope'],
-  },
-  {
-    id: 'moc-sites',
-    title: 'MOC Sites & Candidates',
-    category: 'Planetary Geology',
-    icon: Compass,
-    notesCount: 28,
-    summary:
-      '21 LROC NAC DTM target dossiers, candidate registry coordinates, morphological feature classification, and false-positive clustering.',
-    keyConcepts: ['TRANQPIT1 Anchor', 'Marius Hills Rille System', 'Mare Ingenii Swirl', 'Philolaus Polar Pit'],
-  },
-  {
-    id: 'moc-concepts',
-    title: 'MOC Concepts & Methods',
-    category: 'Epistemology & Theory',
-    icon: BookOpen,
-    notesCount: 22,
-    summary:
-      'Epistemic calibration context, Bayesian evidence combination, beam deflection structural mechanics, and observational bias mitigation.',
-    keyConcepts: ['Calibration-Context FP', 'I14 Morphometric Funnel', 'LOLA Track Density Bias', 'Basalt Tensile Limits'],
-  },
-  {
-    id: 'moc-data',
-    title: 'MOC Data & Code',
-    category: 'Pipeline & Artifacts',
-    icon: Layers,
-    notesCount: 19,
-    summary:
-      'Dataset manifests, USGS ISIS3 stereo ingestion, ASP DTM point-cloud generation scripts, and reproducible smoke tests.',
-    keyConcepts: ['ISIS3 Ingestion', 'NASA Ames Stereo Pipeline', 'SLDEM2015 Normalization', 'Mini-RF CPR Extraction'],
-  },
-  {
-    id: 'moc-sessions',
-    title: 'MOC Sessions & Ops',
-    category: 'Research History',
-    icon: Cpu,
-    notesCount: 24,
-    summary:
-      'Complete record of all 24 research sessions from repository initialization through Gate G2 review, paired with the budget ledger.',
-    keyConcepts: ['24 Session Logs', 'Zero-Spend Compliance', 'Tier-0 Workstation Setup', 'Master Plan v5 Synthesis'],
-  },
-];
+const MOC_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  'moc-gates': GitBranch,
+  'moc-sites': Compass,
+  'moc-concepts': BookOpen,
+  'moc-data': Layers,
+  'moc-sessions': Cpu,
+};
 
 export const KnowledgeVaultSection: React.FC = () => {
-  const [activeMoc, setActiveMoc] = useState<MOCItem>(MOCS[0]!);
+  const [activeMoc, setActiveMoc] = useState(MOCS[0]!);
+  const [openConcept, setOpenConcept] = useState<string | null>(null);
+
+  const dossier = openConcept ? dossierFor(activeMoc.id, openConcept) : undefined;
 
   return (
     <section className="space-y-6">
@@ -89,7 +46,7 @@ export const KnowledgeVaultSection: React.FC = () => {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {MOCS.map((moc) => {
           const isSelected = activeMoc.id === moc.id;
-          const Icon = moc.icon;
+          const Icon = MOC_ICONS[moc.id] ?? BookOpen;
 
           return (
             <button
@@ -110,7 +67,7 @@ export const KnowledgeVaultSection: React.FC = () => {
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <span className="rounded-[2px] bg-muted/70 px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
-                  {moc.notesCount} NOTES
+                  {Object.keys(moc.dossiers).length} DOSSIERS
                 </span>
               </div>
 
@@ -141,19 +98,80 @@ export const KnowledgeVaultSection: React.FC = () => {
         </div>
 
         <div className="space-y-2.5">
-          <span className="collar-ribbon text-[9px]">FIRST-CLASS WIKI GRAPH NODES & CORE ATOMIC REFERENCES</span>
+          <span className="collar-ribbon text-[9px]">
+            WIKI GRAPH NODES · {DOSSIER_COUNT} CURATED CONCEPT DOSSIERS
+          </span>
           <div className="grid grid-cols-1 gap-2.5 font-mono text-xs sm:grid-cols-2">
-            {activeMoc.keyConcepts.map((concept) => (
-              <div
-                key={concept}
-                className="flex items-center justify-between rounded-[2px] border border-border/70 bg-surface/60 p-3"
-              >
-                <span className="text-foreground/80 text-xs">[[{concept}]]</span>
-              </div>
-            ))}
+            {activeMoc.keyConcepts.map((concept) => {
+              const hasDossier = !!activeMoc.dossiers[concept];
+              return hasDossier ? (
+                <button
+                  key={concept}
+                  type="button"
+                  onClick={() => setOpenConcept(concept)}
+                  className="group flex items-center justify-between rounded-[2px] border border-border/70 bg-surface/60 p-3 text-left transition-colors hover:border-accent/50 hover:bg-surface/90"
+                >
+                  <span className="text-xs text-foreground/80 group-hover:text-foreground">
+                    [[{concept}]]
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-muted-foreground transition group-hover:text-accent" />
+                </button>
+              ) : (
+                <div
+                  key={concept}
+                  className="flex items-center justify-between rounded-[2px] border border-border/70 bg-surface/60 p-3"
+                >
+                  <span className="text-xs text-foreground/80">[[{concept}]]</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
+
+      <Dialog open={!!dossier} onOpenChange={(o) => !o && setOpenConcept(null)}>
+        <DialogContent className="workbench-panel sm:max-w-md">
+          {dossier && (
+            <>
+              <DialogHeader>
+                <span className="collar-ribbon text-[9px]">CONCEPT DOSSIER</span>
+                <DialogTitle className="font-display text-left">
+                  {dossier.title}
+                </DialogTitle>
+              </DialogHeader>
+              <DialogDescription className="text-left font-sans text-xs leading-relaxed text-muted-foreground">
+                {dossier.summary}
+              </DialogDescription>
+              {dossier.related.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="collar-ribbon text-[9px]">RELATED NODES</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {dossier.related.map((ref) =>
+                      activeMoc.dossiers[ref] ? (
+                        <button
+                          key={ref}
+                          type="button"
+                          onClick={() => setOpenConcept(ref)}
+                          className="rounded-[2px] border border-border/70 bg-surface/60 px-2 py-1 font-mono text-[10px] text-muted-foreground transition-colors hover:border-accent/50 hover:text-foreground"
+                        >
+                          [[{ref}]]
+                        </button>
+                      ) : (
+                        <span
+                          key={ref}
+                          className="rounded-[2px] border border-border/70 bg-surface/40 px-2 py-1 font-mono text-[10px] text-muted-foreground"
+                        >
+                          [[{ref}]]
+                        </span>
+                      ),
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

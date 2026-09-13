@@ -18,6 +18,7 @@ import {
   type SiteId,
 } from '@/lib/lunarvoid-data';
 import type { TabId } from '@/App';
+import { DOSSIER_COUNT } from '@/lib/knowledge';
 
 export interface CommandPaletteProps {
   isOpen: boolean;
@@ -60,7 +61,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       value: 'knowledge',
       title: 'Knowledge',
-      subtitle: 'Obsidian vault — 5 MOCs, 107 atomic notes',
+      subtitle: `Obsidian vault — 5 MOCs, ${DOSSIER_COUNT} curated concept dossiers`,
     },
   ];
 
