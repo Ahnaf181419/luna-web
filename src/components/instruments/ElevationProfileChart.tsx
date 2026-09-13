@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TRANSECT_LENGTH, buildTransectPoints, toPolylinePath } from '@/lib/chart-math';
+import { TRANSECT_LENGTH, buildTransectPoints, toPolylinePath, type TransectPoint } from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface ElevationProfileChartProps {
@@ -43,6 +43,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
 
   const firstPoint = points[0];
   const lastPoint = points[points.length - 1];
+  if (!firstPoint || !lastPoint) return null;
   const fillD = `${pathD} L ${scaleX(lastPoint.x).toFixed(1)} ${scaleY(minZ).toFixed(1)} L ${scaleX(firstPoint.x).toFixed(1)} ${scaleY(minZ).toFixed(1)} Z`;
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -52,7 +53,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
     const normalizedRatio = (clampedX - padLeft) / plotWidth;
     const targetMeter = normalizedRatio * totalLength;
 
-    let closest = points[0];
+    let closest: TransectPoint | undefined;
     let minDiff = Infinity;
     points.forEach((p) => {
       const diff = Math.abs(p.x - targetMeter);
@@ -62,7 +63,7 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
       }
     });
 
-    setHoverPoint(closest);
+    if (closest) setHoverPoint(closest);
   };
 
   return (

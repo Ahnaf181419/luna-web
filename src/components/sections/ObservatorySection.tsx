@@ -4,7 +4,7 @@ import { ArrowRight, MapPin } from 'lucide-react';
 import { GlobeClient } from '@/components/lunar/Client3D';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SITES, siteById, type SiteId } from '@/lib/lunarvoid-data';
+import { FIRST_SITE, siteById, type SiteId } from '@/lib/lunarvoid-data';
 
 interface ObservatorySectionProps {
   activeSite: SiteId | null;
@@ -17,7 +17,7 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
   onSelectSite,
   onInspectInAtlas,
 }) => {
-  const selectedSite = activeSite ? siteById(activeSite) : SITES[0]!;
+  const selectedSite = activeSite ? siteById(activeSite) : FIRST_SITE;
 
   return (
     <section className="space-y-6">

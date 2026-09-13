@@ -156,11 +156,14 @@ export const SITES: Site[] = [
 
 const SITE_IDS = new Set<string>(SITES.map((s) => s.id));
 
+/** Statically non-empty (pinned by the smoke test asserting SITES.length === 8). */
+export const FIRST_SITE = SITES[0]!;
+
 export function isSiteId(value: string | null): value is SiteId {
   return value !== null && SITE_IDS.has(value);
 }
 
-export const siteById = (id: SiteId) => SITES.find((s) => s.id === id) ?? SITES[0]!;
+export const siteById = (id: SiteId) => SITES.find((s) => s.id === id) ?? FIRST_SITE;
 
 /** Total registry size across all 21 DTM targets (published working set is smaller). */
 export const CATALOG_SIZE = 257;
