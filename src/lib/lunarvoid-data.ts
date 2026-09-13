@@ -574,16 +574,6 @@ export const BUDGET_LEDGER: BudgetRecord[] = [
 
 /* ------------------------------ inference math ----------------------------- */
 
-/** Source's Bayesian-flavoured toy score used by the likelihood calculator. */
-export function inferenceScore(depthSpan: number, cpr: number, bouguer: number) {
-  const dsTerm = Math.min(1, Math.max(0, (depthSpan - 0.08) / 0.5));
-  const cprTerm = Math.min(1, Math.max(0, (cpr - 0.85) / 0.6));
-  const gravTerm = Math.min(1, Math.max(0, bouguer / 5));
-  const logit =
-    -2.6 + 2.5 * dsTerm + 2.4 * cprTerm + 2.0 * gravTerm + 0.9 * dsTerm * cprTerm;
-  return 1 / (1 + Math.exp(-logit));
-}
-
 /** Target's hand-tuned weighted fusion: morphometry 0.40, radar 0.35, gravity 0.25. */
 export function targetWeightedScore(
   morphRatio: number,
@@ -594,10 +584,6 @@ export function targetWeightedScore(
   const radarScore = Math.min(1.0, (radarCpr - 0.5) / 2.0) * 0.35;
   const gravScore = Math.min(1.0, Math.abs(bouguerDeficit) / 14.0) * 0.25;
   return Math.min(0.99, Math.max(0.05, morphScore + radarScore + gravScore));
-}
-
-export function falsePositiveBound(score: number) {
-  return 6.06 * Math.exp(-2.9 * (score - 0.5));
 }
 
 /** Target-style calibrated FP rate, per 10⁴ km². */
