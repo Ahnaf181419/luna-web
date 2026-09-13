@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 import {
   calibratedFpRate,
   targetWeightedScore,
@@ -7,6 +8,7 @@ import {
 } from "@/lib/lunarvoid-data";
 import { EvidenceRadarChart } from "@/components/instruments/EvidenceRadarChart";
 import { buildPdfCurve } from "@/lib/chart-math";
+import { Link2, RotateCcw } from "lucide-react";
 import { CHART } from "@/lib/chart-theme";
 
 const SVG_W = 420;
@@ -51,10 +53,45 @@ function Control({
   );
 }
 
-export function LikelihoodCalculator() {
-  const [morphRatio, setMorphRatio] = useState(0.85);
-  const [radarCpr, setRadarCpr] = useState(1.6);
-  const [bouguer, setBouguer] = useState(-8.0);
+export interface CalcSeed {
+  morphRatio: number;
+  radarCpr: number;
+  bouguer: number;
+  label?: string;
+  publishedScore?: number;
+  morphIsDefault?: boolean;
+}
+
+const DEFAULTS = { morphRatio: 0.85, radarCpr: 1.6, bouguer: -8.0 } as const;
+
+const clamp = (v: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, v));
+
+export function LikelihoodCalculator({
+  seed,
+  onReset,
+  onCopyScenario,
+}: {
+  seed?: CalcSeed;
+  onReset?: () => void;
+  onCopyScenario?: (m: number, c: number, b: number) => void;
+}) {
+  const [morphRatio, setMorphRatio] = useState(() =>
+    clamp(seed?.morphRatio ?? DEFAULTS.morphRatio, 0.1, 1.5),
+  );
+  const [radarCpr, setRadarCpr] = useState(() =>
+    clamp(seed?.radarCpr ?? DEFAULTS.radarCpr, 0.5, 3.0),
+  );
+  const [bouguer, setBouguer] = useState(() =>
+    clamp(seed?.bouguer ?? DEFAULTS.bouguer, -15, 0),
+  );
+
+  const reset = () => {
+    setMorphRatio(DEFAULTS.morphRatio);
+    setRadarCpr(DEFAULTS.radarCpr);
+    setBouguer(DEFAULTS.bouguer);
+    onReset?.();
+  };
 
   const score = useMemo(
     () => targetWeightedScore(morphRatio, radarCpr, bouguer),
@@ -80,6 +117,42 @@ export function LikelihoodCalculator() {
             Adjust the three empirical evidence sliders and watch the continuous posterior — and its
             calibrated false-positive cost — respond in real time.
           </p>
+          {seed?.label && (
+            <div className="label-mono mt-2 flex flex-wrap items-center gap-2 text-[10px]">
+              <span className="text-primary">SEEDED: {seed.label}</span>
+              {seed.publishedScore !== undefined && (
+                <span className="text-muted-foreground">
+                  Published (authored): {seed.publishedScore.toFixed(2)} · Fusion model:{" "}
+                  {score.toFixed(2)}
+                  {seed.morphIsDefault ? " · morph = default (registry lacks morphometry ratio)" : ""}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="mt-2 flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-6 rounded-[2px] font-mono text-[9px] tracking-widest"
+              onClick={reset}
+            >
+              <RotateCcw className="h-3 w-3" />
+              RESET
+            </Button>
+            {onCopyScenario && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-6 rounded-[2px] font-mono text-[9px] tracking-widest"
+                onClick={() => onCopyScenario(morphRatio, radarCpr, bouguer)}
+              >
+                <Link2 className="h-3 w-3" />
+                COPY SCENARIO LINK
+              </Button>
+            )}
+          </div>
         </div>
         <Control
           label="Morphometry depth-to-span ratio"

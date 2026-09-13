@@ -1,6 +1,12 @@
 import React from 'react';
 import { Camera, Radio, Globe, Compass } from 'lucide-react';
-import { LikelihoodCalculator } from '@/components/lunar/LikelihoodCalculator';
+import { LikelihoodCalculator, type CalcSeed } from '@/components/lunar/LikelihoodCalculator';
+
+interface TheorySectionProps {
+  calcSeed?: CalcSeed;
+  onCalcReset?: () => void;
+  onCopyScenario?: (m: number, c: number, b: number) => void;
+}
 
 const LAYERS = [
   {
@@ -29,7 +35,11 @@ const LAYERS = [
   },
 ];
 
-export const TheorySection: React.FC = () => {
+export const TheorySection: React.FC<TheorySectionProps> = ({
+  calcSeed,
+  onCalcReset,
+  onCopyScenario,
+}) => {
   return (
     <section className="space-y-8">
       {/* Header */}
@@ -65,7 +75,7 @@ export const TheorySection: React.FC = () => {
       </div>
 
       {/* Live Bayesian inference instrument */}
-      <LikelihoodCalculator />
+      <LikelihoodCalculator seed={calcSeed} onReset={onCalcReset} onCopyScenario={onCopyScenario} />
     </section>
   );
 };

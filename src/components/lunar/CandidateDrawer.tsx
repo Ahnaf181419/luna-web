@@ -6,6 +6,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { Calculator } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { siteById, STATUS_TONE, type Candidate } from "@/lib/lunarvoid-data";
 import { ElevationProfileChart } from "@/components/instruments/ElevationProfileChart";
@@ -37,9 +39,11 @@ function Layer({
 export function CandidateDrawer({
   candidate,
   onOpenChange,
+  onOpenInCalculator,
 }: {
   candidate: Candidate | null;
   onOpenChange: (open: boolean) => void;
+  onOpenInCalculator?: (candidate: Candidate) => void;
 }) {
   const site = candidate ? siteById(candidate.site) : null;
 
@@ -95,6 +99,19 @@ export function CandidateDrawer({
                 bouguerMGal={candidate.bouguerMGal}
                 depthMeters={candidate.depthMeters}
               />
+
+              {onOpenInCalculator && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-[2px] font-mono text-[10px] tracking-widest"
+                  onClick={() => onOpenInCalculator(candidate)}
+                >
+                  <Calculator className="h-3 w-3" />
+                  OPEN IN LIKELIHOOD CALCULATOR
+                </Button>
+              )}
 
               <div className="space-y-3">
                 <p className="label-mono">Evidence layers</p>

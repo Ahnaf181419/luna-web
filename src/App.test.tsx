@@ -69,4 +69,20 @@ describe('App URL deep-link state machine', () => {
     })
     expect(document.body.textContent).toContain('TRANQPIT1')
   })
+
+  it('seeds the calculator from ?m/&c/&b and shows both scores with ?src=', () => {
+    setUrl('/?tab=fusion&m=1.1&c=2.5&b=-12&src=CAND-MARIUS-001')
+    render(<App />)
+    const text = document.body.textContent ?? ''
+    expect(text).toContain('1.10')
+    expect(text).toContain('2.50')
+    expect(text).toContain('SEEDED: CAND-MARIUS-001')
+    expect(text).toContain('Published (authored):')
+    expect(text).toContain('Fusion model:')
+  })
+
+  it('survives garbage calculator params', () => {
+    setUrl('/?tab=fusion&m=abc')
+    expect(() => render(<App />)).not.toThrow()
+  })
 })

@@ -12,6 +12,7 @@ import { GatesJourneySection } from "./components/sections/GatesJourneySection";
 import { KnowledgePreviewSection } from "./components/sections/KnowledgePreviewSection";
 import { KnowledgeVaultSection } from "./components/sections/KnowledgeVaultSection";
 import { CandidateDrawer } from "./components/lunar/CandidateDrawer";
+import type { CalcSeed } from "./components/lunar/LikelihoodCalculator";
 import { CommandPalette } from "./components/instruments/CommandPalette";
 import { CANDIDATES, isSiteId, type Candidate, type SiteId } from "./lib/lunarvoid-data";
 import { downloadWorkingSet } from "./lib/registry-export";
@@ -54,6 +55,27 @@ export const App: React.FC = () => {
     return isSiteId(s) ? s : "ALL";
   });
 
+  const [calcSeed, setCalcSeed] = useState<CalcSeed | null>(() => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const m = Number(params.get("m"));
+    const c = Number(params.get("c"));
+    const b = Number(params.get("b"));
+    const src = params.get("src");
+    const fromCandidate = src ? CANDIDATES.find((x) => x.id === src) : undefined;
+    if ([m, c, b].every(Number.isFinite)) {
+      return {
+        morphRatio: m,
+        radarCpr: c,
+        bouguer: b,
+        label: fromCandidate?.id,
+        publishedScore: fromCandidate?.score,
+        morphIsDefault: fromCandidate !== undefined,
+      };
+    }
+    return null;
+  });
+
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // Sync state changes back to URL search params
@@ -62,11 +84,17 @@ export const App: React.FC = () => {
     if (tab !== "overview") params.set("tab", tab);
     if (activeSite && activeSite !== "TRANQPIT1") params.set("site", activeSite);
     if (selected) params.set("candidate", selected.id);
+    if (calcSeed) {
+      params.set("m", String(calcSeed.morphRatio));
+      params.set("c", String(calcSeed.radarCpr));
+      params.set("b", String(calcSeed.bouguer));
+      if (calcSeed.label) params.set("src", calcSeed.label);
+    }
 
     const newQuery = params.toString();
     const newUrl = newQuery ? `${window.location.pathname}?${newQuery}` : window.location.pathname;
     window.history.replaceState({}, "", newUrl);
-  }, [tab, activeSite, selected]);
+  }, [tab, activeSite, selected, calcSeed]);
 
   // Handle browser back/forward buttons
   useEffect(() => {
@@ -92,6 +120,23 @@ export const App: React.FC = () => {
         if (found) setSelected(found);
       } else {
         setSelected(null);
+      }
+      const m = Number(params.get("m"));
+      const c = Number(params.get("c"));
+      const b = Number(params.get("b"));
+      const src = params.get("src");
+      const fromCandidate = src ? CANDIDATES.find((x) => x.id === src) : undefined;
+      if ([m, c, b].every(Number.isFinite)) {
+        setCalcSeed({
+          morphRatio: m,
+          radarCpr: c,
+          bouguer: b,
+          label: fromCandidate?.id,
+          publishedScore: fromCandidate?.score,
+          morphIsDefault: fromCandidate !== undefined,
+        });
+      } else {
+        setCalcSeed(null);
       }
     };
     window.addEventListener("popstate", handlePopState);
@@ -127,6 +172,29 @@ export const App: React.FC = () => {
     setActiveSite(c.site);
   }
 
+  function seedCalculatorFromCandidate(c: Candidate) {
+    setSelected(null);
+    setTab("fusion");
+    setCalcSeed({
+      morphRatio: 0.85,
+      radarCpr: c.cprRatio,
+      bouguer: c.bouguerMGal,
+      label: c.id,
+      publishedScore: c.score,
+      morphIsDefault: true,
+    });
+  }
+
+  async function copyScenarioLink(m: number, c: number, b: number) {
+    const url = `${window.location.origin}${window.location.pathname}?tab=fusion&m=${m}&c=${c}&b=${b}`;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Non-fatal: the URL is also reflected in the address bar via the sync effect.
+    }
+  }
+
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as TabId)} className="min-h-screen gap-0">
       {/* ---------------------------- header / status --------------------------- */}
@@ -156,7 +224,11 @@ export const App: React.FC = () => {
         {/* -------------------------------- fusion ----------------------------- */}
         <TabsContent value="fusion" className="space-y-8">
           <CutawaySection />
-          <TheorySection />
+          <TheorySection
+            calcSeed={calcSeed ?? undefined}
+            onCalcReset={() => setCalcSeed(null)}
+            onCopyScenario={copyScenarioLink}
+          />
         </TabsContent>
 
         {/* -------------------------------- gates ------------------------------ */}
@@ -174,6 +246,7 @@ export const App: React.FC = () => {
       <CandidateDrawer
         candidate={selected}
         onOpenChange={(o) => !o && setSelected(null)}
+        onOpenInCalculator={seedCalculatorFromCandidate}
       />
 
       <Footer />
