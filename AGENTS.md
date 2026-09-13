@@ -2,7 +2,7 @@
 
 Working agreements for AI coding agents in this repo. Human-readable context:
 `README.md`, as-built architecture: `docs/architecture_and_design_plan.md`,
-active improvement roadmap: `plans/README.md`.
+roadmap/status/lessons: `docs/ROADMAP.md`.
 
 ## Commands
 
