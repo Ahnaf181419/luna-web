@@ -20,7 +20,7 @@ export const Footer: React.FC = () => {
   const copyBibtex = async () => {
     setCopyFailed(false);
     try {
-      if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
+      if (!navigator.clipboard?.writeText) throw new Error('clipboard unavailable');
       await navigator.clipboard.writeText(bibtex);
       setCopiedBib(true);
       window.clearTimeout(resetTimer.current);
@@ -43,9 +43,9 @@ export const Footer: React.FC = () => {
               <span>LUNARVOID OPEN RESEARCH INITIATIVE</span>
             </div>
             <p className="font-sans text-xs leading-relaxed text-muted-foreground">
-              This research portal documents the complete empirical pipeline, Bayesian
-              inference mathematics, candidate registry, and milestone gate evidence for
-              inferring subsurface basaltic conduits beneath the lunar mare.
+              This research portal documents the complete empirical pipeline, Bayesian inference
+              mathematics, candidate registry, and milestone gate evidence for inferring subsurface
+              basaltic conduits beneath the lunar mare.
             </p>
             <div className="workbench-panel space-y-1.5 p-3.5 rounded-[2px]">
               <div className="collar-ribbon text-[9px] text-warning">
@@ -53,10 +53,10 @@ export const Footer: React.FC = () => {
                 <span>EPISTEMIC GOVERNANCE NOTICE</span>
               </div>
               <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
-                Nothing subsurface on the Moon is verifiable today except the
-                radar-evidenced Tranquillitatis conduit. All candidates cataloged here
-                represent calibrated log-likelihood inferences anchored in terrestrial
-                basalt geomechanics, with published false positive rates per 10⁴ km².
+                Nothing subsurface on the Moon is verifiable today except the radar-evidenced
+                Tranquillitatis conduit. All candidates cataloged here represent calibrated
+                log-likelihood inferences anchored in terrestrial basalt geomechanics, with
+                published false positive rates per 10⁴ km².
               </p>
             </div>
           </div>

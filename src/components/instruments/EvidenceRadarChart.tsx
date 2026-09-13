@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  RADAR_SIZE,
-  getRadarCoordinates,
-  radarAxisValues,
-} from '@/lib/chart-math';
+import { RADAR_SIZE, getRadarCoordinates, radarAxisValues } from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface EvidenceRadarChartProps {
@@ -52,7 +48,6 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-1">
-
         <div className="relative w-48 h-48 shrink-0">
           <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
             {[0.25, 0.5, 0.75, 1.0].map((ringLevel, rIdx) => {
@@ -116,7 +111,10 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
 
         <div className="space-y-1.5 text-[11px] w-full">
           {axes.map((ax, idx) => (
-            <div key={idx} className="flex items-center justify-between gap-2 bg-surface/60 px-2.5 py-1 rounded border border-border">
+            <div
+              key={idx}
+              className="flex items-center justify-between gap-2 bg-surface/60 px-2.5 py-1 rounded border border-border"
+            >
               <span className="text-muted-foreground text-[10px] truncate flex-1">{ax.label}</span>
               <span className="text-primary font-bold text-[10px] shrink-0">
                 {(ax.val * 100).toFixed(0)}%
@@ -124,7 +122,6 @@ export const EvidenceRadarChart: React.FC<EvidenceRadarChartProps> = ({
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );

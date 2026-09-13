@@ -1,8 +1,8 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
-import * as THREE from "three";
-import { Button } from "@/components/ui/button";
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Html, OrbitControls } from '@react-three/drei';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { Button } from '@/components/ui/button';
 
 const HALF_X = 6;
 const DEPTH = 6;
@@ -81,15 +81,11 @@ function SectionBlock({ geo }: { geo: CutawayGeometry }) {
 function Regolith({ geo }: { geo: CutawayGeometry }) {
   return (
     <group>
-      <mesh
-        position={[-(HALF_X + geo.SHAFT_HALF) / 2 - geo.SHAFT_HALF / 2, 0.11, -DEPTH / 2]}
-      >
+      <mesh position={[-(HALF_X + geo.SHAFT_HALF) / 2 - geo.SHAFT_HALF / 2, 0.11, -DEPTH / 2]}>
         <boxGeometry args={[HALF_X - geo.SHAFT_HALF, 0.22, DEPTH]} />
         <meshStandardMaterial color="#9a9184" roughness={1} />
       </mesh>
-      <mesh
-        position={[(HALF_X + geo.SHAFT_HALF) / 2 + geo.SHAFT_HALF / 2, 0.11, -DEPTH / 2]}
-      >
+      <mesh position={[(HALF_X + geo.SHAFT_HALF) / 2 + geo.SHAFT_HALF / 2, 0.11, -DEPTH / 2]}>
         <boxGeometry args={[HALF_X - geo.SHAFT_HALF, 0.22, DEPTH]} />
         <meshStandardMaterial color="#9a9184" roughness={1} />
       </mesh>
@@ -120,7 +116,12 @@ function Conduit({ geo }: { geo: CutawayGeometry }) {
         <coneGeometry args={[0.75, 0.55, 24]} />
         <meshStandardMaterial color="#7d756a" roughness={1} />
       </mesh>
-      <pointLight position={[0, geo.TUBE_Y + 0.4, -1.2]} intensity={16} distance={10} color="#cfe0ea" />
+      <pointLight
+        position={[0, geo.TUBE_Y + 0.4, -1.2]}
+        intensity={16}
+        distance={10}
+        color="#cfe0ea"
+      />
       <pointLight position={[-3.4, geo.TUBE_Y, -1.5]} intensity={9} distance={8} color="#b6c4cf" />
       <pointLight position={[3.4, geo.TUBE_Y, -1.5]} intensity={9} distance={8} color="#b6c4cf" />
     </group>
@@ -129,10 +130,7 @@ function Conduit({ geo }: { geo: CutawayGeometry }) {
 
 function RadarRays({ running, geo }: { running: boolean; geo: CutawayGeometry }) {
   const group = useRef<THREE.Group>(null);
-  const rays = useMemo(
-    () => [-4.2, -2.4, 2.4, 4.2].map((x, i) => ({ x, offset: i * 0.23 })),
-    [],
-  );
+  const rays = useMemo(() => [-4.2, -2.4, 2.4, 4.2].map((x, i) => ({ x, offset: i * 0.23 })), []);
   const t = useRef(0);
   const TOP = 4.6;
   const CEIL_Y = geo.CEIL_Y;
@@ -142,7 +140,8 @@ function RadarRays({ running, geo }: { running: boolean; geo: CutawayGeometry })
     t.current += Math.min(delta, 0.05) * 0.35;
     group.current.children.forEach((child, i) => {
       const p = (t.current + rays[i]!.offset) % 1;
-      const y = p < 0.5 ? TOP + (CEIL_Y - TOP) * (p / 0.5) : CEIL_Y + (TOP - CEIL_Y) * ((p - 0.5) / 0.5);
+      const y =
+        p < 0.5 ? TOP + (CEIL_Y - TOP) * (p / 0.5) : CEIL_Y + (TOP - CEIL_Y) * ((p - 0.5) / 0.5);
       child.position.y = y;
       const m = (child as THREE.Mesh).material as THREE.MeshBasicMaterial;
       m.opacity = p < 0.5 ? 1 : 0.45;
@@ -180,10 +179,10 @@ function RadarRays({ running, geo }: { running: boolean; geo: CutawayGeometry })
 
 function Labels({ geo }: { geo: CutawayGeometry }) {
   const items: Array<[string, [number, number, number]]> = [
-    ["Rimless skylight", [1.9, 0.55, 0.1]],
-    ["Ceiling reflector", [-4.0, geo.CEIL_Y + 0.42, 0.1]],
-    ["Basalt conduit", [3.4, geo.TUBE_Y, 0.1]],
-    ["Floor reflector", [-4.0, geo.FLOOR_Y - 0.42, 0.1]],
+    ['Rimless skylight', [1.9, 0.55, 0.1]],
+    ['Ceiling reflector', [-4.0, geo.CEIL_Y + 0.42, 0.1]],
+    ['Basalt conduit', [3.4, geo.TUBE_Y, 0.1]],
+    ['Floor reflector', [-4.0, geo.FLOOR_Y - 0.42, 0.1]],
   ];
   return (
     <>
@@ -206,19 +205,16 @@ export default function TubeCutaway({
   spanMeters?: number;
 }) {
   const [running, setRunning] = useState(true);
-  const geo = useMemo(
-    () => deriveGeometry(depthMeters, spanMeters),
-    [depthMeters, spanMeters],
-  );
+  const geo = useMemo(() => deriveGeometry(depthMeters, spanMeters), [depthMeters, spanMeters]);
 
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border border-border bg-background/60 sm:h-[560px]">
       <Canvas
         camera={{ position: [3.2, 1.6, 12.5], fov: 42 }}
         dpr={[1, 2]}
-        frameloop={running ? "always" : "demand"}
+        frameloop={running ? 'always' : 'demand'}
       >
-        <color attach="background" args={["#0c0e13"]} />
+        <color attach="background" args={['#0c0e13']} />
         <ambientLight intensity={0.5} />
         <directionalLight position={[6, 10, 12]} intensity={2.1} />
         <directionalLight position={[-8, 3, 6]} intensity={0.45} color="#8fd4e8" />
@@ -246,11 +242,11 @@ export default function TubeCutaway({
         </div>
         <Button
           size="sm"
-          variant={running ? "default" : "outline"}
+          variant={running ? 'default' : 'outline'}
           className="font-mono text-[11px]"
           onClick={() => setRunning((v) => !v)}
         >
-          {running ? "Sounding: ACTIVE" : "Sounding: PAUSED"}
+          {running ? 'Sounding: ACTIVE' : 'Sounding: PAUSED'}
         </Button>
       </div>
       <div className="label-mono pointer-events-none absolute inset-x-0 bottom-0 p-3 text-center">

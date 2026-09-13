@@ -71,7 +71,8 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
             Candidate Atlas & Morphometry Registry
           </h2>
           <p className="mt-1 font-sans text-xs text-muted-foreground">
-            {CATALOG_SIZE} indexed candidates; {CANDIDATES.length} published in this public working set.
+            {CATALOG_SIZE} indexed candidates; {CANDIDATES.length} published in this public working
+            set.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -97,7 +98,10 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               JSON
             </Button>
           </div>
-          <Badge variant="outline" className="rounded-[2px] font-mono text-[10px] tracking-widest border-primary/50 text-primary">
+          <Badge
+            variant="outline"
+            className="rounded-[2px] font-mono text-[10px] tracking-widest border-primary/50 text-primary"
+          >
             {filtered.length} / {CANDIDATES.length} ACTIVE
           </Badge>
         </div>

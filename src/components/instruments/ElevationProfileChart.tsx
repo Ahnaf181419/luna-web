@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { TRANSECT_LENGTH, buildTransectPoints, toPolylinePath, type TransectPoint } from '@/lib/chart-math';
+import {
+  TRANSECT_LENGTH,
+  buildTransectPoints,
+  toPolylinePath,
+  type TransectPoint,
+} from '@/lib/chart-math';
 import { CHART } from '@/lib/chart-theme';
 
 interface ElevationProfileChartProps {
@@ -15,7 +20,9 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
   candidateId,
   resolution,
 }) => {
-  const [hoverPoint, setHoverPoint] = useState<{ x: number; z: number; label: string } | null>(null);
+  const [hoverPoint, setHoverPoint] = useState<{ x: number; z: number; label: string } | null>(
+    null,
+  );
 
   const maxDepth = Math.max(25, depthMeters);
   const points = buildTransectPoints(depthMeters, spanMeters);
@@ -107,7 +114,13 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
             stroke={CHART.grid}
             strokeWidth="0.8"
           />
-          <text x={padLeft - 8} y={scaleY(-maxDepth / 2) + 3} fill={CHART.labelDim} fontSize="8" textAnchor="end">
+          <text
+            x={padLeft - 8}
+            y={scaleY(-maxDepth / 2) + 3}
+            fill={CHART.labelDim}
+            fontSize="8"
+            textAnchor="end"
+          >
             -{Math.round(maxDepth / 2)}m
           </text>
 
@@ -119,7 +132,13 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
             stroke={CHART.grid}
             strokeWidth="0.8"
           />
-          <text x={padLeft - 8} y={scaleY(-maxDepth) + 3} fill={CHART.labelDim} fontSize="8" textAnchor="end">
+          <text
+            x={padLeft - 8}
+            y={scaleY(-maxDepth) + 3}
+            fill={CHART.labelDim}
+            fontSize="8"
+            textAnchor="end"
+          >
             -{maxDepth}m
           </text>
 
@@ -127,7 +146,13 @@ export const ElevationProfileChart: React.FC<ElevationProfileChartProps> = ({
           <path d={fillD} fill={CHART.bedrockFill} />
 
           {/* Telemetry amber elevation profile */}
-          <path d={pathD} fill="none" stroke={CHART.primary} strokeWidth="2" strokeLinecap="round" />
+          <path
+            d={pathD}
+            fill="none"
+            stroke={CHART.primary}
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
 
           {hoverPoint && (
             <>

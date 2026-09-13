@@ -1,9 +1,9 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Html, OrbitControls, Stars } from "@react-three/drei";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import * as THREE from "three";
-import { formatCoord, SITES, type SiteId } from "@/lib/lunarvoid-data";
-import { Button } from "@/components/ui/button";
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Html, OrbitControls, Stars } from '@react-three/drei';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import * as THREE from 'three';
+import { formatCoord, SITES, type SiteId } from '@/lib/lunarvoid-data';
+import { Button } from '@/components/ui/button';
 
 const RADIUS = 2;
 
@@ -30,7 +30,7 @@ function vec3ToLatLon(v: THREE.Vector3) {
 }
 
 function formatCursorCoord(lat: number, lon: number) {
-  return formatCoord(lat, lon, " ");
+  return formatCoord(lat, lon, ' ');
 }
 
 /** Module-scope marker data — stable Vector3 identity so Marker memos hold. */
@@ -45,12 +45,12 @@ function useMoonTextures() {
   return useMemo(() => {
     const w = 1024;
     const h = 512;
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext('2d')!;
 
-    ctx.fillStyle = "#7e7a72";
+    ctx.fillStyle = '#7e7a72';
     ctx.fillRect(0, 0, w, h);
 
     // maria — darker basalt plains
@@ -65,8 +65,8 @@ function useMoonTextures() {
       const y = h * 0.18 + rnd() * h * 0.64;
       const r = 60 + rnd() * 190;
       const g = ctx.createRadialGradient(x, y, r * 0.1, x, y, r);
-      g.addColorStop(0, "rgba(58,56,54,0.85)");
-      g.addColorStop(1, "rgba(58,56,54,0)");
+      g.addColorStop(0, 'rgba(58,56,54,0.85)');
+      g.addColorStop(1, 'rgba(58,56,54,0)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -85,7 +85,7 @@ function useMoonTextures() {
       ctx.fill();
       ctx.beginPath();
       ctx.arc(x - r * 0.16, y - r * 0.16, r * 0.94, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(215,210,200,0.35)";
+      ctx.strokeStyle = 'rgba(215,210,200,0.35)';
       ctx.lineWidth = Math.max(0.6, r * 0.12);
       ctx.stroke();
     }
@@ -116,15 +116,14 @@ const Marker = memo(function Marker({
   const ringRef = useRef<THREE.Mesh>(null);
   const normal = useMemo(() => position.clone().normalize(), [position]);
   const quat = useMemo(
-    () =>
-      new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal),
+    () => new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal),
     [normal],
   );
 
   // Restore the page cursor if the marker unmounts while hovered.
   useEffect(
     () => () => {
-      document.body.style.cursor = "auto";
+      document.body.style.cursor = 'auto';
     },
     [],
   );
@@ -136,7 +135,7 @@ const Marker = memo(function Marker({
     ringRef.current.scale.setScalar(s);
   });
 
-  const color = active ? "#f0b34a" : hovered ? "#6fd0e6" : "#d7d2c6";
+  const color = active ? '#f0b34a' : hovered ? '#6fd0e6' : '#d7d2c6';
 
   return (
     <group
@@ -149,11 +148,11 @@ const Marker = memo(function Marker({
       onPointerOver={(e) => {
         e.stopPropagation();
         setHovered(true);
-        document.body.style.cursor = "pointer";
+        document.body.style.cursor = 'pointer';
       }}
       onPointerOut={() => {
         setHovered(false);
-        document.body.style.cursor = "auto";
+        document.body.style.cursor = 'auto';
       }}
     >
       <mesh position={[0, 0.13, 0]}>
@@ -272,13 +271,13 @@ export default function LunarGlobe({
   const readoutRef = useRef<HTMLDivElement>(null);
   const updateReadout = useCallback((coord: { lat: number; lon: number } | null) => {
     const el = readoutRef.current;
-    if (el) el.textContent = coord ? formatCursorCoord(coord.lat, coord.lon) : "—.—° —.—°";
+    if (el) el.textContent = coord ? formatCursorCoord(coord.lat, coord.lon) : '—.—° —.—°';
   }, []);
 
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border border-border bg-background/60 sm:h-[540px]">
       <Canvas camera={{ position: [0, 1.2, 6], fov: 45 }} dpr={[1, 2]}>
-        <color attach="background" args={["#0b0d12"]} />
+        <color attach="background" args={['#0b0d12']} />
         <ambientLight intensity={0.28} />
         <directionalLight position={[6, 4, 6]} intensity={2.1} />
         <directionalLight position={[-6, -2, -4]} intensity={0.25} color="#7fb6d9" />
@@ -304,11 +303,11 @@ export default function LunarGlobe({
         </div>
         <Button
           size="sm"
-          variant={autoRotate ? "default" : "outline"}
+          variant={autoRotate ? 'default' : 'outline'}
           className="pointer-events-auto font-mono text-[11px]"
           onClick={() => setAutoRotate((v) => !v)}
         >
-          {autoRotate ? "Auto-rotate: ON" : "Auto-rotate: OFF"}
+          {autoRotate ? 'Auto-rotate: ON' : 'Auto-rotate: OFF'}
         </Button>
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between p-3 gap-2">

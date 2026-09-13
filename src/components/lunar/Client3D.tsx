@@ -1,7 +1,7 @@
-import { Suspense, lazy, useSyncExternalStore, type ComponentType } from "react";
-import type { SiteId } from "@/lib/lunarvoid-data";
+import { Suspense, lazy, useSyncExternalStore, type ComponentType } from 'react';
+import type { SiteId } from '@/lib/lunarvoid-data';
 
-const LunarGlobe = lazy(() => import("./LunarGlobe")) as ComponentType<{
+const LunarGlobe = lazy(() => import('./LunarGlobe')) as ComponentType<{
   activeSite: SiteId | null;
   onSelect: (id: SiteId) => void;
 }>;
@@ -16,17 +16,18 @@ function Placeholder({ label }: { label: string }) {
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 }
 
 /**
  * Client wrapper: defers WebGL initialisation until after first paint and
  * code-splits the three.js bundle out of the main chunk.
  */
-export function GlobeClient(props: {
-  activeSite: SiteId | null;
-  onSelect: (id: SiteId) => void;
-}) {
+export function GlobeClient(props: { activeSite: SiteId | null; onSelect: (id: SiteId) => void }) {
   const mounted = useMounted();
   if (!mounted) return <Placeholder label="Initialising lunar basemap…" />;
   return (

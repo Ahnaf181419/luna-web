@@ -24,13 +24,11 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
       {/* Header */}
       <div className="max-w-3xl">
         <p className="label-mono">Interactive 3D lunar target observatory</p>
-        <h3 className="mt-2 text-2xl font-bold text-foreground">
-          Global lunar target directory
-        </h3>
+        <h3 className="mt-2 text-2xl font-bold text-foreground">Global lunar target directory</h3>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Rotate the 3D globe to explore target coordinates across the lunar near and far
-          sides. Click any coordinate pin to inspect its high-resolution LROC NAC DTM
-          dossier; the cursor readout tracks live selenographic coordinates.
+          Rotate the 3D globe to explore target coordinates across the lunar near and far sides.
+          Click any coordinate pin to inspect its high-resolution LROC NAC DTM dossier; the cursor
+          readout tracks live selenographic coordinates.
         </p>
       </div>
 
@@ -53,7 +51,9 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
             <div className="flex items-start justify-between border-b border-border/70 pb-3">
               <div>
                 <span className="collar-ribbon text-[9px]">TARGET DOSSIER // LROC NAC</span>
-                <h4 className="font-display mt-1 text-xl font-bold tracking-tight text-foreground">{selectedSite.name}</h4>
+                <h4 className="font-display mt-1 text-xl font-bold tracking-tight text-foreground">
+                  {selectedSite.name}
+                </h4>
                 <span className="font-mono text-xs text-primary">{selectedSite.id}</span>
               </div>
               {selectedSite.primaryAnchor ? (

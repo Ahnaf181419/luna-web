@@ -67,19 +67,27 @@ export const EpistemicThesis: React.FC = () => {
             <li className="flex items-start gap-2.5">
               <span className="text-destructive font-bold text-sm leading-none mt-0.5">✕</span>
               <span>
-                <strong className="text-foreground/80">Treats surface depressions as confirmed voids:</strong> Conflates collapse sags and degraded impact craters with continuous subsurface conduits without dielectric proof.
+                <strong className="text-foreground/80">
+                  Treats surface depressions as confirmed voids:
+                </strong>{' '}
+                Conflates collapse sags and degraded impact craters with continuous subsurface
+                conduits without dielectric proof.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
               <span className="text-destructive font-bold text-sm leading-none mt-0.5">✕</span>
               <span>
-                <strong className="text-foreground/80">Ignores observational bias:</strong> Disregards track-density artifacts in LOLA altimetry and low-sun grazing shadow illusions that mimic pit mouths.
+                <strong className="text-foreground/80">Ignores observational bias:</strong>{' '}
+                Disregards track-density artifacts in LOLA altimetry and low-sun grazing shadow
+                illusions that mimic pit mouths.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
               <span className="text-destructive font-bold text-sm leading-none mt-0.5">✕</span>
               <span>
-                <strong className="text-foreground/80">Omits error rates:</strong> Publishes unconditional positive claims with zero false-positive bounds or posterior uncertainty intervals.
+                <strong className="text-foreground/80">Omits error rates:</strong> Publishes
+                unconditional positive claims with zero false-positive bounds or posterior
+                uncertainty intervals.
               </span>
             </li>
           </ul>
@@ -103,19 +111,26 @@ export const EpistemicThesis: React.FC = () => {
             <li className="flex items-start gap-2.5">
               <span className="text-primary font-bold text-sm leading-none mt-0.5">✓</span>
               <span>
-                <strong className="text-foreground">Honest limits of orbital sensing:</strong> Explicitly acknowledges that nothing subsurface on the Moon is verifiable today except the radar-evidenced Tranquillitatis conduit.
+                <strong className="text-foreground">Honest limits of orbital sensing:</strong>{' '}
+                Explicitly acknowledges that nothing subsurface on the Moon is verifiable today
+                except the radar-evidenced Tranquillitatis conduit.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
               <span className="text-primary font-bold text-sm leading-none mt-0.5">✓</span>
               <span>
-                <strong className="text-foreground">Published false-positive bounds:</strong> Publishes calibration metrics: <code className="text-primary">6.06 [2.77, 11.51] / 10⁴ km²</code> bootstrapped against non-void mare controls.
+                <strong className="text-foreground">Published false-positive bounds:</strong>{' '}
+                Publishes calibration metrics:{' '}
+                <code className="text-primary">6.06 [2.77, 11.51] / 10⁴ km²</code> bootstrapped
+                against non-void mare controls.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
               <span className="text-primary font-bold text-sm leading-none mt-0.5">✓</span>
               <span>
-                <strong className="text-foreground">Orthogonal physics fusion:</strong> Synthesizes sub-meter stereo photogrammetry with Mini-RF radar backscatter, GRAIL Bouguer gravity mass-deficits, and terrestrial basalt mechanics.
+                <strong className="text-foreground">Orthogonal physics fusion:</strong> Synthesizes
+                sub-meter stereo photogrammetry with Mini-RF radar backscatter, GRAIL Bouguer
+                gravity mass-deficits, and terrestrial basalt mechanics.
               </span>
             </li>
           </ul>

@@ -68,19 +68,22 @@ export const HeroSection: React.FC = () => {
           </span>
         </h2>
         <p className="font-sans text-sm sm:text-base leading-relaxed text-muted-foreground max-w-3xl">
-          Photogrammetry reconstructs only the illuminated outer envelope; a lunar point cloud contains
-          zero direct information about a void 20–100 m beneath the regolith. LUNARVOID fuses three
-          orthogonal physical observables — sub-meter stereo photogrammetry, Mini-RF circular-polarisation
-          ratio (CPR) backscatter, and GRAIL Bouguer gravity deficits — anchored in terrestrial basalt
-          geomechanics under 1/6 g. Every candidate carries an interval, and no claim is stated more
-          strongly than the calibration supports.
+          Photogrammetry reconstructs only the illuminated outer envelope; a lunar point cloud
+          contains zero direct information about a void 20–100 m beneath the regolith. LUNARVOID
+          fuses three orthogonal physical observables — sub-meter stereo photogrammetry, Mini-RF
+          circular-polarisation ratio (CPR) backscatter, and GRAIL Bouguer gravity deficits —
+          anchored in terrestrial basalt geomechanics under 1/6 g. Every candidate carries an
+          interval, and no claim is stated more strongly than the calibration supports.
         </p>
       </div>
 
       {/* Unified Telemetry Deck (Console Strip) */}
       <div className="workbench-panel grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-4">
         {TELEMETRY_METRICS.map((m) => (
-          <div key={m.code} className="p-4 sm:p-5 space-y-2 relative group hover:bg-surface/30 transition-colors">
+          <div
+            key={m.code}
+            className="p-4 sm:p-5 space-y-2 relative group hover:bg-surface/30 transition-colors"
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <m.icon className="h-3.5 w-3.5 text-primary" />

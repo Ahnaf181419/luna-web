@@ -27,7 +27,12 @@ export const KnowledgePreviewSection: React.FC<KnowledgePreviewSectionProps> = (
             Maps of content — {DOSSIER_COUNT} curated concept dossiers
           </h3>
         </div>
-        <Button onClick={onOpenKnowledge} variant="outline" size="sm" className="font-mono text-[11px]">
+        <Button
+          onClick={onOpenKnowledge}
+          variant="outline"
+          size="sm"
+          className="font-mono text-[11px]"
+        >
           Open knowledge tab
           <ArrowRight className="h-3.5 w-3.5" />
         </Button>

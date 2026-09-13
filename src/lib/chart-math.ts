@@ -51,18 +51,14 @@ export function buildPdfCurve(score: number, width: number, height: number, step
     const gaussian = peak * Math.exp(-0.5 * Math.pow((val - mu) / sigma, 2));
     pts.push({ x: (i / steps) * width, y: height - (gaussian / peak) * (height * 0.85) });
   }
-  const d = pts
-    .map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-    .join(' ');
+  const d = pts.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
   return { d, fill: `${d} L ${width} ${height} L 0 ${height} Z` };
 }
 
 /* ------------------------------ polyline ---------------------------------- */
 
 export function toPolylinePath(points: Array<{ x: number | string; y: number | string }>): string {
-  return points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-    .join(' ');
+  return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 }
 
 /* ------------------------------ transect ---------------------------------- */

@@ -22,12 +22,12 @@ export interface Moc {
   dossiers: Record<string, ConceptDossier>;
 }
 
-const d = (
-  id: string,
-  title: string,
-  summary: string,
-  related: string[],
-): ConceptDossier => ({ id, title, summary, related });
+const d = (id: string, title: string, summary: string, related: string[]): ConceptDossier => ({
+  id,
+  title,
+  summary,
+  related,
+});
 
 export const MOCS: Moc[] = [
   {
@@ -99,7 +99,7 @@ export const MOCS: Moc[] = [
       'Mare Ingenii Swirl': d(
         'Mare Ingenii Swirl',
         'Mare Ingenii — swirl-adjacent depressions',
-        'Ingenii hosts the largest candidate count (38) but also the registry\'s most aggressive false-positive clustering: many swirl-adjacent depressions mimic pit geometry while lacking any radar or gravity corroboration. It is the primary calibration control for the FP bound.',
+        "Ingenii hosts the largest candidate count (38) but also the registry's most aggressive false-positive clustering: many swirl-adjacent depressions mimic pit geometry while lacking any radar or gravity corroboration. It is the primary calibration control for the FP bound.",
         ['Calibration-Context FP', 'Visual Backlog Triage'],
       ),
       'Philolaus Polar Pit': d(
@@ -127,7 +127,7 @@ export const MOCS: Moc[] = [
       'Calibration-Context FP': d(
         'Calibration-Context FP',
         'Calibration-context false-positive bounds',
-        'The registry publishes a calibrated false-positive rate per 10⁴ km² (6.06 [2.77, 11.51], bootstrapped against non-void mare controls) and a score-dependent floor of 1.8. Claims are stated no stronger than these bounds allow — the portal\'s core epistemic commitment.',
+        "The registry publishes a calibrated false-positive rate per 10⁴ km² (6.06 [2.77, 11.51], bootstrapped against non-void mare controls) and a score-dependent floor of 1.8. Claims are stated no stronger than these bounds allow — the portal's core epistemic commitment.",
         ['Gate G2 Criteria', 'Mare Ingenii Swirl'],
       ),
       'I14 Morphometric Funnel': d(
@@ -225,7 +225,7 @@ export const MOCS: Moc[] = [
       'Master Plan v5 Synthesis': d(
         'Master Plan v5 Synthesis',
         'Master Plan v5.0 — the source synthesis',
-        'The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal\'s epistemic thesis, gate structure, and calibration commitments derive. The portal cites it wherever a displayed constant has a rationale.',
+        "The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal's epistemic thesis, gate structure, and calibration commitments derive. The portal cites it wherever a displayed constant has a rationale.",
         ['Gate G2 Criteria', '24 Session Logs'],
       ),
     },

@@ -36,9 +36,9 @@ export const KnowledgeVaultSection: React.FC = () => {
           Knowledge Vault & Maps of Content (MOCs)
         </h2>
         <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
-          The entire body of LUNARVOID research is organized as an interconnected
-          bi-directional knowledge vault. Maps of Content (MOCs) cluster atomic markdown
-          dossiers across geological sites, gates, and epistemology.
+          The entire body of LUNARVOID research is organized as an interconnected bi-directional
+          knowledge vault. Maps of Content (MOCs) cluster atomic markdown dossiers across geological
+          sites, gates, and epistemology.
         </p>
       </div>
 
@@ -76,7 +76,9 @@ export const KnowledgeVaultSection: React.FC = () => {
                 <h3 className="font-mono text-xs font-bold text-foreground mt-0.5">{moc.title}</h3>
               </div>
 
-              <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">{moc.summary}</p>
+              <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
+                {moc.summary}
+              </p>
             </button>
           );
         })}
@@ -87,7 +89,9 @@ export const KnowledgeVaultSection: React.FC = () => {
         <div className="flex flex-col justify-between gap-3 border-b border-border/70 pb-3 sm:flex-row sm:items-center">
           <div>
             <span className="collar-ribbon text-[9px]">ACTIVE CLUSTER DOSSIER</span>
-            <h3 className="font-display text-base font-bold tracking-tight text-foreground mt-0.5">{activeMoc.title}</h3>
+            <h3 className="font-display text-base font-bold tracking-tight text-foreground mt-0.5">
+              {activeMoc.title}
+            </h3>
           </div>
           <Badge
             variant="outline"
@@ -135,9 +139,7 @@ export const KnowledgeVaultSection: React.FC = () => {
             <>
               <DialogHeader>
                 <span className="collar-ribbon text-[9px]">CONCEPT DOSSIER</span>
-                <DialogTitle className="font-display text-left">
-                  {dossier.title}
-                </DialogTitle>
+                <DialogTitle className="font-display text-left">{dossier.title}</DialogTitle>
               </DialogHeader>
               <DialogDescription className="text-left font-sans text-xs leading-relaxed text-muted-foreground">
                 {dossier.summary}

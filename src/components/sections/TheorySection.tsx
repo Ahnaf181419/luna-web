@@ -51,9 +51,9 @@ export const TheorySection: React.FC<TheorySectionProps> = ({
           The Multi-Evidence Bayesian Fusion Engine
         </h2>
         <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
-          No individual orbital sensor can conclusively confirm a hollow subsurface void
-          on the Moon. LUNARVOID unifies four orthogonal physics layers into a calibrated
-          posterior log-likelihood formulation with observational confound penalties.
+          No individual orbital sensor can conclusively confirm a hollow subsurface void on the
+          Moon. LUNARVOID unifies four orthogonal physics layers into a calibrated posterior
+          log-likelihood formulation with observational confound penalties.
         </p>
       </div>
 

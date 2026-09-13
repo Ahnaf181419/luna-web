@@ -6,7 +6,7 @@ import { CANDIDATES } from '@/lib/lunarvoid-data';
 export const CutawaySection: React.FC = () => {
   const [candidateId, setCandidateId] = useState<string>('ANCHOR');
   const candidate =
-    candidateId === 'ANCHOR' ? null : CANDIDATES.find((c) => c.id === candidateId) ?? null;
+    candidateId === 'ANCHOR' ? null : (CANDIDATES.find((c) => c.id === candidateId) ?? null);
   const depth = candidate?.depthMeters ?? 105;
   const span = candidate?.spanMeters ?? 80;
 
@@ -51,8 +51,8 @@ export const CutawaySection: React.FC = () => {
           The schematic below models the physical observable: a rimless skylight opening into a
           hollow basalt conduit, and orbital radar pulses that return twice — once from the conduit
           ceiling, once from its floor. The separation between those two returns is the observable;
-          the void is the inference. Under 1/6 lunar gravity, structural basalt beam stability allows
-          spans of 80 to 200 meters without roof collapse.
+          the void is the inference. Under 1/6 lunar gravity, structural basalt beam stability
+          allows spans of 80 to 200 meters without roof collapse.
         </p>
       </div>
 
@@ -97,12 +97,17 @@ export const CutawaySection: React.FC = () => {
 
             <div className="space-y-3 font-mono text-xs">
               {STRATA.map((s) => (
-                <div key={s.title} className="border-t border-border/60 pt-3 first:border-t-0 first:pt-0">
+                <div
+                  key={s.title}
+                  className="border-t border-border/60 pt-3 first:border-t-0 first:pt-0"
+                >
                   <div className={`${s.tone} flex items-center justify-between font-semibold`}>
                     <span>{s.title}</span>
                     <span className="text-[10px] text-muted-foreground">{s.depth}</span>
                   </div>
-                  <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">{s.body}</p>
+                  <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">
+                    {s.body}
+                  </p>
                 </div>
               ))}
             </div>
@@ -114,9 +119,9 @@ export const CutawaySection: React.FC = () => {
               <span>RADAR SOUNDING REFLECTION SIGNATURE</span>
             </div>
             <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
-              Mini-RF and Kaguya LRS radar waves penetrate the low-loss lunar regolith. A
-              dielectric impedance contrast between solid basalt and the hollow void
-              generates distinctive dual-horizon return echoes.
+              Mini-RF and Kaguya LRS radar waves penetrate the low-loss lunar regolith. A dielectric
+              impedance contrast between solid basalt and the hollow void generates distinctive
+              dual-horizon return echoes.
             </p>
           </div>
         </div>

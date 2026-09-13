@@ -1,15 +1,11 @@
-import { useMemo, useState } from "react";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-import {
-  calibratedFpRate,
-  targetWeightedScore,
-  verdict,
-} from "@/lib/lunarvoid-data";
-import { EvidenceRadarChart } from "@/components/instruments/EvidenceRadarChart";
-import { buildPdfCurve } from "@/lib/chart-math";
-import { Link2, RotateCcw } from "lucide-react";
-import { CHART } from "@/lib/chart-theme";
+import { useMemo, useState } from 'react';
+import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+import { calibratedFpRate, targetWeightedScore, verdict } from '@/lib/lunarvoid-data';
+import { EvidenceRadarChart } from '@/components/instruments/EvidenceRadarChart';
+import { buildPdfCurve } from '@/lib/chart-math';
+import { Link2, RotateCcw } from 'lucide-react';
+import { CHART } from '@/lib/chart-theme';
 
 const SVG_W = 420;
 const SVG_H = 100;
@@ -64,8 +60,7 @@ export interface CalcSeed {
 
 const DEFAULTS = { morphRatio: 0.85, radarCpr: 1.6, bouguer: -8.0 } as const;
 
-const clamp = (v: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, v));
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
 export function LikelihoodCalculator({
   seed,
@@ -82,9 +77,7 @@ export function LikelihoodCalculator({
   const [radarCpr, setRadarCpr] = useState(() =>
     clamp(seed?.radarCpr ?? DEFAULTS.radarCpr, 0.5, 3.0),
   );
-  const [bouguer, setBouguer] = useState(() =>
-    clamp(seed?.bouguer ?? DEFAULTS.bouguer, -15, 0),
-  );
+  const [bouguer, setBouguer] = useState(() => clamp(seed?.bouguer ?? DEFAULTS.bouguer, -15, 0));
 
   const reset = () => {
     setMorphRatio(DEFAULTS.morphRatio);
@@ -100,10 +93,7 @@ export function LikelihoodCalculator({
   const fp = calibratedFpRate(score);
 
   /* Live Bayesian posterior density curve (Gaussian around the score) */
-  const { d: pdfD, fill: pdfFill } = useMemo(
-    () => buildPdfCurve(score, SVG_W, SVG_H),
-    [score],
-  );
+  const { d: pdfD, fill: pdfFill } = useMemo(() => buildPdfCurve(score, SVG_W, SVG_H), [score]);
 
   return (
     <div className="workbench-panel grid gap-6 p-5 lg:grid-cols-2 rounded-[2px]">
@@ -122,9 +112,11 @@ export function LikelihoodCalculator({
               <span className="text-primary">SEEDED: {seed.label}</span>
               {seed.publishedScore !== undefined && (
                 <span className="text-muted-foreground">
-                  Published (authored): {seed.publishedScore.toFixed(2)} · Fusion model:{" "}
+                  Published (authored): {seed.publishedScore.toFixed(2)} · Fusion model:{' '}
                   {score.toFixed(2)}
-                  {seed.morphIsDefault ? " · morph = default (registry lacks morphometry ratio)" : ""}
+                  {seed.morphIsDefault
+                    ? ' · morph = default (registry lacks morphometry ratio)'
+                    : ''}
                 </span>
               )}
             </div>
@@ -216,12 +208,7 @@ export function LikelihoodCalculator({
           </div>
           <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="h-24 w-full select-none">
             <path d={pdfFill} fill={CHART.primaryFill} />
-            <path
-              d={pdfD}
-              fill="none"
-              stroke={CHART.primary}
-              strokeWidth="2"
-            />
+            <path d={pdfD} fill="none" stroke={CHART.primary} strokeWidth="2" />
             <line
               x1={score * SVG_W}
               y1={0}
@@ -242,9 +229,7 @@ export function LikelihoodCalculator({
         <div className="grid grid-cols-2 gap-2.5">
           <div className="rounded-[2px] border border-border/80 bg-background/50 p-3">
             <span className="collar-ribbon text-[9px]">FP BOUND</span>
-            <p className="mt-1 font-mono text-lg font-bold text-foreground">
-              {fp.toFixed(2)}
-            </p>
+            <p className="mt-1 font-mono text-lg font-bold text-foreground">{fp.toFixed(2)}</p>
             <p className="text-[10px] font-mono text-muted-foreground">per 10⁴ km²</p>
           </div>
           <div className="rounded-[2px] border border-border/80 bg-background/50 p-3">
@@ -257,9 +242,7 @@ export function LikelihoodCalculator({
         </div>
         <div className="rounded-[2px] border border-accent/40 bg-accent/5 p-3">
           <span className="collar-ribbon text-[9px] text-accent">AUTOMATED VERDICT</span>
-          <p className="mt-1 font-sans text-xs leading-relaxed text-foreground">
-            {verdict(score)}
-          </p>
+          <p className="mt-1 font-sans text-xs leading-relaxed text-foreground">{verdict(score)}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Clock, CircleDollarSign, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
+import {
+  CheckCircle2,
+  Clock,
+  CircleDollarSign,
+  ChevronDown,
+  ChevronUp,
+  GitBranch,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { GATES, BUDGET_LEDGER, type GateCriterion } from '@/lib/lunarvoid-data';
@@ -58,9 +65,8 @@ export const GatesJourneySection: React.FC = () => {
         </h2>
         <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground">
           Nothing advances without a formal gate review, and no gate opens spend it has not been
-          approved for. LUNARVOID progresses strictly across verifiable milestone gates
-          with numerical pass criteria, explicit decision records, and complete budget
-          transparency.
+          approved for. LUNARVOID progresses strictly across verifiable milestone gates with
+          numerical pass criteria, explicit decision records, and complete budget transparency.
         </p>
       </div>
 
@@ -83,10 +89,15 @@ export const GatesJourneySection: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-4">
           {JOURNEY.map((j) => (
-            <div key={j.title} className={`rounded-[2px] border border-border/80 bg-surface/60 p-4 ${j.tone}`}>
+            <div
+              key={j.title}
+              className={`rounded-[2px] border border-border/80 bg-surface/60 p-4 ${j.tone}`}
+            >
               <div className={`text-[10px] font-bold ${j.label}`}>{j.phase}</div>
               <div className="mt-1 text-sm font-bold text-foreground">{j.title}</div>
-              <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">{j.body}</p>
+              <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">
+                {j.body}
+              </p>
             </div>
           ))}
         </div>
@@ -152,7 +163,11 @@ export const GatesJourneySection: React.FC = () => {
                 </div>
 
                 <div className="text-muted-foreground">
-                  {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  {isExpanded ? (
+                    <ChevronUp className="h-5 w-5" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5" />
+                  )}
                 </div>
               </button>
 
@@ -203,8 +218,8 @@ export const GatesJourneySection: React.FC = () => {
               Compute infrastructure & zero cloud waste
             </h3>
             <p className="font-mono text-xs text-muted-foreground">
-              Rigorous discipline: all 24 research sessions executed on local Tier-0
-              hardware with zero cloud waste.
+              Rigorous discipline: all 24 research sessions executed on local Tier-0 hardware with
+              zero cloud waste.
             </p>
           </div>
 
@@ -219,7 +234,10 @@ export const GatesJourneySection: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-4 font-mono text-xs md:grid-cols-3">
           {BUDGET_LEDGER.map((b) => (
-            <div key={b.tier} className="space-y-2 rounded-md border border-border bg-surface/60 p-5">
+            <div
+              key={b.tier}
+              className="space-y-2 rounded-md border border-border bg-surface/60 p-5"
+            >
               <div className="text-[11px] text-muted-foreground">{b.tier}</div>
               <div className="text-2xl font-bold text-foreground">
                 ${b.spent}.00{' '}

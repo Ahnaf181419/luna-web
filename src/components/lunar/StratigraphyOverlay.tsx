@@ -1,7 +1,7 @@
-import { lazy, Suspense, type ComponentType } from "react";
-import type { Candidate } from "@/lib/lunarvoid-data";
+import { lazy, Suspense, type ComponentType } from 'react';
+import type { Candidate } from '@/lib/lunarvoid-data';
 
-const TubeCutaway = lazy(() => import("./TubeCutaway")) as ComponentType<{
+const TubeCutaway = lazy(() => import('./TubeCutaway')) as ComponentType<{
   depthMeters?: number;
   spanMeters?: number;
 }>;

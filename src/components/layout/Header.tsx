@@ -1,14 +1,14 @@
-import React from "react";
-import { Compass, Search } from "lucide-react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CATALOG_SIZE } from "@/lib/lunarvoid-data";
+import React from 'react';
+import { Compass, Search } from 'lucide-react';
+import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CATALOG_SIZE } from '@/lib/lunarvoid-data';
 
 function Telemetry({
   label,
   value,
   shortValue,
   tone,
-  className = "",
+  className = '',
 }: {
   label: string;
   value: string;
@@ -17,8 +17,10 @@ function Telemetry({
   className?: string;
 }) {
   return (
-    <div className={`flex items-center gap-1.5 sm:gap-2 rounded-[2px] border border-border/80 bg-surface/70 px-2 sm:px-2.5 py-1 sm:py-1.5 ${className}`}>
-      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${tone ?? "bg-muted-foreground"}`} />
+    <div
+      className={`flex items-center gap-1.5 sm:gap-2 rounded-[2px] border border-border/80 bg-surface/70 px-2 sm:px-2.5 py-1 sm:py-1.5 ${className}`}
+    >
+      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${tone ?? 'bg-muted-foreground'}`} />
       <span className="collar-ribbon text-[9px]">{label}</span>
       <span className="font-mono text-[10px] sm:text-[11px] text-foreground">
         {shortValue ? (
@@ -39,11 +41,11 @@ interface HeaderProps {
 }
 
 const NAV_ITEMS: Array<{ value: string; label: string; badge?: string }> = [
-  { value: "overview", label: "Overview & 3D Globe" },
-  { value: "atlas", label: "Candidate Atlas", badge: String(CATALOG_SIZE) },
-  { value: "fusion", label: "3D Tube Cutaway & Fusion" },
-  { value: "gates", label: "Gates & Ledger" },
-  { value: "knowledge", label: "Knowledge" },
+  { value: 'overview', label: 'Overview & 3D Globe' },
+  { value: 'atlas', label: 'Candidate Atlas', badge: String(CATALOG_SIZE) },
+  { value: 'fusion', label: '3D Tube Cutaway & Fusion' },
+  { value: 'gates', label: 'Gates & Ledger' },
+  { value: 'knowledge', label: 'Knowledge' },
 ];
 
 export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {

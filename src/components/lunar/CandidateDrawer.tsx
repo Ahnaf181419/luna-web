@@ -4,14 +4,14 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { Calculator } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { siteById, STATUS_TONE, type Candidate } from "@/lib/lunarvoid-data";
-import { ElevationProfileChart } from "@/components/instruments/ElevationProfileChart";
-import { EvidenceRadarChart } from "@/components/instruments/EvidenceRadarChart";
+} from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+import { Calculator } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { siteById, STATUS_TONE, type Candidate } from '@/lib/lunarvoid-data';
+import { ElevationProfileChart } from '@/components/instruments/ElevationProfileChart';
+import { EvidenceRadarChart } from '@/components/instruments/EvidenceRadarChart';
 
 function Layer({
   tag,
