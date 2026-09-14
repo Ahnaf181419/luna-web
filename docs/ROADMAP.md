@@ -78,6 +78,15 @@ Ordered by leverage; each needs a design pass before implementation:
    embedsolar system.nasa.gov/gltf_embed/2366 URL is dead (maintenance page
    since the site's 2024 migration to science.nasa.gov); the right NASA asset
    for our sphere is the public-domain color map, not the 3D viewer.
+3. **Photorealistic PBR moon** (2026-09-14, in-session) — DONE. Replaced the
+   bump-map-from-luminance hack with proper Sobel-derived normal maps and a
+   luminance-derived roughness map (both computed at upload time in canvas
+   getImageData loops, no extra assets). Bumped sphere subdivisions 96→192 so
+   the displacement reads cleanly across the terminator. Tuned lighting for the
+   airless-moon model: minimal ambient, single harsh "sun" directional, faint
+   earthshine fill, slight hemisphere sky. Source: Solar System Scope 2K moon
+   color map (CC-BY 3.0; LROC WAC derivative, public-domain lineage). HUD label
+   updated honestly: "LROC color basemap · derived normal & roughness · PBR".
 3. **Content reconciliation** — the registry's numeric story has known deliberate
    fuzziness (candidateCount sum 190 vs CATALOG_SIZE 257; G1 "17 targets" vs C1-1
    "21 sites"): pick the canon, update data + export together.
@@ -146,3 +155,16 @@ Ordered by leverage; each needs a design pass before implementation:
     `Content-Type: image/jpeg`) decoded in `curl` and `Pillow` but tripped some
     Image-decoder paths in Chromium. Always match the file's extension to its real
     format and verify with a real browser before claiming "the texture loads".
+13. **Procedurally-derived PBR maps beat shipped placeholder bumps.** With only
+    the LROC color map reachable (the SVS 4K/16K derivative maps were
+    unreachable from the build sandbox), the highest-fidelity moon came from
+    a Sobel-of-luminance normal map + luminance-→-roughness map, both
+    computed in `getImageData` loops at upload time. Zero extra assets, no extra
+    network dependency, real surface relief + mare/highland specular contrast.
+14. **Match GPU texture-slot dimensions across procedural and real paths.**
+    When the procedural canvas was 1024×512 and the real LROC map was 2048×1024,
+    Three.js raised `glTexSubImage2D: Offset overflows texture dimensions`
+    because the GPU texture had been allocated at the smaller dimensions and a
+    new image was being uploaded into it. Resizing the procedural canvas to
+    match the real asset's dimensions eliminated the warning and avoided a
+    brief reallocation stall on the upgrade path.

@@ -36,6 +36,10 @@ test && npm run build`. CI runs the same gate on every push/PR.
    (`src/lib/__tests__/`); change math and tests together, with rationale.
 6. Format before committing: `npm run format` (Prettier; `src/components/ui`
    and `plans/` are excluded).
+7. **Third-party assets go in `public/`, not at runtime.** `public/moon/ldam_4k.jpg`
+   is the LROC moon color map (CC-BY 3.0, attribution via HUD label). When
+   swapping it, bump `MOON_ASSET_VERSION` in `LunarGlobe.tsx` so stale
+   browsers refetch. Same convention for any future asset additions.
 
 ## Settled decisions (do not re-litigate)
 

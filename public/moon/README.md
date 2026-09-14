@@ -3,56 +3,66 @@
 This directory holds an **optional** upgrade for the 3D globe:
 
 ```
-moon/ldam_4k.jpg   ← drop the NASA CGI Moon Kit color map here (recommended: 4K)
+moon/ldam_4k.jpg   ← LROC-derived moon color map (recommended: 2K or 8K)
 ```
 
 ## Why
 
 The 3D globe (`src/components/lunar/LunarGlobe.tsx`) currently renders a
-procedural canvas texture (maria + craters). If a real moon color map is
-present at `moon/ldam_4k.jpg`, the globe loads it asynchronously on mount and
-substitutes it into the same `THREE.CanvasTexture` (no remount, Markers stay
-memoized). A grayscale luminance pass over the color map becomes the bump map,
-so the basemap actually shapes lighting. The HUD label flips from
-"LRO WAC basemap · shaded relief proxy" to "NASA LRO WAC basemap · luminance-derived normal".
+procedural canvas texture (maria + craters). If a real LROC-derived moon
+color map is present at `moon/ldam_4k.jpg`, the globe loads it asynchronously
+on mount, uploads it onto the same `THREE.CanvasTexture` objects (no remount,
+Markers stay memoized), and generates two derived textures in-canvas:
+
+- **Normal map** (Sobel of luminance) — gives the sphere real surface relief
+  so directional light sculpts maria/highland contrast accurately.
+- **Roughness map** (luminance remapped into `[0.92, 0.99]`) — small mare /
+  highland specular contrast consistent with the regolith being uniformly rough.
+
+The HUD label flips from "LRO WAC basemap · shaded relief proxy" to
+"LROC color basemap · derived normal & roughness · PBR" when the real texture
+is loaded. The sphere is 192×192 subdivisions (up from 96×96) so the
+displacement response reads cleanly across the terminator.
 
 If the file is missing or fails to load, the procedural fallback stays in
-place and nothing renders broken. The page weight stays identical to baseline
-when this asset is absent.
+place and nothing renders broken. The procedural fallback matches the real
+texture's resolution (2048×1024) so the GPU texture slots don't need to be
+reallocated when the real image loads — keeps WebGL silent (no "offset
+overflows texture dimensions" warnings) and avoids a brief stall on the
+upgrade.
 
 ## Source
 
-**NASA Scientific Visualization Studio — CGI Moon Kit**
-https://svs.gsfc.nasa.gov/4720/
+**Solar System Scope — 2K Moon map** (the file currently in this slot was fetched from this URL)
+https://www.solarsystemscope.com/textures/
 
-The high-resolution LROC WAC (Wide Angle Camera) color / normal / spec / shade
-maps produced by NASA's SVS for 3D / IMAX / print use. All files in the kit
-are **NASA public domain**.
+Fetch the 2K file with:
 
-Recommended file for this slot:
-`ldam_20150915_4k.jpg` (LDAM = LROC Digital Elevation / Albedo Map, 4K).
+```bash
+curl -L -o public/moon/ldam_4k.jpg https://www.solarsystemscope.com/textures/download/2k_moon.jpg
+```
 
-Alternative sources (same data lineage):
-- `nasa3d.arc.nasa.gov` — NASA-3D-Resources archive.
-- `eoimages.gsfc.nasa.gov` — LROC WAC mosaic (different mosaic style).
-- Wikipedia Commons hosts NASA-derived full-moon and equatorial moon maps
-  (also public domain); useful for prototyping, but the CGI Moon Kit is the
-  canonical source.
+Solar System Scope distributes the LROC WAC color shaded relief map under
+CC-BY 3.0 (and an 8K version when you need the higher resolution —
+`8k_moon.jpg` is 15 MB; download only if your audience has the bandwidth).
+The map is a derivative of public-domain LROC WAC imagery (NASA/GSFC),
+re-projected and tone-mapped for visualization.
 
-## Attribution (already in the app)
+CC-BY 3.0 requirements: credit + indicate changes. The HUD label satisfies
+the credit; no changes are made to the texture itself.
 
-The globe HUD label states the active source. The portal's license file is MIT
-(code); the **embedded image retains NASA's public-domain status** under
-17 U.S.C. § 105 — no additional credit required, though NASA's media usage
-guidelines request a line of attribution where feasible. This README and the
-HUD label together satisfy that.
+## Attribution in the app
+
+The globe HUD label states the active source. The portal's code license is
+MIT; the **embedded texture is CC-BY 3.0** (Solar System Scope, derived from
+NASA LROC WAC).
 
 ## After dropping the file in
 
 The component keys the request with a cache-buster query string
 (`?v=MOON_ASSET_VERSION`) defined in `src/components/lunar/LunarGlobe.tsx`.
 **Bump `MOON_ASSET_VERSION` whenever you replace the texture** (e.g.
-`'1'` → `'2'`) — this forces every existing browser cache to drop the old
+`'3'` → `'4'`) — this forces every existing browser cache to drop the old
 file, so users on stale tabs see the new texture on next load.
 
 ## Dev / production note
@@ -79,4 +89,3 @@ appType: 'spa',
       next();
     }); }}],
 ```
-

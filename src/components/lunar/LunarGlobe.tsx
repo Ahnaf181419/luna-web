@@ -40,10 +40,14 @@ const SITE_MARKERS = SITES.map((s) => ({
   position: latLonToVec3(s.lat, s.lon),
 }));
 
-export type MoonTextureSource = 'procedural' | 'nasa-lro-wac';
+export type MoonTextureSource = 'procedural' | 'lroc-color-pbr';
 
-const PROC_W = 1024;
-const PROC_H = 512;
+// Sized to match the real LROC color map (public/moon/ldam_4k.jpg — 2048×1024).
+// Keeping the procedural fallback at the same resolution means the GPU texture
+// slots don't need to be reallocated when the real texture loads, avoiding the
+// "Offset overflows texture dimensions" WebGL warning.
+const PROC_W = 2048;
+const PROC_H = 1024;
 const NASA_IMAGE_URL = 'moon/ldam_4k.jpg';
 
 /**
@@ -52,13 +56,13 @@ const NASA_IMAGE_URL = 'moon/ldam_4k.jpg';
  * "404/HTML-fallback" entry from before the file existed doesn't shadow the
  * upgrade.
  */
-const MOON_ASSET_VERSION = '2';
+const MOON_ASSET_VERSION = '3';
 
 function buildProceduralCanvas(): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.width = PROC_W;
   canvas.height = PROC_H;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
   ctx.fillStyle = '#7e7a72';
   ctx.fillRect(0, 0, PROC_W, PROC_H);
@@ -100,38 +104,113 @@ function buildProceduralCanvas(): HTMLCanvasElement {
   return canvas;
 }
 
-/** Re-bake a color canvas as a grayscale luminance bump map (ITU-R BT.601 weights). */
-function bakeBumpFromColor(canvas: HTMLCanvasElement): HTMLCanvasElement {
-  const src = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
+/** ITU-R BT.601 luminance from a color ImageData. */
+function luminance(data: Uint8ClampedArray, i: number): number {
+  return data[i]! * 0.299 + data[i + 1]! * 0.587 + data[i + 2]! * 0.114;
+}
+
+/**
+ * Sobel-derived normal map from luminance. Encodes (dx, dy) surface gradients
+ * into RGB so the GPU can light the sphere with real surface relief — much more
+ * accurate than `bumpMap` alone, which the shader approximates in-shader from a
+ * height field.
+ *
+ * `strength` is a multiplier on the gradient; the moon has gentle, large-scale
+ * relief (maria vs. highlands), so a low-ish value keeps the surface sculpted
+ * rather than jagged.
+ */
+function bakeNormalFromLuminance(canvas: HTMLCanvasElement, strength = 1.8): HTMLCanvasElement {
+  const w = canvas.width;
+  const h = canvas.height;
+  const src = canvas.getContext('2d', { willReadFrequently: true })!.getImageData(0, 0, w, h).data;
   const out = document.createElement('canvas');
-  out.width = canvas.width;
-  out.height = canvas.height;
-  const octx = out.getContext('2d')!;
-  const dst = octx.createImageData(canvas.width, canvas.height);
-  for (let i = 0; i < src.length; i += 4) {
-    const l = src[i]! * 0.299 + src[i + 1]! * 0.587 + src[i + 2]! * 0.114;
-    dst.data[i] = dst.data[i + 1] = dst.data[i + 2] = l;
-    dst.data[i + 3] = 255;
+  out.width = w;
+  out.height = h;
+  const octx = out.getContext('2d', { willReadFrequently: true })!;
+  const dst = octx.createImageData(w, h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const xm = (x - 1 + w) % w;
+      const xp = (x + 1) % w;
+      const ym = (y - 1 + h) % h;
+      const yp = (y + 1) % h;
+      const lx = luminance(src, (y * w + xp) * 4) - luminance(src, (y * w + xm) * 4);
+      const ly = luminance(src, (yp * w + x) * 4) - luminance(src, (ym * w + x) * 4);
+      const i = (y * w + x) * 4;
+      dst.data[i] = Math.max(0, Math.min(255, 128 - lx * strength));
+      dst.data[i + 1] = Math.max(0, Math.min(255, 128 - ly * strength));
+      dst.data[i + 2] = 255;
+      dst.data[i + 3] = 255;
+    }
   }
   octx.putImageData(dst, 0, 0);
   return out;
 }
 
 /**
- * Procedural canvas renders synchronously so the sphere has a valid texture on the
- * first frame. If a real NASA CGI Moon Kit texture is present at
- * public/moon/ldam_4k.jpg, it loads async and is uploaded onto the same
- * CanvasTexture objects (no remount, no state churn; Markers stay memoized).
+ * Roughness map from luminance. The lunar regolith is roughly uniform (~0.95)
+ * but mare basalts are very slightly darker than highland anorthosite in
+ * specular response — we map the luminance into a narrow [lo, hi] range so the
+ * mare/highland contrast reads without losing physical plausibility.
  */
-function useMoonTextures(onSourceChange?: (s: MoonTextureSource) => void) {
+function bakeRoughnessFromLuminance(
+  canvas: HTMLCanvasElement,
+  lo = 0.92,
+  hi = 0.99,
+): HTMLCanvasElement {
+  const src = canvas
+    .getContext('2d', { willReadFrequently: true })!
+    .getImageData(0, 0, canvas.width, canvas.height).data;
+  const out = document.createElement('canvas');
+  out.width = canvas.width;
+  out.height = canvas.height;
+  const octx = out.getContext('2d', { willReadFrequently: true })!;
+  const dst = octx.createImageData(canvas.width, canvas.height);
+  for (let i = 0; i < src.length; i += 4) {
+    const l = luminance(src, i) / 255;
+    const r = Math.round((lo + (hi - lo) * (1 - l)) * 255);
+    dst.data[i] = dst.data[i + 1] = dst.data[i + 2] = r;
+    dst.data[i + 3] = 255;
+  }
+  octx.putImageData(dst, 0, 0);
+  return out;
+}
+
+interface MoonTextures {
+  map: THREE.CanvasTexture;
+  normalMap: THREE.CanvasTexture;
+  roughnessMap: THREE.CanvasTexture;
+  source: MoonTextureSource;
+}
+
+/**
+ * Procedural canvas renders synchronously so the sphere has a valid texture on the
+ * first frame. If a real LROC-derived color map is present at public/moon/ldam_4k.jpg,
+ * it loads async and is uploaded onto the same CanvasTexture objects (no remount,
+ * no state churn; Markers stay memoized). A Sobel-derived normal map and a
+ * luminance-derived roughness map are computed at upload time so the sphere
+ * responds to light with real surface relief rather than a flat-shaded albedo.
+ */
+function useMoonTextures(onSourceChange?: (s: MoonTextureSource) => void): MoonTextures {
   const proceduralCanvas = useMemo(() => buildProceduralCanvas(), []);
+  const proceduralRoughnessCanvas = useMemo(
+    () => bakeRoughnessFromLuminance(proceduralCanvas),
+    [proceduralCanvas],
+  );
   const map = useMemo(() => {
     const t = new THREE.CanvasTexture(proceduralCanvas);
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 4;
     return t;
   }, [proceduralCanvas]);
-  const bump = useMemo(() => new THREE.CanvasTexture(proceduralCanvas), [proceduralCanvas]);
+  const normalMap = useMemo(() => {
+    const t = new THREE.CanvasTexture(bakeNormalFromLuminance(proceduralCanvas, 1.2));
+    return t;
+  }, [proceduralCanvas]);
+  const roughnessMap = useMemo(() => {
+    const t = new THREE.CanvasTexture(proceduralRoughnessCanvas);
+    return t;
+  }, [proceduralRoughnessCanvas]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -141,15 +220,18 @@ function useMoonTextures(onSourceChange?: (s: MoonTextureSource) => void) {
       const c = document.createElement('canvas');
       c.width = img.naturalWidth || PROC_W;
       c.height = img.naturalHeight || PROC_H;
-      const ctx = c.getContext('2d')!;
+      const ctx = c.getContext('2d', { willReadFrequently: true })!;
       ctx.drawImage(img, 0, 0, c.width, c.height);
       map.image = c;
       map.colorSpace = THREE.SRGBColorSpace;
       map.needsUpdate = true;
-      const bumpCanvas = bakeBumpFromColor(c);
-      bump.image = bumpCanvas;
-      bump.needsUpdate = true;
-      onSourceChange?.('nasa-lro-wac');
+      const normalCanvas = bakeNormalFromLuminance(c, 1.8);
+      normalMap.image = normalCanvas;
+      normalMap.needsUpdate = true;
+      const roughCanvas = bakeRoughnessFromLuminance(c);
+      roughnessMap.image = roughCanvas;
+      roughnessMap.needsUpdate = true;
+      onSourceChange?.('lroc-color-pbr');
     };
     const img = new Image();
     img.onload = () => {
@@ -166,9 +248,12 @@ function useMoonTextures(onSourceChange?: (s: MoonTextureSource) => void) {
     return () => {
       cancelled = true;
     };
-  }, [map, bump, onSourceChange]);
+  }, [map, normalMap, roughnessMap, onSourceChange]);
 
-  return useMemo(() => ({ map, bump, source: 'procedural' as MoonTextureSource }), [map, bump]);
+  return useMemo(
+    () => ({ map, normalMap, roughnessMap, source: 'procedural' as MoonTextureSource }),
+    [map, normalMap, roughnessMap],
+  );
 }
 
 const Marker = memo(function Marker({
@@ -264,7 +349,7 @@ const Moon = memo(function Moon({
   onTextureSource?: (s: MoonTextureSource) => void;
 }) {
   const group = useRef<THREE.Group>(null);
-  const { map, bump } = useMoonTextures(onTextureSource);
+  const { map, normalMap, roughnessMap } = useMoonTextures(onTextureSource);
   const { camera } = useThree();
   const targetQuat = useRef<THREE.Quaternion | null>(null);
   const invWorldQuat = useRef(new THREE.Quaternion());
@@ -273,9 +358,10 @@ const Moon = memo(function Moon({
   useEffect(
     () => () => {
       map.dispose();
-      bump.dispose();
+      normalMap.dispose();
+      roughnessMap.dispose();
     },
-    [map, bump],
+    [map, normalMap, roughnessMap],
   );
 
   useEffect(() => {
@@ -311,12 +397,12 @@ const Moon = memo(function Moon({
         }}
         onPointerOut={() => onCursor?.(null)}
       >
-        <sphereGeometry args={[RADIUS, 96, 96]} />
+        <sphereGeometry args={[RADIUS, 192, 192]} />
         <meshStandardMaterial
           map={map}
-          bumpMap={bump}
-          bumpScale={6}
-          roughness={0.98}
+          normalMap={normalMap}
+          roughnessMap={roughnessMap}
+          roughness={1}
           metalness={0}
         />
       </mesh>
@@ -352,11 +438,16 @@ export default function LunarGlobe({
   return (
     <div className="relative h-[460px] w-full overflow-hidden rounded-lg border border-border bg-background/60 sm:h-[540px]">
       <Canvas camera={{ position: [0, 1.2, 6], fov: 45 }} dpr={[1, 2]}>
-        <color attach="background" args={['#0b0d12']} />
-        <ambientLight intensity={0.28} />
-        <directionalLight position={[6, 4, 6]} intensity={2.1} />
-        <directionalLight position={[-6, -2, -4]} intensity={0.25} color="#7fb6d9" />
-        <Stars radius={60} depth={40} count={2200} factor={3} fade speed={0.4} />
+        <color attach="background" args={['#04060a']} />
+        {/* No lunar atmosphere: ambient is minimal. The dominant light is a
+            single harsh "sun" — high ratio against the night-side gives the
+            moon its characteristic stark day/night terminator. */}
+        <ambientLight intensity={0.05} />
+        <hemisphereLight args={['#3a3a40', '#0a0a10', 0.18]} />
+        <directionalLight position={[5, 3, 6]} intensity={3.2} color="#fff7e6" />
+        {/* Faint earthshine / fill from the anti-solar direction. */}
+        <directionalLight position={[-7, -2, -5]} intensity={0.18} color="#9fb8c8" />
+        <Stars radius={60} depth={40} count={1200} factor={3} fade speed={0.25} />
         <Moon
           activeSite={activeSite}
           autoRotate={autoRotate}
@@ -375,8 +466,8 @@ export default function LunarGlobe({
 
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-3">
         <div className="label-mono rounded border border-border bg-background/70 px-2 py-1">
-          {textureSource === 'nasa-lro-wac'
-            ? 'NASA LRO WAC basemap · luminance-derived normal'
+          {textureSource === 'lroc-color-pbr'
+            ? 'LROC color basemap · derived normal & roughness · PBR'
             : 'LRO WAC basemap · shaded relief proxy'}
         </div>
         <Button
