@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { calibratedFpRate, targetWeightedScore, verdict } from '@/lib/lunarvoid-data';
@@ -78,12 +78,23 @@ export function LikelihoodCalculator({
     clamp(seed?.radarCpr ?? DEFAULTS.radarCpr, 0.5, 3.0),
   );
   const [bouguer, setBouguer] = useState(() => clamp(seed?.bouguer ?? DEFAULTS.bouguer, -15, 0));
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(copiedTimer.current), []);
 
   const reset = () => {
     setMorphRatio(DEFAULTS.morphRatio);
     setRadarCpr(DEFAULTS.radarCpr);
     setBouguer(DEFAULTS.bouguer);
     onReset?.();
+  };
+
+  const copyScenario = () => {
+    onCopyScenario?.(morphRatio, radarCpr, bouguer);
+    setCopied(true);
+    window.clearTimeout(copiedTimer.current);
+    copiedTimer.current = window.setTimeout(() => setCopied(false), 700);
   };
 
   const score = useMemo(
@@ -126,7 +137,7 @@ export function LikelihoodCalculator({
               type="button"
               variant="outline"
               size="sm"
-              className="h-6 rounded-[2px] font-mono text-[9px] tracking-widest"
+              className="h-6 rounded-[2px] font-mono text-[9px] tracking-widest btn-lift"
               onClick={reset}
             >
               <RotateCcw className="h-3 w-3" />
@@ -137,8 +148,8 @@ export function LikelihoodCalculator({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-6 rounded-[2px] font-mono text-[9px] tracking-widest"
-                onClick={() => onCopyScenario(morphRatio, radarCpr, bouguer)}
+                className={`h-6 rounded-[2px] font-mono text-[9px] tracking-widest btn-lift ${copied ? 'flash-ok' : ''}`}
+                onClick={copyScenario}
               >
                 <Link2 className="h-3 w-3" />
                 COPY SCENARIO LINK
@@ -187,7 +198,7 @@ export function LikelihoodCalculator({
       <div className="flex flex-col gap-4 rounded-[2px] border border-border/80 bg-surface/60 p-5">
         <div>
           <span className="collar-ribbon text-[9px]">CALIBRATED POSTERIOR SCORE P(VOID | E)</span>
-          <p className="mt-1 font-mono text-5xl sm:text-6xl font-black leading-none text-primary">
+          <p className="numeric-readout mt-1 text-5xl font-bold leading-none text-primary sm:text-6xl">
             {score.toFixed(2)}
           </p>
           <div className="mt-3 h-1.5 w-full overflow-hidden rounded-[2px] bg-muted">

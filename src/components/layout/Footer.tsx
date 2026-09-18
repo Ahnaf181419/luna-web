@@ -1,41 +1,12 @@
-import React, { useState } from 'react';
-import { Copy, Check, ShieldCheck, ExternalLink, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { ShieldCheck, ExternalLink, GitBranch } from 'lucide-react';
+import { PROGRAM_RECORD } from '@/lib/lunarvoid-data';
 
 export const Footer: React.FC = () => {
-  const [copiedBib, setCopiedBib] = useState(false);
-  const [copyFailed, setCopyFailed] = useState(false);
-  const resetTimer = React.useRef<number | undefined>(undefined);
-
-  React.useEffect(() => () => window.clearTimeout(resetTimer.current), []);
-
-  const bibtex = `@article{lunarvoid2026,
-  title={Calibrated Multi-Evidence Subsurface Inference of Lunar Lava Tubes from Orbital Morphometry and Geophysics},
-  author={LUNARVOID Research Group},
-  year={2026},
-  institution={Autonomous Planetary Science Working Group},
-  note={Gate G2 Reproducibility Milestone, 257 Candidate Catalog}
-}`;
-
-  const copyBibtex = async () => {
-    setCopyFailed(false);
-    try {
-      if (!navigator.clipboard?.writeText) throw new Error('clipboard unavailable');
-      await navigator.clipboard.writeText(bibtex);
-      setCopiedBib(true);
-      window.clearTimeout(resetTimer.current);
-      resetTimer.current = window.setTimeout(() => setCopiedBib(false), 2000);
-    } catch {
-      setCopyFailed(true);
-      window.clearTimeout(resetTimer.current);
-      resetTimer.current = window.setTimeout(() => setCopyFailed(false), 2500);
-    }
-  };
-
   return (
     <footer className="border-t border-border py-10 font-mono text-xs text-muted-foreground">
       <div className="mx-auto max-w-7xl space-y-8 px-4 lg:px-8">
-        {/* Top: Provenance & BibTeX */}
+        {/* Top: Provenance & governance */}
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
           <div className="space-y-4 lg:col-span-6">
             <div className="collar-ribbon text-foreground font-semibold">
@@ -43,9 +14,10 @@ export const Footer: React.FC = () => {
               <span>LUNARVOID OPEN RESEARCH INITIATIVE</span>
             </div>
             <p className="font-sans text-xs leading-relaxed text-muted-foreground">
-              This research portal documents the complete empirical pipeline, Bayesian inference
-              mathematics, candidate registry, and milestone gate evidence for inferring subsurface
-              basaltic conduits beneath the lunar mare.
+              This portal documents the research program of LUNARVOID: calibrated multi-evidence
+              inference of subsurface basaltic conduits beneath the lunar mare. Program-level
+              statistics shown here are frozen from the project repository; the interactive
+              candidate atlas is a synthetic demonstration of the method.
             </p>
             <div className="workbench-panel space-y-1.5 p-3.5 rounded-[2px]">
               <div className="collar-ribbon text-[9px] text-warning">
@@ -54,36 +26,37 @@ export const Footer: React.FC = () => {
               </div>
               <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
                 Nothing subsurface on the Moon is verifiable today except the radar-evidenced
-                Tranquillitatis conduit. All candidates cataloged here represent calibrated
-                log-likelihood inferences anchored in terrestrial basalt geomechanics, with
-                published false positive rates per 10⁴ km².
+                Tranquillitatis conduit. All candidates represent calibrated log-likelihood
+                inferences anchored in terrestrial basalt geomechanics, with stated false positive
+                rates per 10⁴ km² — every current candidate is tier C, morphometry only.
               </p>
             </div>
           </div>
 
           <div className="space-y-2 lg:col-span-6">
             <div className="flex items-center justify-between">
-              <span className="collar-ribbon text-[9px]">ACADEMIC CITATION (BIBTEX)</span>
-              <Button
-                onClick={copyBibtex}
-                variant="outline"
-                size="sm"
-                type="button"
-                className="h-6 px-2 font-mono text-[9px] rounded-[2px]"
-              >
-                {copyFailed ? (
-                  <X className="h-3 w-3 text-destructive" />
-                ) : copiedBib ? (
-                  <Check className="h-3 w-3 text-success" />
-                ) : (
-                  <Copy className="h-3 w-3" />
-                )}
-                <span>{copyFailed ? 'COPY FAILED' : copiedBib ? 'COPIED' : 'COPY BIBTEX'}</span>
-              </Button>
+              <span className="collar-ribbon text-[9px]">PROJECT PROVENANCE</span>
             </div>
-            <pre className="overflow-x-auto rounded-[2px] border border-border/80 bg-card/60 p-3.5 font-mono text-[10px] leading-relaxed text-foreground/80">
-              {bibtex}
-            </pre>
+            <a
+              href={PROGRAM_RECORD.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor-magnet
+              className="workbench-panel group flex items-start gap-3 p-4 rounded-[2px] transition-colors hover:border-primary/50 btn-lift"
+            >
+              <GitBranch className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-foreground">
+                  <span>github.com/amrahman90/luna</span>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary" />
+                </div>
+                <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
+                  The complete research record: master plan v5, gate reports G0′/G1/G2, the 278-row
+                  candidate registry, code and data manifests, verifier evidence, and the budget
+                  ledger. Statistics frozen as of {PROGRAM_RECORD.frozenAsOf}.
+                </p>
+              </div>
+            </a>
           </div>
         </div>
 
@@ -92,17 +65,17 @@ export const Footer: React.FC = () => {
           <div>
             <span className="label-mono block">Photogrammetry</span>
             <span className="mt-1 block font-semibold text-foreground">LROC NAC Stereo</span>
-            <span className="text-[10px] text-muted-foreground">ASU / NASA Ames (ASP)</span>
+            <span className="text-[10px] text-muted-foreground">ASU / NASA (PDS RDR DTMs)</span>
           </div>
           <div>
-            <span className="label-mono block">Radar backscatter</span>
-            <span className="mt-1 block font-semibold text-foreground">Mini-RF S-Band</span>
-            <span className="text-[10px] text-muted-foreground">LRO / Kaguya LRS horizons</span>
+            <span className="label-mono block">Thermal screening</span>
+            <span className="mt-1 block font-semibold text-foreground">LRO Diviner GHRM</span>
+            <span className="text-[10px] text-muted-foreground">Powell 2023 derivative</span>
           </div>
           <div>
-            <span className="label-mono block">Gravity mass deficit</span>
-            <span className="mt-1 block font-semibold text-foreground">GRAIL GL1200A</span>
-            <span className="text-[10px] text-muted-foreground">Degree-1200 spherical</span>
+            <span className="label-mono block">Gravity field</span>
+            <span className="mt-1 block font-semibold text-foreground">GRAIL GRGM1200A</span>
+            <span className="text-[10px] text-muted-foreground">Degree-680 spherical</span>
           </div>
           <div>
             <span className="label-mono block">Terrestrial analogs</span>
@@ -116,9 +89,21 @@ export const Footer: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <span>© 2026 LUNARVOID Research Group</span>
             <span>·</span>
-            <span>Zero-spend frugal science compliance ($0.00 / $800 spent)</span>
+            <span>
+              {PROGRAM_RECORD.sessionsRun} sessions · ${PROGRAM_RECORD.spendUsd}.00 of $
+              {PROGRAM_RECORD.ceilingUsd} ceiling
+            </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              href={PROGRAM_RECORD.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1 transition-colors hover:text-foreground"
+            >
+              <span>Source Repository</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
             <a
               href="https://quickmap.lroc.asu.edu/"
               target="_blank"

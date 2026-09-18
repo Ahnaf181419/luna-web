@@ -1,7 +1,6 @@
-import { CANDIDATES, CATALOG_SIZE, siteById } from '@/lib/lunarvoid-data';
+import { CANDIDATES, CATALOG_SIZE, PROGRAM_RECORD, siteById } from '@/lib/lunarvoid-data';
 
-const PROVENANCE_NOTE =
-  'Provenance: id/site/status/morphology/score and the structured fields (cprRatio/bouguerMGal/depthMeters/spanMeters) are authored working-set values. Elevation transects and 3D geometry rendered in the portal are parametric illustrations derived from depth/span, not measured profiles.';
+const PROVENANCE_NOTE = `Provenance: SYNTHETIC DEMONSTRATION working set. Id/site/status/morphology/score and the structured fields (cprRatio/bouguerMGal/depthMeters/spanMeters) are authored demonstration values, not the research registry. The real ${PROGRAM_RECORD.registryRows}-row candidate registry and frozen program statistics live in the project repository: ${PROGRAM_RECORD.repoUrl}. Elevation transects and 3D geometry rendered in the portal are parametric illustrations derived from depth/span, not measured profiles.`;
 
 const CSV_COLUMNS = [
   'id',
@@ -52,10 +51,27 @@ export function workingSetToCsv(): string {
 export function workingSetToJson(): string {
   return JSON.stringify(
     {
-      schema_version: 1,
+      schema_version: 2,
       catalog_size: CATALOG_SIZE,
       published: CANDIDATES.length,
       provenance: PROVENANCE_NOTE,
+      program_record: {
+        repository: PROGRAM_RECORD.repoUrl,
+        frozen_as_of: PROGRAM_RECORD.frozenAsOf,
+        registry_rows: PROGRAM_RECORD.registryRows,
+        registry_partition: {
+          active: PROGRAM_RECORD.registryActive,
+          superseded: PROGRAM_RECORD.registrySuperseded,
+        },
+        tiers: `A=${PROGRAM_RECORD.tierA} B=${PROGRAM_RECORD.tierB} C=all`,
+        fp_per_1e4km2: {
+          row_based: PROGRAM_RECORD.fpRowRate,
+          row_based_ci: PROGRAM_RECORD.fpRowCi,
+          unique_feature: PROGRAM_RECORD.fpUniqueRate,
+          unique_feature_ci: PROGRAM_RECORD.fpUniqueCi,
+          context: 'calibration-context, not a survey rate',
+        },
+      },
       candidates: CANDIDATES.map((c) => {
         const site = siteById(c.site);
         return {

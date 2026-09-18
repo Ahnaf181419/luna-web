@@ -105,7 +105,8 @@ export const ObservatorySection: React.FC<ObservatorySectionProps> = ({
 
           <Button
             onClick={() => onInspectInAtlas(selectedSite.id)}
-            className="w-full rounded-[2px] font-mono text-xs"
+            data-cursor-magnet
+            className="w-full rounded-[2px] font-mono text-xs btn-lift btn-shimmer"
           >
             <MapPin className="h-3.5 w-3.5 mr-1.5" />
             <span>Filter candidate atlas by {selectedSite.id}</span>

@@ -6,19 +6,19 @@ const TELEMETRY_METRICS = [
     icon: Radar,
     code: 'MET-01',
     label: 'Calibration FP Bound',
-    value: '6.06',
+    value: '3.74',
     unit: '/ 10⁴ km²',
-    interval: '[2.77, 11.51] 95% CI',
-    sub: 'Bootstrapped control calibration against non-void mare',
+    interval: '[1.71, 7.10] 95% CI',
+    sub: 'Row-based calibration-context rate; unique-feature 2.08 [0.67, 4.85]',
   },
   {
     icon: Layers,
     code: 'MET-02',
-    label: 'Target Sample Scope',
+    label: 'DTM Working Scope',
     value: '21 / 649',
-    unit: 'DTM sites',
-    interval: '3.2% sample',
-    sub: 'High-resolution NAC stereo coverage of pit populations',
+    unit: 'NAC DTMs',
+    interval: '24,063 km² searched',
+    sub: 'Catalogued-pit selection bias — not a random survey',
   },
   {
     icon: Waypoints,
@@ -26,8 +26,8 @@ const TELEMETRY_METRICS = [
     label: 'Benchmark Anchor',
     value: 'MTP',
     unit: '8.33°N 33.22°E',
-    interval: 'Conduit verified',
-    sub: 'Mare Tranquillitatis Pit · Ground-truth recalibration datum',
+    interval: 'Radar-evidenced',
+    sub: 'Mare Tranquillitatis Pit · Calibration-freeze datum',
   },
   {
     icon: CircleDollarSign,
@@ -36,22 +36,28 @@ const TELEMETRY_METRICS = [
     value: '$0.00',
     unit: '/ $800 ceiling',
     interval: 'Tier-0 local',
-    sub: '24 research sessions executed with zero cloud waste',
+    sub: '58 research sessions executed with zero cloud spend',
   },
 ];
 
 export const HeroSection: React.FC = () => {
   return (
-    <section className="space-y-8">
+    <section className="relative space-y-8 overflow-x-clip">
+      <div className="hero-drift" aria-hidden="true" />
+
       {/* Precision Collar Ribbon */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-3">
+      <div
+        data-boot="fade"
+        style={{ '--boot-i': 0 } as React.CSSProperties}
+        className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-3"
+      >
         <div className="collar-ribbon">
           <Terminal className="h-3.5 w-3.5 text-primary" />
           <span className="text-foreground font-semibold">LUNARVOID</span>
           <span className="text-border">/</span>
           <span>AUTONOMOUS PLANETARY SCIENCE WORKBENCH</span>
           <span className="text-border">/</span>
-          <span className="text-primary">GATE G2 REVIEW</span>
+          <span className="text-primary">G0′ / G1 / G2 FINAL-PASS</span>
         </div>
         <div className="font-mono text-[10px] text-muted-foreground flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
@@ -61,27 +67,43 @@ export const HeroSection: React.FC = () => {
 
       {/* Hero Manifesto */}
       <div className="max-w-4xl space-y-4">
-        <h2 className="font-display text-3xl font-extrabold leading-[1.12] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-          We do not detect lava tubes.{' '}
-          <span className="serif-thesis block font-normal text-primary">
+        <h2 className="hero-headline text-3xl leading-[1.12] text-foreground sm:text-5xl lg:text-6xl">
+          <span data-boot="rise" style={{ '--boot-i': 1 } as React.CSSProperties} className="block">
+            We do not detect lava tubes.
+          </span>
+          <span
+            data-boot="rise"
+            style={{ '--boot-i': 2 } as React.CSSProperties}
+            className="serif-thesis block text-primary"
+          >
             We infer them, with error bars.
           </span>
         </h2>
-        <p className="font-sans text-sm sm:text-base leading-relaxed text-muted-foreground max-w-3xl">
+        <p
+          data-boot="fade"
+          style={{ '--boot-i': 3 } as React.CSSProperties}
+          className="font-sans text-sm sm:text-base leading-relaxed text-muted-foreground max-w-3xl"
+        >
           Photogrammetry reconstructs only the illuminated outer envelope; a lunar point cloud
           contains zero direct information about a void 20–100 m beneath the regolith. LUNARVOID
-          fuses three orthogonal physical observables — sub-meter stereo photogrammetry, Mini-RF
-          circular-polarisation ratio (CPR) backscatter, and GRAIL Bouguer gravity deficits —
-          anchored in terrestrial basalt geomechanics under 1/6 g. Every candidate carries an
+          infers void candidates from orbital morphometry — sub-metre NAC stereo sag detection over
+          measured per-DTM noise floors — with gravity and Diviner thermal as independent evidence
+          legs, anchored in terrestrial basalt geomechanics under 1/6 g. Every candidate carries an
           interval, and no claim is stated more strongly than the calibration supports.
         </p>
       </div>
 
       {/* Unified Telemetry Deck (Console Strip) */}
-      <div className="workbench-panel grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-4">
-        {TELEMETRY_METRICS.map((m) => (
+      <div
+        data-boot="fade"
+        style={{ '--boot-i': 3 } as React.CSSProperties}
+        className="workbench-panel grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-4"
+      >
+        {TELEMETRY_METRICS.map((m, i) => (
           <div
             key={m.code}
+            data-boot="power"
+            style={{ '--boot-i': 4 + i } as React.CSSProperties}
             className="p-4 sm:p-5 space-y-2 relative group hover:bg-surface/30 transition-colors"
           >
             <div className="flex items-center justify-between">
@@ -94,7 +116,7 @@ export const HeroSection: React.FC = () => {
 
             <div className="pt-1">
               <div className="flex items-baseline gap-1.5">
-                <span className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                <span className="numeric-readout text-2xl font-bold text-foreground sm:text-3xl">
                   {m.value}
                 </span>
                 <span className="font-mono text-xs text-primary">{m.unit}</span>

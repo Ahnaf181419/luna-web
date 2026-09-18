@@ -14,6 +14,7 @@ import { KnowledgeVaultSection } from '@/components/sections/KnowledgeVaultSecti
 import { CandidateDrawer } from '@/components/lunar/CandidateDrawer';
 import type { CalcSeed } from '@/components/lunar/LikelihoodCalculator';
 import { CommandPalette } from '@/components/instruments/CommandPalette';
+import { AnimatedCursor } from '@/components/system/AnimatedCursor';
 import { CANDIDATES, isSiteId, type Candidate, type SiteId } from '@/lib/lunarvoid-data';
 import { downloadWorkingSet } from '@/lib/registry-export';
 
@@ -206,6 +207,7 @@ export const App: React.FC = () => {
 
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as TabId)} className="min-h-screen gap-0">
+      <AnimatedCursor />
       {/* ---------------------------- header / status --------------------------- */}
       <Header onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 

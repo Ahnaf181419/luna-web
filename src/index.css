@@ -25,6 +25,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-bright: var(--primary-bright);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -59,10 +60,14 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Newsreader', Georgia, serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  /*
+   * Dual font themes, runtime-swappable via html[data-font-theme].
+   * Console (default): Chakra Petch + Martian Mono.
+   * Archive: Michroma (wordmark/hero) + Saira + Martian Mono.
+   */
+  --font-display: var(--app-font-display);
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
 
   /* Legacy space-* aliases — map old surface scale onto the new token set */
   --color-space-950: var(--background);
@@ -76,6 +81,18 @@
 :root {
   --radius: 0.2rem;
 
+  /* Font theme: Console (default) */
+  --app-font-display: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
+  --app-font-sans: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
+  --app-font-hero: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: 'Martian Mono', ui-monospace, SFMono-Regular, monospace;
+  --app-font-numeric: 'Martian Mono', ui-monospace, SFMono-Regular, monospace;
+  --app-hero-weight: 700;
+  --app-hero-tracking: -0.02em;
+  --app-mark-weight: 700;
+  --app-mark-tracking: 0.24em;
+  --app-numeric-tracking: 0em;
+
   --background: oklch(0.16 0.012 255);
   --foreground: oklch(0.93 0.008 250);
 
@@ -86,6 +103,7 @@
 
   /* Telemetry amber */
   --primary: oklch(0.79 0.145 74);
+  --primary-bright: oklch(0.87 0.115 74);
   --primary-foreground: oklch(0.19 0.03 60);
 
   --secondary: oklch(0.26 0.014 258);
@@ -139,6 +157,18 @@
   color-scheme: dark;
 }
 
+/* Font theme: Aerospace Archive */
+:root[data-font-theme='archive'] {
+  --app-font-display: 'Saira', ui-sans-serif, system-ui, sans-serif;
+  --app-font-sans: 'Saira', ui-sans-serif, system-ui, sans-serif;
+  --app-font-hero: 'Michroma', ui-sans-serif, system-ui, sans-serif;
+  --app-hero-weight: 400;
+  --app-hero-tracking: 0.01em;
+  --app-mark-weight: 400;
+  --app-mark-tracking: 0.14em;
+  --app-numeric-tracking: 0.04em;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -167,7 +197,7 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-display);
+    font-family: var(--app-font-display);
     letter-spacing: -0.02em;
   }
 }
@@ -181,7 +211,7 @@
 }
 
 @utility label-mono {
-  font-family: var(--font-mono);
+  font-family: var(--app-font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -197,7 +227,7 @@
 }
 
 @utility collar-ribbon {
-  font-family: var(--font-mono);
+  font-family: var(--app-font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -208,9 +238,28 @@
 }
 
 @utility serif-thesis {
-  font-family: var(--font-serif);
+  font-family: var(--app-font-sans);
   font-style: italic;
+  font-weight: 500;
   letter-spacing: -0.01em;
+}
+
+@utility hero-headline {
+  font-family: var(--app-font-hero);
+  font-weight: var(--app-hero-weight);
+  letter-spacing: var(--app-hero-tracking);
+}
+
+@utility wordmark {
+  font-family: var(--app-font-hero);
+  font-weight: var(--app-mark-weight);
+  letter-spacing: var(--app-mark-tracking);
+}
+
+@utility numeric-readout {
+  font-family: var(--app-font-numeric);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--app-numeric-tracking);
 }
 
 /* Legacy archival-grid alias — now rides the same grid-line token */

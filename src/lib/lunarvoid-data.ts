@@ -1,8 +1,14 @@
 /*
- * LUNARVOID merged data layer.
- * Source repo's structure (SiteId union, coordLabel, prose fields, STATUS_TONE,
- * inference math) extended with target's richer structured fields, 3 extra sites,
- * 4 extra candidates, 5th status value, and target's gate/budget records.
+ * LUNARVOID merged data layer — two distinct strata:
+ *
+ * 1. PROGRAM_RECORD / GATES / BUDGET_LEDGER: REAL frozen program statistics
+ *    from the research repository (github.com/amrahman90/luna, R3 report
+ *    2026-09-12). Track the repository when updating.
+ *
+ * 2. SITES / CANDIDATES / CATALOG_SIZE / inference math: a SYNTHETIC
+ *    demonstrATION working set (extended from a design source) that powers
+ *    the interactive atlas, charts, and calculator. Labeled as illustrative
+ *    in the Atlas banner and every export.
  */
 
 export type CandidateStatus =
@@ -165,7 +171,7 @@ export function isSiteId(value: string | null): value is SiteId {
 
 export const siteById = (id: SiteId) => SITES.find((s) => s.id === id) ?? FIRST_SITE;
 
-/** Total registry size across all 21 DTM targets (published working set is smaller). */
+/** Synthetic demonstration catalog size (illustrative; real registry: 278 rows in the repository). */
 export const CATALOG_SIZE = 257;
 
 export interface Candidate {
@@ -474,20 +480,54 @@ export const STATUS_TONE: Record<CandidateStatus, string> = {
   'DEFERRED DTM GAP': 'border-destructive/40 bg-destructive/10 text-destructive',
 };
 
+/* ------------------------ real program record (frozen) ----------------------- */
+/*
+ * Frozen program statistics of the LUNARVOID research project
+ * (github.com/amrahman90/luna), as of the R3 terminal status report
+ * (2026-09-12, HEAD c5be2a2). These are REAL numbers — not part of the
+ * illustrative working set below. Change them only to track the repository.
+ */
+
+export const PROGRAM_REPO_URL = 'https://github.com/amrahman90/luna';
+
+export const PROGRAM_RECORD = {
+  repoUrl: PROGRAM_REPO_URL,
+  frozenAsOf: 'R3 terminal report · 2026-09-12',
+  sessionsRun: 58,
+  testsGreen: 124,
+  spendUsd: 0,
+  ceilingUsd: 800,
+  tier1CeilingUsd: 150,
+  dtmsOnDisk: 21,
+  goodTierPopulation: 649,
+  areaSearchedKm2: 24063,
+  registryRows: 278,
+  registryActive: 117,
+  registrySuperseded: 161,
+  tierA: 0,
+  tierB: 0,
+  fpRowRate: 3.74,
+  fpRowCi: [1.71, 7.1],
+  fpUniqueRate: 2.08,
+  fpUniqueCi: [0.67, 4.85],
+  puBaseline: { precision: 0.9, recall: 0.8182, auc: 0.8968 },
+  puV5RunB: { f1: 0.824, auc: 0.93 },
+} as const;
+
 /* ------------------------------ gates & budget ----------------------------- */
 
 export interface GateCriterion {
   id: string;
   name: string;
-  verdict: 'PASS' | 'PARTIAL' | 'DEMONSTRATION' | 'DEFERRED' | 'PENDING';
+  verdict: 'PASS' | 'PARTIAL' | 'DEMONSTRATION' | 'DEFERRED' | 'DEFERRED-DTM-GAP' | 'NOT MEASURED';
   detail: string;
 }
 
 export interface GateReport {
   id: string;
   title: string;
-  status: 'PASSED' | 'DRAFT-FOR-REVIEW' | 'UPCOMING';
-  sessionCompleted?: number;
+  status: 'FINAL-PASS';
+  datePassed: string;
   spend: number;
   criteria: GateCriterion[];
   summary: string;
@@ -505,105 +545,117 @@ export const GATES: GateReport[] = [
   {
     id: 'G0-PRIME',
     title: 'Gate G0′: Tier-0 Environment & Pipeline Baseline',
-    status: 'PASSED',
-    sessionCompleted: 6,
+    status: 'FINAL-PASS',
+    datePassed: '2026-08-21',
     spend: 0,
     summary:
-      'Proved offline Tier-0 workstation environment capability. Validated USGS ISIS3 ingestion and NASA Ames Stereo Pipeline (ASP) photogrammetric reproduction on TRANQPIT1 stereo pair without cloud compute.',
+      'Zero-cost subset of Gate G0: 9 PASS / 0 PARTIAL / 0 FAIL at $0. Kriging correction, measured noise floors, confusion layers, and the Z2 sag search — the Mare Tranquillitatis pit recovered at rank 11 of 29, 45 m from the catalogued feature. LLTB-1 v0.4 analog benchmark: best honest F1 0.362, recall 1.00 wherever ≥5 void cells.',
     criteria: [
       {
         id: 'C0-1',
-        name: 'Tier-0 ISIS3 & ASP Pipeline Execution',
+        name: 'Pit-Recovery Primitive',
         verdict: 'PASS',
-        detail: 'Local execution validated on Ubuntu LTS with 0 cloud spend.',
+        detail:
+          '7/8 covered pits recovered at ≥50% catalogued depth. The sole miss (Marius Hills) is the pre-registered v5 I14 rille-funnel mode — a finding, not a defect.',
       },
       {
         id: 'C0-2',
-        name: 'TRANQPIT1 DTM Reproduction',
+        name: 'Noise-Floor Measurement',
         verdict: 'PASS',
-        detail: '0.8 m/px elevation grid matched published LROC NAC DTM within 0.14m RMS.',
+        detail:
+          'Sag-band RMS 1.245–1.379 m ⇒ effective single-DTM detection floor ≥5 m (≥4 m at TRANQPIT1). 1–2 m sags are not single-DTM claimable.',
       },
       {
         id: 'C0-3',
-        name: 'SLDEM2015 Normalization Pipeline',
-        verdict: 'DEFERRED',
-        detail: 'Normalisation Step 18.1 deferred to cloud burst.',
+        name: 'Confusion Layers & Scope Ranking',
+        verdict: 'PASS',
+        detail:
+          '195 Hurwitz rilles + 4.45M CC-BY-4.0 craters as confusion rasters; 660-DTM scope ranking with MARIUSCONE as top WP2 target.',
       },
       {
         id: 'C0-4',
-        name: 'Confound Covariates Tracking',
+        name: 'Local ASP Stereo Attempt',
         verdict: 'DEFERRED',
-        detail: 'I12 LOLA track density and NAC image count logged.',
+        detail:
+          'Time-boxed local Ames Stereo Pipeline run incomplete at the memory ceiling; Tier-1 rental path (trigger T1) unchanged. Published LROC RDR DTMs used meanwhile.',
       },
     ],
   },
   {
     id: 'G1',
-    title: 'Gate G1: Morphometric Filtering & Candidate Registry',
-    status: 'PASSED',
-    sessionCompleted: 18,
+    title: 'Gate G1: Calibration Freeze & Analog Transfer',
+    status: 'FINAL-PASS',
+    datePassed: '2026-08-22',
     spend: 0,
     summary:
-      'Extracted 257 candidate features across 17 ran DTM targets (4 deferred). Isolated the 27 visual-inspection backlog targets across FECUNPIT, TRANQPIT1, and INGENIIPIT.',
+      '5 PASS / 1 PARTIAL / 1 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap / 1 NOT MEASURED. The TRANQPIT1 recipe was frozen (F1 0.400, byte-identical reproduction) and transferred unchanged to 9 further DTMs — a portability demonstration, not a held-out evaluation. Honest per-DTM FP reading: 240.41 [49.58, 702.58] per 10⁴ km² at the calibration site.',
     criteria: [
       {
         id: 'C1-1',
-        name: 'Morphometric Extraction Across Sites',
+        name: 'LLTB-1 v0.5 Degradation Story',
         verdict: 'PASS',
-        detail: 'Ran over 21 sites, sample space N=21/649 = 3.2%.',
+        detail:
+          'Verify 11/11. Hapke mean F1 0.349→0.096 at 0.5 m attributed to shadow voiding of trench-hosted labels; caveats carried verbatim into the manuscript record.',
       },
       {
         id: 'C1-2',
-        name: 'Candidate Feature Registration',
+        name: 'Indian Tunnel Analog Registration',
         verdict: 'PASS',
-        detail: '257 features registered with lat/lon, depth, span, and DTM footprint.',
+        detail:
+          'Dense-gate RMS 0.490 m (9.3% inliers <1 m); entrance-trench mask semantics guardrailed; the 5-cell roofed-void ground truth is excluded from sag rungs.',
       },
       {
         id: 'C1-3',
-        name: 'Visual Inspection Backlog Triage',
+        name: 'Registry Provenance & Tier Discipline',
         verdict: 'PASS',
-        detail: '27 ambiguous features tagged for human NAC browse inspection.',
+        detail:
+          'N=44 rows at G1, tier A=0 / B=0 / C=44. Rille-intersection candidates downgraded per the pre-registered I14 funnel rule; ring artifacts annotated in-row.',
       },
       {
         id: 'C1-4',
-        name: 'Zero-Cost Budget Compliance',
-        verdict: 'PASS',
-        detail: 'Maintained strict $0 spend discipline through Session 18.',
+        name: 'Diviner Thermal Line',
+        verdict: 'PARTIAL',
+        detail:
+          '2/7 DTMs fully usable in the Powell GHRM coverage gap; INGENIIPIT +2.65 K reframed as rocky-ejecta counter-evidence; tube-scale signatures are sub-pixel at 128 ppd.',
       },
     ],
   },
   {
     id: 'G2',
-    title: 'Gate G2: Multi-Evidence Fusion & Calibration',
-    status: 'DRAFT-FOR-REVIEW',
+    title: 'Gate G2: N=7→N=21 Expansion & FP Bounds',
+    status: 'FINAL-PASS',
+    datePassed: '2026-08-24',
     spend: 0,
     summary:
-      '5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-EXPANDED / 1 NOT MEASURED. Formulated calibration-context aggregate False Positive rate: 6.06 [2.77, 11.51] per 10⁴ km².',
+      '5 PASS / 1 PARTIAL / 2 DEMONSTRATION / 1 DEFERRED / 1 DEFERRED-DTM-gap-PARTIAL / 1 NOT MEASURED. Eleven sha-verified NAC DTMs acquired at $0 (3.59 GiB); the registry grew to 278 rows at terminal state. The aggregate FP bound improved 6.06 → 3.74 per 10⁴ km² — purely denominator-driven (14,840 → 24,063 km² searched); all 9 FPs unchanged.',
     criteria: [
       {
         id: 'C2-1',
-        name: 'Bayesian Fusion Formulation',
+        name: 'Registry Expansion to N=21',
         verdict: 'PASS',
         detail:
-          'Log-likelihood ratio combining morphometry, Mini-RF CPR, and GRAIL Bouguer anomaly.',
+          '44 → 257 rows (+213) with the 15-column schema preserved byte-identically; original 44 rows verified intact; tiers remain A=0 / B=0.',
       },
       {
         id: 'C2-2',
-        name: 'Calibration-Context FP Quantification',
+        name: 'By-Terrain Noise-Floor Split',
         verdict: 'PASS',
-        detail: '6.06 [2.77, 11.51] per 10⁴ km² bound established against MTP.',
+        detail:
+          'N=19 floors: mare n=9 median pooled RMS 1.118 m vs highland n=5 at 1.089 m — central-peak impact melt is smoother than mare regolith; not a portability claim.',
       },
       {
         id: 'C2-3',
-        name: 'Terrestrial Analog Geomechanics Anchor',
+        name: 'Highland Extrapolation Handling',
         verdict: 'DEMONSTRATION',
-        detail: 'Basalt roof beam deflection modeled using Kīlauea LiDAR analog data.',
+        detail:
+          '9 highland / impact-melt DTMs tested with 0 FPs counted at the calibration threshold; the FROZEN recipe is mare-only, so this is extrapolation handling, not portability.',
       },
       {
         id: 'C2-4',
-        name: 'Tier-1 Burst Readiness (AX52)',
-        verdict: 'PARTIAL',
-        detail: 'Hetzner AX52 script ready; pending human review to burst compute.',
+        name: 'Survey-Grade FP Rate',
+        verdict: 'NOT MEASURED',
+        detail:
+          'Aggregate 3.74 [1.71, 7.10] per 10⁴ km² over 24,063 km² is calibration-context, not a survey rate: all 21 DTMs are catalogued-pit or impact-melt selected, and the 30-random-mare control still lacks NAC coverage.',
       },
     ],
   },
@@ -614,17 +666,17 @@ export const BUDGET_LEDGER: BudgetRecord[] = [
     tier: 'Tier-0 (Local Machine Execution)',
     allocation: 0,
     spent: 0,
-    status: 'ACTIVE (24 Sessions)',
+    status: 'COMPLETE — 58 SESSIONS',
     description:
-      'All 24 research sessions, code compilation, and DTM testing executed with zero external cloud cost.',
+      'All 58 research sessions, registry tooling, verifier scripts, and the 124-test suite executed on local hardware with zero external compute cost.',
   },
   {
-    tier: 'Tier-1 Burst Buffer (Hetzner AX52)',
+    tier: 'Tier-1 Burst Buffer (Hetzner AX52-class)',
     allocation: 150,
     spent: 0,
-    status: 'APPROVED / UNSPENT',
+    status: 'APPROVED / UNSPENT (D2)',
     description:
-      'Authorized interim buffer for 30-site random mare control sampling and ASP reproducibility validation.',
+      'Burst buffer for DTM-production gap closure and stereo reproduction. Trigger approved 2026-08-22 under a $150 ceiling; never drawn.',
   },
   {
     tier: 'Master Plan v5 Lifetime Ceiling',
