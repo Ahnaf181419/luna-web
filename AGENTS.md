@@ -52,11 +52,25 @@ test && npm run build`. CI runs the same gate on every push/PR.
   extension over the design source — keep it.
 - Two `export default`s survive in `lunar/` (LunarGlobe, TubeCutaway) because
   dynamic `import()` consumers rely on them.
+- **Both font themes (Console + Archive) are permanent** — the union Google
+  Fonts payload in `index.html` is intentional; do not prune a theme or remove
+  the `FontThemeToggle`.
 
 ## Data-layer facts
 
-- 8 of 21 DTM sites modeled; 12 candidates published of `CATALOG_SIZE = 257`;
-  site `candidateCount`s sum to 190 (deliberate fictional-registry fuzziness).
+- **Two strata in `src/lib/lunarvoid-data.ts`:**
+  - **REAL program record** — `PROGRAM_RECORD`, `GATES`, `BUDGET_LEDGER` are
+    frozen statistics of the research repository
+    (github.com/amrahman90/luna, R3 report 2026-09-12): 278-row registry
+    (117 ACTIVE + 161 SUPERSEDED, all tier C), FP 3.74 [1.71, 7.10] per 10⁴ km²
+    (calibration-context, not survey), gates G0′/G1/G2 FINAL-PASS, 58 sessions,
+    124 tests, $0 of $800. Pinned by
+    `src/lib/__tests__/program-record.test.ts`. Do NOT "fix" these as if
+    fictional; update only deliberately to track the repository.
+  - **Synthetic demonstration set** — `SITES` (8 of 21 modeled), `CANDIDATES`
+    (12 of `CATALOG_SIZE = 257`), site `candidateCount`s sum to 190
+    (deliberate fictional-registry fuzziness), and the calculator model.
+    Labeled as illustrative in the Atlas banner and all exports.
 - Elevation transects are **parametric illustrations** derived from depth/span,
   not measured profiles — any export must label provenance
   (`src/lib/registry-export.ts` does).

@@ -19,8 +19,14 @@
 | Tests | vitest + @testing-library + happy-dom | `npm test`; suites in `src/**/__tests__` + `src/App.test.tsx` |
 | Deploy | GitHub Actions → GitHub Pages | push to `main` = live. https://ahnaf181419.github.io/luna-web/ |
 
-Fonts (Google Fonts, `index.html`): Instrument Sans (body), JetBrains Mono
-(telemetry/mono), Newsreader (serif accents), Syne (display).
+Fonts (Google Fonts, `index.html`) — dual runtime themes toggled by the header
+`FONT` button (`html[data-font-theme]`, persisted in `localStorage.fontTheme`,
+anti-flash script in `index.html`): **Console** (default) = Chakra Petch
+(text) + Martian Mono (data, `numeric-readout` big digits); **Archive** =
+Michroma (wordmark/hero via `hero-headline`/`wordmark` utilities) + Saira
+(text) + Martian Mono. Stacks live in `src/index.css` `--app-font-*` tokens.
+**Both themes are permanent** (settled decision): the union Google Fonts
+payload is intentional — do not prune a theme or remove the toggle.
 
 ## 2. Module tree
 
@@ -58,14 +64,26 @@ preview) · `knowledge` (vault).
 
 ## 3. Data model
 
-- `SITES` — 8 of 21 DTM targets modeled; `siteById` falls back to the first site.
-- `CANDIDATES` — 12 published of `CATALOG_SIZE = 257`; site `candidateCount`s sum
-  to 190 — deliberate fuzziness of the fictional registry, not a bug.
+Two strata in `src/lib/lunarvoid-data.ts`:
+
+- **REAL program record** (frozen from github.com/amrahman90/luna, R3 report
+  2026-09-12): `PROGRAM_RECORD` (278-row registry = 117 ACTIVE + 161 SUPERSEDED,
+  all tier C; FP 3.74 [1.71, 7.10] row-based / 2.08 [0.67, 4.85] unique-feature
+  per 10⁴ km², calibration-context; 58 sessions; 124 tests; $0 of $800),
+  `GATES` (G0′/G1/G2 FINAL-PASS with real dates + distilled criteria), and
+  `BUDGET_LEDGER` (Tier-0 complete, Tier-1 approved/$150 D2 ceiling undrawn,
+  $800 lifetime cap). Test-pinned in `program-record.test.ts`; update only to
+  track the repository.
+- **Synthetic demonstration set**: `SITES` — 8 of 21 DTM targets modeled;
+  `siteById` falls back to the first site. `CANDIDATES` — 12 published of
+  `CATALOG_SIZE = 257`; site `candidateCount`s sum to 190 — deliberate
+  fuzziness of the illustrative registry, not a bug. Labeled as synthetic in
+  the Atlas banner and all exports.
 - Math (load-bearing, test-pinned): `targetWeightedScore` (0.4/0.35/0.25 fusion,
   clamped [0.05, 0.99]), `calibratedFpRate` (floor 1.8/10⁴ km²), `verdict`
   (thresholds 0.85/0.65/0.4). Chart geometry: `src/lib/chart-math.ts`.
 - Statuses: CONFIRMED ANCHOR · HIGH CONFIDENCE · INSPECTION BACKLOG · PLAUSIBLE
-  SAG · DEFERRED DTM GAP (`STATUS_TONE` map).
+  SAG · DEFERRED DTM GAP (`STATUS_TONE` map) — demonstration-layer vocabulary.
 
 ## 4. Design system
 

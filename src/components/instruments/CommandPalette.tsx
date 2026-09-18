@@ -56,7 +56,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       value: 'gates',
       title: 'Gates & Ledger',
-      subtitle: 'Gate G0′/G1/G2 criteria, 24-session journey & budget',
+      subtitle: 'Gate G0′/G1/G2 criteria, 58-session journey & budget',
     },
     {
       value: 'knowledge',

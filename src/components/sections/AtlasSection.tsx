@@ -1,7 +1,7 @@
 import { SitePills } from '@/components/instruments/SitePills';
 import { downloadWorkingSet } from '@/lib/registry-export';
 import React, { useMemo, useState } from 'react';
-import { Search, Binoculars, Download } from 'lucide-react';
+import { Search, Binoculars, Download, FlaskConical, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,7 @@ import {
 import {
   CANDIDATES,
   CATALOG_SIZE,
+  PROGRAM_RECORD,
   STATUS_TONE,
   siteById,
   type Candidate,
@@ -61,6 +62,31 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
 
   return (
     <section className="space-y-6">
+      {/* Synthetic-registry disclosure */}
+      <div className="workbench-panel flex flex-wrap items-center justify-between gap-3 border-primary/40 p-3.5">
+        <div className="flex items-start gap-2.5">
+          <FlaskConical className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <p className="font-sans text-[11px] leading-relaxed text-muted-foreground">
+            <span className="font-mono text-[10px] font-bold tracking-widest text-primary">
+              SYNTHETIC DEMONSTRATION REGISTRY —{' '}
+            </span>
+            this interactive atlas is an illustrative working set that demonstrates the method:
+            scores, CPR / gravity values, and site counts are authored demonstration values, not the
+            research registry.
+          </p>
+        </div>
+        <a
+          href={PROGRAM_RECORD.repoUrl}
+          target="_blank"
+          rel="noreferrer"
+          data-cursor-magnet
+          className="flex shrink-0 items-center gap-1.5 rounded-[2px] border border-border bg-surface/60 px-2.5 py-1.5 font-mono text-[9px] tracking-widest text-foreground transition-colors hover:border-primary/50 hover:text-primary btn-lift"
+        >
+          REAL REGISTRY ({PROGRAM_RECORD.registryRows} ROWS)
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      </div>
+
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border/70 pb-3">
         <div>
@@ -81,7 +107,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               type="button"
               variant="outline"
               size="sm"
-              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest"
+              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest btn-lift"
               onClick={() => downloadWorkingSet('csv')}
             >
               <Download className="h-3 w-3" />
@@ -91,7 +117,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               type="button"
               variant="outline"
               size="sm"
-              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest"
+              className="h-7 rounded-[2px] font-mono text-[10px] tracking-widest btn-lift"
               onClick={() => downloadWorkingSet('json')}
             >
               <Download className="h-3 w-3" />
@@ -167,7 +193,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
               <TableRow
                 key={c.id}
                 onClick={() => onSelectCandidate(c)}
-                className="cursor-pointer transition-colors hover:bg-surface/50 border-b border-border/40"
+                className="cursor-pointer row-hover border-b border-border/40"
               >
                 <TableCell className="font-mono text-xs font-bold text-primary">{c.id}</TableCell>
                 <TableCell className="font-mono text-xs">{c.site}</TableCell>

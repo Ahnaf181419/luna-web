@@ -8,7 +8,7 @@ const PRINCIPLES = [
     icon: Shield,
     accent: 'text-primary',
     body: 'Continuous calibrated likelihoods over sensational binary labels. We mandate publishing the numerical false positive rate per 10⁴ km² and explicit confidence intervals.',
-    datum: 'FP: 6.06 [2.77, 11.51] / 10⁴ km²',
+    datum: 'FP: 3.74 [1.71, 7.10] / 10⁴ km²',
   },
   {
     code: 'PL-02',
@@ -23,7 +23,7 @@ const PRINCIPLES = [
     title: 'Frugal Science Architecture',
     icon: Cpu,
     accent: 'text-success',
-    body: 'Planetary science does not require endless cloud expenditure. All 24 research sessions have executed entirely on local Tier-0 compute with $0 spent against an $800 master ceiling.',
+    body: 'Planetary science does not require endless cloud expenditure. All 58 research sessions have executed entirely on local Tier-0 compute with $0 spent against an $800 master ceiling.',
     datum: '$0.00 drawn / $800 ceiling',
   },
 ];
@@ -121,16 +121,18 @@ export const EpistemicThesis: React.FC = () => {
               <span>
                 <strong className="text-foreground">Published false-positive bounds:</strong>{' '}
                 Publishes calibration metrics:{' '}
-                <code className="text-primary">6.06 [2.77, 11.51] / 10⁴ km²</code> bootstrapped
-                against non-void mare controls.
+                <code className="text-primary">3.74 [1.71, 7.10] / 10⁴ km²</code> with Poisson-exact
+                intervals over 21 searched NAC DTMs — and labels it calibration-context, never a
+                survey rate.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
               <span className="text-primary font-bold text-sm leading-none mt-0.5">✓</span>
               <span>
-                <strong className="text-foreground">Orthogonal physics fusion:</strong> Synthesizes
-                sub-meter stereo photogrammetry with Mini-RF radar backscatter, GRAIL Bouguer
-                gravity mass-deficits, and terrestrial basalt mechanics.
+                <strong className="text-foreground">Orthogonal evidence fusion:</strong> Synthesizes
+                sub-metre NAC stereo morphometry with GRAIL gravity and Diviner thermal screening,
+                anchored in terrestrial basalt mechanics — tier A requires two independent legs,
+                which is why every current candidate is honestly tier C.
               </span>
             </li>
           </ul>

@@ -473,7 +473,8 @@ export default function LunarGlobe({
         <Button
           size="sm"
           variant={autoRotate ? 'default' : 'outline'}
-          className="pointer-events-auto font-mono text-[11px]"
+          className="pointer-events-auto font-mono text-[11px] btn-lift"
+          data-cursor-magnet
           onClick={() => setAutoRotate((v) => !v)}
         >
           {autoRotate ? 'Auto-rotate: ON' : 'Auto-rotate: OFF'}

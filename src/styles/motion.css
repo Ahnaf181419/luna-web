@@ -1,0 +1,306 @@
+/*
+ * LUNARVOID motion system — instrument wake-up.
+ * Easing tokens, reticle cursor, hero boot choreography, micro-interactions.
+ * Transform / opacity / glow only; every effect dies under prefers-reduced-motion.
+ */
+
+:root {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+  --dur-1: 140ms;
+  --dur-2: 280ms;
+  --dur-3: 420ms;
+}
+
+/* ------------------------------ reticle cursor ----------------------------- */
+
+.reticle-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.reticle-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+
+.reticle-cross {
+  color: var(--primary);
+}
+
+.reticle-ring {
+  color: var(--accent);
+  transition:
+    color var(--dur-2) var(--ease-out-quart),
+    opacity var(--dur-2) linear;
+}
+
+.reticle-cursor[data-text='true'] .reticle-layer {
+  opacity: 0.25;
+}
+
+body.has-reticle-cursor,
+body.has-reticle-cursor * {
+  cursor: none !important;
+}
+
+body.has-reticle-cursor input,
+body.has-reticle-cursor textarea,
+body.has-reticle-cursor select,
+body.has-reticle-cursor [contenteditable] {
+  cursor: text !important;
+}
+
+/* ---------------------------- hero boot sequence ---------------------------- */
+
+[data-boot] {
+  animation-delay: calc(var(--boot-i, 0) * 90ms);
+}
+
+[data-boot='fade'] {
+  animation: boot-fade 480ms var(--ease-out-quart) both;
+}
+
+[data-boot='rise'] {
+  animation: boot-rise 640ms var(--ease-out-expo) both;
+}
+
+[data-boot='power'] {
+  animation:
+    boot-power 700ms var(--ease-out-quart) both,
+    boot-glow 900ms var(--ease-out-quart) both;
+}
+
+@keyframes boot-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes boot-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes boot-power {
+  0%,
+  55% {
+    opacity: 0;
+  }
+  68% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes boot-glow {
+  0%,
+  55% {
+    box-shadow: none;
+  }
+  75% {
+    box-shadow: var(--glow-amber);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+/* ------------------------------ ambient drift ------------------------------- */
+
+.hero-drift {
+  position: absolute;
+  inset: -15% -10%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 55% 45% at 28% 18%,
+    color-mix(in oklab, var(--primary) 7%, transparent),
+    transparent 70%
+  );
+  animation: hero-drift 16s var(--ease-in-out-sine) infinite alternate;
+}
+
+@keyframes hero-drift {
+  from {
+    transform: translate3d(-1.2%, -0.8%, 0);
+  }
+  to {
+    transform: translate3d(1.4%, 1.2%, 0);
+  }
+}
+
+/* ------------------------------- micro-buttons ------------------------------ */
+
+.btn-lift {
+  transition:
+    transform var(--dur-1) var(--ease-out-quart),
+    box-shadow var(--dur-2) var(--ease-out-quart);
+}
+
+.btn-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--glow-amber);
+}
+
+.btn-lift:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: none;
+  transition-duration: 80ms;
+}
+
+.btn-lift:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-130%);
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    color-mix(in oklab, var(--primary) 26%, transparent) 50%,
+    transparent 65%
+  );
+  pointer-events: none;
+}
+
+.btn-shimmer:hover::after {
+  animation: btn-sweep 640ms var(--ease-out-quart);
+}
+
+@keyframes btn-sweep {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(130%);
+  }
+}
+
+.flash-ok {
+  animation: flash-ok 640ms var(--ease-out-quart);
+}
+
+@keyframes flash-ok {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--success) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+
+/* --------------------------------- tabs ------------------------------------ */
+
+[role='tab'] {
+  position: relative;
+}
+
+[role='tab']::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--primary);
+  box-shadow: var(--glow-amber);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-2) var(--ease-out-quint);
+}
+
+[role='tab'][data-state='active']::after {
+  transform: scaleX(1);
+}
+
+[role='tab'][data-state='active'] {
+  animation: tab-lock 480ms var(--ease-out-quart);
+}
+
+@keyframes tab-lock {
+  0% {
+    box-shadow: var(--glow-amber);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* --------------------------------- rows ------------------------------------- */
+
+.row-hover {
+  transition:
+    background-color var(--dur-1) var(--ease-out-quart),
+    transform var(--dur-1) var(--ease-out-quart);
+}
+
+.row-hover:hover {
+  background: color-mix(in oklab, var(--surface) 55%, transparent);
+  transform: translateX(2px);
+}
+
+/* ------------------------------ gate disclosure ----------------------------- */
+
+.gate-disclosure {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-3) var(--ease-out-quart);
+}
+
+.gate-disclosure > .gate-disclosure-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.gate-disclosure[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+.gate-disclosure-inner {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--dur-2) var(--ease-out-quart) 80ms,
+    transform var(--dur-2) var(--ease-out-quart) 80ms;
+}
+
+.gate-disclosure[data-open='true'] .gate-disclosure-inner {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------ reduced motion ------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

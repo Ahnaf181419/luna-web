@@ -105,7 +105,8 @@ export function CandidateDrawer({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="w-full rounded-[2px] font-mono text-[10px] tracking-widest"
+                  data-cursor-magnet
+                  className="w-full rounded-[2px] font-mono text-[10px] tracking-widest btn-lift"
                   onClick={() => onOpenInCalculator(candidate)}
                 >
                   <Calculator className="h-3 w-3" />

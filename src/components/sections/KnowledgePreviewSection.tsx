@@ -31,7 +31,7 @@ export const KnowledgePreviewSection: React.FC<KnowledgePreviewSectionProps> = (
           onClick={onOpenKnowledge}
           variant="outline"
           size="sm"
-          className="font-mono text-[11px]"
+          className="font-mono text-[11px] btn-lift"
         >
           Open knowledge tab
           <ArrowRight className="h-3.5 w-3.5" />
@@ -45,7 +45,7 @@ export const KnowledgePreviewSection: React.FC<KnowledgePreviewSectionProps> = (
             <button
               key={moc.id}
               onClick={onOpenKnowledge}
-              className="space-y-2 rounded-md border border-border bg-surface/60 p-3 text-left transition-colors hover:border-primary/40"
+              className="space-y-2 rounded-md border border-border bg-surface/60 p-3 text-left transition-all duration-150 ease-out hover:border-primary/40 hover:-translate-y-0.5"
             >
               <div className="flex items-center justify-between">
                 <Icon className="h-4 w-4 text-accent" />

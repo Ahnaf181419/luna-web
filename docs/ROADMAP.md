@@ -12,7 +12,7 @@
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errors (2 known warnings: vendored `ui/button.tsx` fast-refresh + intentional `TubeCutaway` export) |
 | Typecheck | `npm run typecheck` | ✅ 0 errors — with `noUncheckedIndexedAccess` ON |
-| Tests | `npm test` | ✅ 7 files, **58 tests** passing (was 0 at program start) |
+| Tests | `npm test` | ✅ 7 files, **67 tests** passing (was 0 at program start) |
 | Format | `npm run format:check` | ✅ clean (Prettier, ui/ excluded) |
 | Build | `npm run build` | ✅ ~0.9s |
 | Live smoke | dev server, all 5 tabs | ✅ globe WebGL, 12 atlas rows, CSV export, calculator seeding, 20 knowledge dossiers |
@@ -101,7 +101,7 @@ Ordered by leverage; each needs a design pass before implementation:
 
 | Metric | Program start (6f6856b) | Now |
 |---|---|---|
-| Tests | 0 | 58 passing |
+| Tests | 0 | 67 passing |
 | Runtime dependencies | 47 | 16 |
 | Vendored ui files | 46 | 11 (verbatim) |
 | CI gates on push | build only | lint + typecheck + test + format + build |

@@ -59,14 +59,14 @@ export const MOCS: Moc[] = [
       'Visual Backlog Triage': d(
         'Visual Backlog Triage',
         'The 27-item visual inspection backlog',
-        'Candidates whose automated evidence lines disagree are parked in a 27-item visual backlog rather than promoted or discarded. Each item is re-inspected against new DTM releases; the protocol is deliberately conservative — backlog status is a claim of ignorance, not of doubt.',
+        'Twenty-seven candidates await eyes-on LROC NAC browse verdicts: the FECUNPIT cluster of 3 large depressions, 3 large-amplitude TRANQPIT1 features, and 21 INGENIIPIT ring artifacts. No verdict is persisted yet — backlog status is a claim of ignorance, not of doubt, and no candidate is promoted without it.',
         ['Gate G2 Criteria', 'Calibration-Context FP'],
       ),
       'AX52 Burst Scope': d(
         'AX52 Burst Scope',
-        'AX52 radar burst scope decision',
-        'The AX52 burst scope bounds which Mini-RF S-band tracks are admitted as evidence: only bursts with matched incidence geometry against the D1 stereo baseline count. This kills the largest historical false-positive source — CPR artifacts from unmatched look angles.',
-        ['Mini-RF CPR Extraction', 'Gate G2 Criteria'],
+        'AX52 rental burst scope decision',
+        'The approved Tier-1 burst rental (Hetzner AX52-class, $150 ceiling under decision D2) bounds when paid compute may enter: DTM-production gap closure and stereo reproduction only. It has never been drawn — every result in the record to date is Tier-0 local, and the ceiling keeps it that way.',
+        ['Diviner Thermal Screening', 'Gate G2 Criteria'],
       ),
     },
   },
@@ -86,8 +86,8 @@ export const MOCS: Moc[] = [
     dossiers: {
       'TRANQPIT1 Anchor': d(
         'TRANQPIT1 Anchor',
-        'Mare Tranquillitatis Pit — the ground-truth anchor',
-        'The sole radar-evidenced lava tube conduit on the Moon today: a vertical collapse skylight at 8.33°N, 33.22°E with a subsurface lateral opening evidenced by Mini-RF and radar sounding echoes. Every scoring threshold in the registry is recalibrated against this anchor.',
+        'Mare Tranquillitatis Pit — the calibration anchor',
+        'The sole radar-evidenced lava tube conduit on the Moon today: a vertical collapse skylight at 8.33°N, 33.22°E with a subsurface lateral opening evidenced by radar sounding (Carrer 2024). The frozen detector recipe is calibrated on this site and re-verified byte-identically whenever the pipeline changes.',
         ['Gate G2 Criteria', 'Calibration-Context FP'],
       ),
       'Marius Hills Rille System': d(
@@ -127,7 +127,7 @@ export const MOCS: Moc[] = [
       'Calibration-Context FP': d(
         'Calibration-Context FP',
         'Calibration-context false-positive bounds',
-        "The registry publishes a calibrated false-positive rate per 10⁴ km² (6.06 [2.77, 11.51], bootstrapped against non-void mare controls) and a score-dependent floor of 1.8. Claims are stated no stronger than these bounds allow — the portal's core epistemic commitment.",
+        "The research record publishes a calibrated false-positive rate per 10⁴ km² (3.74 [1.71, 7.10] row-based; 2.08 [0.67, 4.85] unique-feature; Poisson-exact intervals) over 24,063 km² of searched NAC DTMs — and labels it calibration-context, never a survey rate. The portal's illustrative calculator additionally carries a score-dependent floor of 1.8. Claims are stated no stronger than these bounds allow.",
         ['Gate G2 Criteria', 'Mare Ingenii Swirl'],
       ),
       'I14 Morphometric Funnel': d(
@@ -161,7 +161,7 @@ export const MOCS: Moc[] = [
       'ISIS3 Ingestion',
       'NASA Ames Stereo Pipeline',
       'SLDEM2015 Normalization',
-      'Mini-RF CPR Extraction',
+      'Diviner Thermal Screening',
     ],
     dossiers: {
       'ISIS3 Ingestion': d(
@@ -182,10 +182,10 @@ export const MOCS: Moc[] = [
         'Where NAC stereo coverage thins out, SLDEM2015 provides a coarser but globally consistent elevation baseline. It is used only for normalization and sanity bounds — never for the fine morphometry that drives scoring.',
         ['LOLA Track Density Bias', 'NASA Ames Stereo Pipeline'],
       ),
-      'Mini-RF CPR Extraction': d(
-        'Mini-RF CPR Extraction',
-        'Mini-RF circular-polarisation ratio extraction',
-        'CPR contrast against background mare regolith is extracted per burst and admitted only within the AX52 matched-geometry scope. CPR values feed the radar axis of the fusion model at 0.35 weight.',
+      'Diviner Thermal Screening': d(
+        'Diviner Thermal Screening',
+        'LRO Diviner nighttime thermal screening',
+        'Diviner GHRM nighttime temperatures and rock abundance form the thermal evidence leg. At Powell 128 ppd the footprint resolves site scale only — and disagreement is treated as information: the INGENIIPIT +2.65 K anomaly was reframed as rocky-ejecta counter-evidence against the tube hypothesis at that site.',
         ['AX52 Burst Scope', 'Calibration-Context FP'],
       ),
     },
@@ -196,25 +196,25 @@ export const MOCS: Moc[] = [
     shortTitle: 'Sessions & ops',
     category: 'Research History',
     summary:
-      'Complete record of all 24 research sessions from repository initialization through Gate G2 review, paired with the budget ledger.',
+      'Complete record of all 58 research sessions from repository initialization through the engineering terminal state, paired with the budget ledger.',
     keyConcepts: [
-      '24 Session Logs',
+      '58 Session Logs',
       'Zero-Spend Compliance',
       'Tier-0 Workstation Setup',
       'Master Plan v5 Synthesis',
     ],
     dossiers: {
-      '24 Session Logs': d(
-        '24 Session Logs',
-        'The 24-session research record',
-        'Every research session from repository initialization through Gate G2 review is logged with its objectives, artifacts, and spend. The gates tab renders this journey as a verifiable timeline rather than a retrospective narrative.',
+      '58 Session Logs': d(
+        '58 Session Logs',
+        'The 58-session research record',
+        'Every research session from repository initialization through the terminal engineering state is logged with its objectives, artifacts, and spend. The gates tab renders this journey as a verifiable timeline rather than a retrospective narrative; the full changelog lives in the repository.',
         ['Zero-Spend Compliance', 'Master Plan v5 Synthesis'],
       ),
       'Zero-Spend Compliance': d(
         'Zero-Spend Compliance',
         'The $800 ceiling and $0.00 spent',
-        'All 24 sessions executed on local Tier-0 compute against an $800 master ceiling with $0.00 drawn — "frugal science" as a verifiable constraint, not a slogan. The compute ledger in the gates tab is the audit artifact.',
-        ['Tier-0 Workstation Setup', '24 Session Logs'],
+        'All 58 sessions executed on local Tier-0 compute against an $800 master ceiling with $0.00 drawn — "frugal science" as a verifiable constraint, not a slogan. The compute ledger in the gates tab is the audit artifact.',
+        ['Tier-0 Workstation Setup', '58 Session Logs'],
       ),
       'Tier-0 Workstation Setup': d(
         'Tier-0 Workstation Setup',
@@ -225,8 +225,8 @@ export const MOCS: Moc[] = [
       'Master Plan v5 Synthesis': d(
         'Master Plan v5 Synthesis',
         'Master Plan v5.0 — the source synthesis',
-        "The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal's epistemic thesis, gate structure, and calibration commitments derive. The portal cites it wherever a displayed constant has a rationale.",
-        ['Gate G2 Criteria', '24 Session Logs'],
+        "The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal's epistemic thesis, gate structure, and calibration commitments derive. It lives read-only in the project repository; the portal cites it wherever a displayed constant has a rationale.",
+        ['Gate G2 Criteria', '58 Session Logs'],
       ),
     },
   },

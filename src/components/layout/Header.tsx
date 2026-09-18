@@ -1,6 +1,7 @@
 import React from 'react';
 import { Compass, Search } from 'lucide-react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FontThemeToggle } from '@/components/system/FontThemeToggle';
 import { CATALOG_SIZE } from '@/lib/lunarvoid-data';
 
 function Telemetry({
@@ -58,9 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
               <Compass className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h1 className="font-display text-lg font-black tracking-[0.24em] text-foreground">
-                LUNARVOID
-              </h1>
+              <h1 className="wordmark text-lg text-foreground">LUNARVOID</h1>
               <p className="text-xs text-muted-foreground">
                 Calibrated Multi-Evidence Subsurface Inference
               </p>
@@ -69,9 +68,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
           <div className="flex flex-wrap items-center gap-2">
             <Telemetry
               label="Status"
-              value="Gate G2: Draft for Review"
-              shortValue="G2 Draft"
-              tone="bg-warning"
+              value="Gates G0′ / G1 / G2: Final-Pass"
+              shortValue="G2 Passed"
+              tone="bg-success"
             />
             <Telemetry
               label="Compute"
@@ -82,18 +81,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
             />
             <Telemetry
               label="Cal FP"
-              value="6.06 / 10⁴ km²"
+              value="3.74 / 10⁴ km²"
               tone="bg-radar"
               className="hidden md:flex"
             />
             <button
               onClick={onOpenCommandPalette}
-              className="flex items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex min-h-11 items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground touch-action-manipulation"
               title="Search Project Catalog (Cmd+K)"
             >
               <Search className="h-3.5 w-3.5 text-primary" />
               <kbd className="label-mono hidden text-[10px] sm:inline">⌘K</kbd>
             </button>
+            <FontThemeToggle />
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
             <TabsTrigger
               key={item.value}
               value={item.value}
-              className="gap-2 rounded-[2px] border border-border/70 bg-surface/40 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-all data-[state=active]:border-primary/70 data-[state=active]:bg-primary/15 data-[state=active]:text-primary"
+              className="gap-2 rounded-[2px] border border-border/70 bg-surface/40 px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest transition-all min-h-11 touch-action-manipulation data-[state=active]:border-primary/70 data-[state=active]:bg-primary/15 data-[state=active]:text-primary-bright"
             >
               {item.label}
               {item.badge && (
