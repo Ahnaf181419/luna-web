@@ -1,5 +1,6 @@
 import React from 'react';
-import { Radar, Layers, Waypoints, CircleDollarSign, Terminal } from 'lucide-react';
+import { Radar, Layers, Waypoints, CircleDollarSign, Terminal, SigmaSquare } from 'lucide-react';
+import { WP05_RECORD } from '@/lib/lunarvoid-data';
 
 const TELEMETRY_METRICS = [
   {
@@ -36,7 +37,16 @@ const TELEMETRY_METRICS = [
     value: '$0.00',
     unit: '/ $800 ceiling',
     interval: 'Tier-0 local',
-    sub: '58 research sessions executed with zero cloud spend',
+    sub: '70 research sessions executed with zero cloud spend',
+  },
+  {
+    icon: SigmaSquare,
+    code: 'MET-05',
+    label: 'WP0.5 Forward Model',
+    value: '1–5',
+    unit: 'orders below floor',
+    interval: '7/7 anchors ≤3.48% (ρ=2900)',
+    sub: 'Intact-roof sag δ sub-floor; only the widest-span thin-roof corner exceeds the single-DTM detection floor. Median restricted-intact: 2.95 orders.',
   },
 ];
 
@@ -58,6 +68,8 @@ export const HeroSection: React.FC = () => {
           <span>AUTONOMOUS PLANETARY SCIENCE WORKBENCH</span>
           <span className="text-border">/</span>
           <span className="text-primary">G0′ / G1 / G2 FINAL-PASS</span>
+          <span className="text-border">/</span>
+          <span className="text-primary-bright">+ WP0.5</span>
         </div>
         <div className="font-mono text-[10px] text-muted-foreground flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
@@ -86,18 +98,37 @@ export const HeroSection: React.FC = () => {
         >
           Photogrammetry reconstructs only the illuminated outer envelope; a lunar point cloud
           contains zero direct information about a void 20–100 m beneath the regolith. LUNARVOID
-          infers void candidates from orbital morphometry — sub-metre NAC stereo sag detection over
-          measured per-DTM noise floors — with gravity and Diviner thermal as independent evidence
-          legs, anchored in terrestrial basalt geomechanics under 1/6 g. Every candidate carries an
-          interval, and no claim is stated more strongly than the calibration supports.
+          infers void candidates from orbital morphometry — with the WP0.5 forward model showing
+          intact-roof sag sits 1–5 orders below the single-DTM detection floor (per-DTM band
+          1.97–4.39 m, median {WP05_RECORD.floorMedianM} m across 14 processed NAC DTMs), making
+          calibrated multi-evidence inference the only defensible path — with gravity and Diviner
+          thermal as independent evidence legs, anchored in terrestrial basalt geomechanics under
+          1/6 g. Every candidate carries an interval, and no claim is stated more strongly than the
+          calibration supports.
         </p>
+      </div>
+
+      {/* WP0.5 Preprint Teaser (text-only, no link) */}
+      <div
+        data-boot="fade"
+        style={{ '--boot-i': 3 } as React.CSSProperties}
+        className="workbench-panel flex flex-wrap items-center gap-3 px-4 py-2.5 text-[11px] font-mono text-muted-foreground"
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-primary-bright" />
+        <span className="text-foreground">{WP05_RECORD.paperStatus.toUpperCase()}</span>
+        <span className="text-border">/</span>
+        <span>
+          per-DTM floor band {WP05_RECORD.floorBandM[0]}–{WP05_RECORD.floorBandM[1]} m
+        </span>
+        <span className="text-border">/</span>
+        <span>2,880-row sweep · {WP05_RECORD.anchorsReproduced} anchors</span>
       </div>
 
       {/* Unified Telemetry Deck (Console Strip) */}
       <div
         data-boot="fade"
         style={{ '--boot-i': 3 } as React.CSSProperties}
-        className="workbench-panel grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-4"
+        className="workbench-panel grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-y-0 sm:divide-x lg:grid-cols-5"
       >
         {TELEMETRY_METRICS.map((m, i) => (
           <div

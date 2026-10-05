@@ -38,7 +38,7 @@ src/
 ├── components/
 │   ├── lunar/       # 3D globe, tube cutaway, candidate drawer, calculator, client wrappers
 │   ├── instruments/ # DTM transect chart, evidence radar chart, command palette, site pills
-│   ├── layout/      # Header (sticky telemetry bar), Footer (BibTeX + provenance)
+│   ├── layout/      # Header (sticky telemetry bar), Footer (frozen-stats line + provenance; BibTeX lands with arXiv DOI)
 │   ├── sections/    # One component per tab content block
 │   └── ui/          # 11 vendored shadcn primitives (verbatim)
 └── lib/

@@ -7,8 +7,8 @@ const PRINCIPLES = [
     title: 'Claim Discipline & Error Bars',
     icon: Shield,
     accent: 'text-primary',
-    body: 'Continuous calibrated likelihoods over sensational binary labels. We mandate publishing the numerical false positive rate per 10⁴ km² and explicit confidence intervals.',
-    datum: 'FP: 3.74 [1.71, 7.10] / 10⁴ km²',
+    body: 'Continuous calibrated likelihoods over sensational binary labels. We mandate publishing the numerical false positive rate per 10⁴ km² and explicit confidence intervals. The WP0.5 forward model itself falsifies naive single-DTM sag detection: median intact-roof sag δ sits ~2 orders below the per-DTM detection floor band of 1.97–4.39 m (median 3.31 m across 14 processed NAC DTMs); only the widest-span thin-roof corner approaches or exceeds the single-DTM floor.',
+    datum: 'FP 3.74 [1.71, 7.10] / 10⁴ km² · WP0.5 sub-floor 1–5 orders',
   },
   {
     code: 'PL-02',
@@ -23,7 +23,7 @@ const PRINCIPLES = [
     title: 'Frugal Science Architecture',
     icon: Cpu,
     accent: 'text-success',
-    body: 'Planetary science does not require endless cloud expenditure. All 58 research sessions have executed entirely on local Tier-0 compute with $0 spent against an $800 master ceiling.',
+    body: 'Planetary science does not require endless cloud expenditure. All 70 research sessions (post-WP0.5 paper-draft freeze) have executed entirely on local Tier-0 compute with $0 spent against an $800 master ceiling.',
     datum: '$0.00 drawn / $800 ceiling',
   },
 ];
@@ -114,6 +114,16 @@ export const EpistemicThesis: React.FC = () => {
                 <strong className="text-foreground">Honest limits of orbital sensing:</strong>{' '}
                 Explicitly acknowledges that nothing subsurface on the Moon is verifiable today
                 except the radar-evidenced Tranquillitatis conduit.
+              </span>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <span className="text-primary font-bold text-sm leading-none mt-0.5">✓</span>
+              <span>
+                <strong className="text-foreground">Forward-model falsification (WP0.5):</strong>{' '}
+                The 3-regime roof-deflection model reproduces the v5-review F1 anchors at 7/7
+                (≤3.48% at ρ=2900) and shows the predicted intact-roof sag δ sits 1–5 orders below
+                the per-DTM detection floor (median 2.95 orders for the restricted intact subset) —
+                single-DTM sag claims on intact tubes are not physically claimable.
               </span>
             </li>
             <li className="flex items-start gap-2.5">

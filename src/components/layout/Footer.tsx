@@ -74,8 +74,10 @@ export const Footer: React.FC = () => {
           </div>
           <div>
             <span className="label-mono block">Gravity field</span>
-            <span className="mt-1 block font-semibold text-foreground">GRAIL GRGM1200A</span>
-            <span className="text-[10px] text-muted-foreground">Degree-680 spherical</span>
+            <span className="mt-1 block font-semibold text-foreground">GRAIL GL1200A</span>
+            <span className="text-[10px] text-muted-foreground">
+              Degree-1200 spherical harmonic solution
+            </span>
           </div>
           <div>
             <span className="label-mono block">Terrestrial analogs</span>

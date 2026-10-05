@@ -1,4 +1,10 @@
-import { CANDIDATES, CATALOG_SIZE, PROGRAM_RECORD, siteById } from '@/lib/lunarvoid-data';
+import {
+  CANDIDATES,
+  CATALOG_SIZE,
+  PROGRAM_RECORD,
+  WP05_RECORD,
+  siteById,
+} from '@/lib/lunarvoid-data';
 
 const PROVENANCE_NOTE = `Provenance: SYNTHETIC DEMONSTRATION working set. Id/site/status/morphology/score and the structured fields (cprRatio/bouguerMGal/depthMeters/spanMeters) are authored demonstration values, not the research registry. The real ${PROGRAM_RECORD.registryRows}-row candidate registry and frozen program statistics live in the project repository: ${PROGRAM_RECORD.repoUrl}. Elevation transects and 3D geometry rendered in the portal are parametric illustrations derived from depth/span, not measured profiles.`;
 
@@ -70,6 +76,19 @@ export function workingSetToJson(): string {
           unique_feature: PROGRAM_RECORD.fpUniqueRate,
           unique_feature_ci: PROGRAM_RECORD.fpUniqueCi,
           context: 'calibration-context, not a survey rate',
+        },
+        wp05: {
+          paper_status: WP05_RECORD.paperStatus,
+          sweep_rows: WP05_RECORD.sweepRows,
+          dtms_processed: WP05_RECORD.dtmsProcessed,
+          floor_band_m: WP05_RECORD.floorBandM,
+          floor_median_m: WP05_RECORD.floorMedianM,
+          anchors_reproduced: WP05_RECORD.anchorsReproduced,
+          anchor_max_rel_err_pct: WP05_RECORD.anchorMaxRelErrPct,
+          gap_orders_range: WP05_RECORD.gapOrdersRange,
+          gap_median_intact_orders: WP05_RECORD.gapMedianIntactOrders,
+          gap_median_restricted_intact_orders: WP05_RECORD.gapMedianRestrictedIntactOrders,
+          regimes: WP05_RECORD.regimes,
         },
       },
       candidates: CANDIDATES.map((c) => {

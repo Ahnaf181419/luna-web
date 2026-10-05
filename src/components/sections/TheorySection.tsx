@@ -12,7 +12,7 @@ const LAYERS = [
   {
     icon: Camera,
     title: 'Surface photogrammetry',
-    body: 'USGS ISIS3 plus NASA Ames Stereo Pipeline turn LROC NAC stereo pairs into 0.5–1.5 m/px DTMs. Outputs: pit depth, span, wall slope, rim absence.',
+    body: 'USGS ISIS3 plus NASA Ames Stereo Pipeline turn LROC NAC stereo pairs into 0.5–1.5 m/px DTMs. Outputs: pit depth, span, wall slope, rim absence. The WP0.5 forward model shows the predicted intact-roof sag δ sits 1–5 orders below the per-DTM detection floor (median 2.95 orders for the restricted intact subset); only the widest-span thin-roof corner approaches the single-DTM claimability threshold — so morphometry alone is not sufficient, and the other evidence legs carry the inference.',
     footer: 'Ames Stereo Pipeline · 0.5–1.5 m/px',
   },
   {

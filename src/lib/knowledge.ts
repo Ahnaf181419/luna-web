@@ -116,12 +116,13 @@ export const MOCS: Moc[] = [
     shortTitle: 'Concepts & methods',
     category: 'Epistemology & Theory',
     summary:
-      'Epistemic calibration context, Bayesian evidence combination, beam deflection structural mechanics, and observational bias mitigation.',
+      'Epistemic calibration context, Bayesian evidence combination, beam deflection structural mechanics, observational bias mitigation, and the WP0.5 forward-model falsification test.',
     keyConcepts: [
       'Calibration-Context FP',
       'I14 Morphometric Funnel',
       'LOLA Track Density Bias',
       'Basalt Tensile Limits',
+      'WP0.5 Forward Model / F1 Sub-Floor Finding',
     ],
     dossiers: {
       'Calibration-Context FP': d(
@@ -147,6 +148,12 @@ export const MOCS: Moc[] = [
         'Terrestrial basalt beam mechanics, scaled to 1/6 g',
         'Structural beam deflection formulas calibrated against LiDAR scans of Kīlauea and Valentine Cave basalts set the physical prior on stable spans. Scaled to lunar gravity, intact roof widths beyond ~100 m remain physically plausible — which is why span alone never promotes a candidate.',
         ['I14 Morphometric Funnel', 'Marius Hills Rille System'],
+      ),
+      'WP0.5 Forward Model / F1 Sub-Floor Finding': d(
+        'wp05-f1-subfloor',
+        'WP0.5 forward model — the F1 falsification test (2026-10-05)',
+        'A three-regime roof-deformation model (intact elastic beam bending / partially rubbleized / fully rubbleized) was built in response to the v5-review F1 finding and exercised over a 2,880-row parameter sweep (E × h × L × damage). The per-DTM detection floor is defined as 3× the local 60–300 m band-passed residual RMS; across the 14 processed NAC DTMs the band is 1.97–4.39 m (median 3.31 m, with KINGCRATER2 at 1.97 m as a highland mare-fragment outlier at the lower bound). The predicted intact-roof sag δ sits 1–5 orders below this floor; the restricted intact subset (E≥20 GPa, h≥10 m) sits at 2.95 orders below. All 7 of the v5-review F1 canonical anchors reproduce within ≤3.48% at ρ=2900 kg/m³ (≤1.10% at ρ=3000). Honest exceptions: one corner of the parameter space — L=500 m, h=10 m, E=10 GPa — yields δ=9.18 m, above the 3.74 m TRANQPIT1 reference floor by 0.39 orders; 30 of 360 intact-slice sweep crossings exceed the 3.74 m reference, mostly at E≤10 GPa or h≤10 m. The 7/7 anchor reproduction is distinct from the Z2 pit-recovery 7/8 frozen at R3 (different experiment). The 10,610-word preprint draft is committed locally; submission to arXiv / ESS Open Archive is the next step. The honest single-sentence headline: intact-roof sag is sub-floor — so single-DTM sag claims on intact tubes are not physically claimable, and calibrated multi-evidence inference is the only defensible path.',
+        ['Basalt Tensile Limits', 'I14 Morphometric Funnel', 'Gate G2 Criteria'],
       ),
     },
   },
@@ -196,25 +203,25 @@ export const MOCS: Moc[] = [
     shortTitle: 'Sessions & ops',
     category: 'Research History',
     summary:
-      'Complete record of all 58 research sessions from repository initialization through the engineering terminal state, paired with the budget ledger.',
+      'Complete record of all 70 research sessions (post-WP0.5 paper-draft freeze) from repository initialization through the WP0.5 forward-model results, paired with the budget ledger.',
     keyConcepts: [
-      '58 Session Logs',
+      '70 Session Logs',
       'Zero-Spend Compliance',
       'Tier-0 Workstation Setup',
       'Master Plan v5 Synthesis',
     ],
     dossiers: {
-      '58 Session Logs': d(
-        '58 Session Logs',
-        'The 58-session research record',
-        'Every research session from repository initialization through the terminal engineering state is logged with its objectives, artifacts, and spend. The gates tab renders this journey as a verifiable timeline rather than a retrospective narrative; the full changelog lives in the repository.',
+      '70 Session Logs': d(
+        '70 Session Logs',
+        'The 70-session research record (post-WP0.5 freeze)',
+        'Every research session from repository initialization through the WP0.5 paper-draft freeze (2026-10-05) is logged with its objectives, artifacts, and spend. The gates tab renders this journey as a verifiable timeline rather than a retrospective narrative; the full changelog lives in the repository. Session-count derivation: max numbered "execution session N" heading in the CHANGELOG = 68 (2026-09-27 outreach prep) + 2 dated 2026-10-05 entries (WP0.5 paper draft, PDF conversion) = 70.',
         ['Zero-Spend Compliance', 'Master Plan v5 Synthesis'],
       ),
       'Zero-Spend Compliance': d(
         'Zero-Spend Compliance',
         'The $800 ceiling and $0.00 spent',
-        'All 58 sessions executed on local Tier-0 compute against an $800 master ceiling with $0.00 drawn — "frugal science" as a verifiable constraint, not a slogan. The compute ledger in the gates tab is the audit artifact.',
-        ['Tier-0 Workstation Setup', '58 Session Logs'],
+        'All 70 sessions executed on local Tier-0 compute against an $800 master ceiling with $0.00 drawn — "frugal science" as a verifiable constraint, not a slogan. The compute ledger in the gates tab is the audit artifact.',
+        ['Tier-0 Workstation Setup', '70 Session Logs'],
       ),
       'Tier-0 Workstation Setup': d(
         'Tier-0 Workstation Setup',
@@ -225,8 +232,8 @@ export const MOCS: Moc[] = [
       'Master Plan v5 Synthesis': d(
         'Master Plan v5 Synthesis',
         'Master Plan v5.0 — the source synthesis',
-        "The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal's epistemic thesis, gate structure, and calibration commitments derive. It lives read-only in the project repository; the portal cites it wherever a displayed constant has a rationale.",
-        ['Gate G2 Criteria', '58 Session Logs'],
+        "The master plan (v5.0 full synthesis) is the source-of-truth document from which the portal's epistemic thesis, gate structure, and calibration commitments derive. It lives read-only in the project repository; the portal cites it wherever a displayed constant has a rationale. The WP0.5 forward-model results are a v5-review response (F1 finding) and live as a post-G2 addendum in the gates tab.",
+        ['Gate G2 Criteria', '70 Session Logs'],
       ),
     },
   },

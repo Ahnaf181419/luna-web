@@ -85,6 +85,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
               tone="bg-radar"
               className="hidden md:flex"
             />
+            <Telemetry
+              label="WP0.5"
+              value="SAG SUB-FLOOR 1–5 ORD"
+              shortValue="SUB-FLOOR 1–5 ORD"
+              tone="bg-primary"
+              className="hidden xl:flex"
+            />
             <button
               onClick={onOpenCommandPalette}
               className="flex min-h-11 items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground touch-action-manipulation"
