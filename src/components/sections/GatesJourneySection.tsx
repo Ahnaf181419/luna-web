@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { CheckCircle2, CircleDollarSign, ChevronDown, GitBranch, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { BUDGET_LEDGER, GATES, PROGRAM_RECORD, type GateCriterion } from '@/lib/lunarvoid-data';
+import {
+  BUDGET_LEDGER,
+  GATES,
+  PROGRAM_RECORD,
+  WP05_RECORD,
+  type GateCriterion,
+} from '@/lib/lunarvoid-data';
 
 const VERDICT_TONE: Record<GateCriterion['verdict'], string> = {
   PASS: 'border-success/50 bg-success/15 text-success',
@@ -41,6 +47,13 @@ const JOURNEY = [
     body: 'Registry tooling, sentinel hardening, verifier scripts, 124-test suite. Queue exhausted; remaining items are user-gated — see the repository.',
     tone: 'border-primary/50',
     label: 'text-primary',
+  },
+  {
+    phase: 'WP0.5 · 2026-10-05 · Drafted',
+    title: 'Forward-model falsification test',
+    body: `Sessions 59–70 · F1 finding quantified: 1–5 orders sub-floor; 7/7 anchors ≤3.48% (ρ=2900); 2,880-row sweep. Preprint drafted.`,
+    tone: 'border-primary/60',
+    label: 'text-primary-bright',
   },
 ];
 
@@ -114,7 +127,7 @@ export const GatesJourneySection: React.FC = () => {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-3 lg:grid-cols-5">
           {JOURNEY.map((j) => (
             <div
               key={j.title}
@@ -168,6 +181,110 @@ export const GatesJourneySection: React.FC = () => {
               </p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* WP0.5 forward-model results (post-R3 addendum, 2026-10-05) */}
+      <div className="panel space-y-5 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+          <div className="space-y-1">
+            <span className="collar-ribbon text-[10px]">
+              <span>WP0.5 FORWARD-MODEL FALSIFICATION TEST // 2026-10-05</span>
+            </span>
+            <h3 className="text-lg font-semibold text-foreground">
+              Forward-model response to the v5-review F1 finding
+            </h3>
+            <p className="font-sans text-xs leading-relaxed text-muted-foreground">
+              Three-regime roof-deformation model (intact elastic / partially rubbleized / fully
+              rubbleized). Per-DTM detection floor defined as 3× the local 60–300 m band-passed
+              residual RMS (the sag-band RMS detector metric). 7/7 anchor reproduction is distinct
+              from the Z2 pit-recovery 7/8 frozen at R3.
+            </p>
+          </div>
+          <span className="rounded-[2px] border border-primary/60 bg-primary/15 font-mono text-[9px] tracking-widest text-primary-bright px-2.5 py-1.5">
+            ADDENDUM // POST-G2
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-3 font-mono text-xs sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Sweep rows</span>
+            <div className="numeric-readout text-sm font-bold text-foreground">
+              {WP05_RECORD.sweepRows.toLocaleString()}
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              E × h × L × damage parameter grid across {WP05_RECORD.regimes} regimes
+            </p>
+          </div>
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Per-DTM detection floor band</span>
+            <div className="numeric-readout text-sm font-bold text-foreground">
+              {WP05_RECORD.floorBandM[0]}–{WP05_RECORD.floorBandM[1]} m
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              Median {WP05_RECORD.floorMedianM} m across {WP05_RECORD.dtmsProcessed} processed NAC
+              DTMs. {WP05_RECORD.floorOutlierNote}.
+            </p>
+          </div>
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Anchor reproduction (WP0.5)</span>
+            <div className="numeric-readout text-sm font-bold text-foreground">
+              {WP05_RECORD.anchorsReproduced} ≤ {WP05_RECORD.anchorMaxRelErrPct.rho2900}%
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              Max relative error at ρ=2900 kg/m³ (≤{WP05_RECORD.anchorMaxRelErrPct.rho3000}% at
+              ρ=3000). Distinct from the Z2 pit-recovery 7/8 frozen at R3.
+            </p>
+          </div>
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Sub-floor gap range</span>
+            <div className="numeric-readout text-sm font-bold text-foreground">
+              {WP05_RECORD.gapOrdersRange[0]}–{WP05_RECORD.gapOrdersRange[1]} orders
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              Predicted intact-roof sag δ vs 3.74 m TRANQPIT1 reference floor. Median
+              restricted-intact subset: {WP05_RECORD.gapMedianRestrictedIntactOrders} orders.
+            </p>
+          </div>
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Honest exceptions</span>
+            <div className="numeric-readout text-sm font-bold text-foreground">
+              1 of 7 above floor
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              L=500 m, h=10 m, E=10 GPa: δ=9.18 m (above 3.74 m floor by 0.39 orders). 30/360 intact
+              crossings mostly E≤10 GPa or h≤10 m.
+            </p>
+          </div>
+          <div className="space-y-1 rounded-md border border-border bg-surface/60 p-4">
+            <span className="label-mono text-[9px]">Preprint status</span>
+            <div className="numeric-readout text-sm font-bold text-foreground uppercase">
+              {WP05_RECORD.paperStatus}
+            </div>
+            <p className="font-sans text-[10px] leading-relaxed text-muted-foreground">
+              10,610-word draft, 28-page PDF. Submission slot pending (no public link until arXiv
+              DOI exists).
+            </p>
+          </div>
+        </div>
+
+        {/* Figure */}
+        <div className="space-y-2">
+          <span className="label-mono text-[9px]">Forward-model sweep (4-panel figure)</span>
+          <div className="overflow-hidden rounded-md border border-border bg-surface/60 p-3">
+            <img
+              loading="lazy"
+              src="/luna-web/figures/deflection_4panel.png"
+              alt="WP0.5 4-panel forward-model figure: parameter sweep, predicted sag delta, and detection-floor comparison across 14 NAC DTMs"
+              className="w-full h-auto"
+            />
+            <p className="mt-2 font-sans text-[10px] leading-relaxed text-muted-foreground">
+              Forward-model sweep (synthetic parameter grid; E × h × L × damage). δ = predicted
+              surface sag; floor = 3× local 60–300 m band-passed residual RMS per DTM (1.97–4.39 m
+              band, median {WP05_RECORD.floorMedianM} m across {WP05_RECORD.dtmsProcessed} processed
+              NAC DTMs). Source:{' '}
+              <code>01_WORKSPACE/code/wp0_5_deflection/figures/deflection_4panel.png</code>.
+            </p>
+          </div>
         </div>
       </div>
 

@@ -483,17 +483,25 @@ export const STATUS_TONE: Record<CandidateStatus, string> = {
 /* ------------------------ real program record (frozen) ----------------------- */
 /*
  * Frozen program statistics of the LUNARVOID research project
- * (github.com/amrahman90/luna), as of the R3 terminal status report
- * (2026-09-12, HEAD c5be2a2). These are REAL numbers — not part of the
- * illustrative working set below. Change them only to track the repository.
+ * (github.com/amrahman90/luna), as of the WP0.5 paper-draft v1 freeze
+ * (2026-10-05). These are REAL numbers — not part of the illustrative
+ * working set below. Change them only to track the repository.
+ *
+ * Session-count derivation: max numbered "execution session N" heading
+ * in 01_WORKSPACE/admin/CHANGELOG.md = 68 (2026-09-27 outreach prep) +
+ * 2 dated 2026-10-05 entries (WP0.5 paper draft, PDF conversion) = 70.
+ *
+ * testsGreen = 124 is the R3-freeze mixed figure (portal-repo test suite
+ * 67/8 + repo-side smoke+verify scripts at R3). Kept here for continuity;
+ * the lockstep test pins against this exact value.
  */
 
 export const PROGRAM_REPO_URL = 'https://github.com/amrahman90/luna';
 
 export const PROGRAM_RECORD = {
   repoUrl: PROGRAM_REPO_URL,
-  frozenAsOf: 'R3 terminal report · 2026-09-12',
-  sessionsRun: 58,
+  frozenAsOf: 'WP0.5 paper draft v1 · 2026-10-05',
+  sessionsRun: 70,
   testsGreen: 124,
   spendUsd: 0,
   ceilingUsd: 800,
@@ -512,6 +520,41 @@ export const PROGRAM_RECORD = {
   fpUniqueCi: [0.67, 4.85],
   puBaseline: { precision: 0.9, recall: 0.8182, auc: 0.8968 },
   puV5RunB: { f1: 0.824, auc: 0.93 },
+} as const;
+
+/* --------------------- WP0.5 forward-model record (2026-10-05) ---------------- */
+/*
+ * WP0.5 — Roof-deformation forward model, the F1-falsification response to
+ * the v5 review report (LUNARVOID_v5_Review_Report.txt). Three regimes
+ * (intact elastic beam bending / partially rubbleized / fully rubbleized),
+ * 2,880-row parameter sweep (E x h x L x damage), and a per-DTM
+ * detection-floor band derived as 3x the local 60–300 m band-passed
+ * residual RMS (the "sag-band RMS" detector metric). The 7/7 anchor
+ * reproduction covers the v5-review F1 canonical anchors (not the Z2
+ * pit-recovery 7/8, which is a different experiment frozen at R3).
+ *
+ * Honest exceptions are listed verbatim: the widest-span thin-roof corner
+ * CAN exceed the single-DTM detection floor (anchor #7: L=500 m, h=10 m,
+ * E=10 GPa -> delta = 9.18 m, above the 3.74 m TRANQPIT1 floor by 0.39
+ * orders). 30 of 360 intact-slice sweep crossings have delta above the
+ * 3.74 m reference floor, mostly E<=10 GPa or h<=10 m. Claim discipline
+ * preserved: this is an inference-with-error-bars result, not a detection.
+ */
+export const WP05_RECORD = {
+  paperStatus: 'preprint drafted · submission in preparation',
+  sweepRows: 2880,
+  dtmsProcessed: 14,
+  floorBandM: [1.97, 4.39] as [number, number],
+  floorMedianM: 3.31,
+  floorOutlierNote: 'KINGCRATER2 at 1.97 m is a highland mare-fragment outlier at the lower bound',
+  anchorsReproduced: '7/7',
+  anchorMaxRelErrPct: { rho2900: 3.48, rho3000: 1.1 },
+  gapOrdersRange: [1, 5] as [number, number],
+  gapMedianIntactOrders: 2.0,
+  gapMedianRestrictedIntactOrders: 2.95,
+  regimes: 3,
+  honestExceptions:
+    'Widest-span thin-roof corner (L=500 m, h=10 m, E=10 GPa: delta=9.18 m, above the 3.74 m TRANQPIT1 floor by 0.39 orders); 30/360 intact crossings mostly E<=10 GPa or h<=10 m',
 } as const;
 
 /* ------------------------------ gates & budget ----------------------------- */
@@ -666,9 +709,9 @@ export const BUDGET_LEDGER: BudgetRecord[] = [
     tier: 'Tier-0 (Local Machine Execution)',
     allocation: 0,
     spent: 0,
-    status: 'COMPLETE — 58 SESSIONS',
+    status: 'COMPLETE — 70 SESSIONS',
     description:
-      'All 58 research sessions, registry tooling, verifier scripts, and the 124-test suite executed on local hardware with zero external compute cost.',
+      'All 70 research sessions (post-WP0.5 paper-draft freeze), registry tooling, verifier scripts, and the 124-test suite executed on local hardware with zero external compute cost.',
   },
   {
     tier: 'Tier-1 Burst Buffer (Hetzner AX52-class)',

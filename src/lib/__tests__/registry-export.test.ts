@@ -18,6 +18,18 @@ describe('workingSetToJson', () => {
       expect(c.location).toHaveProperty('lat');
     }
   });
+
+  it('embeds the WP0.5 forward-model record (additive, post-R3)', () => {
+    expect(parsed.program_record.wp05).toBeTruthy();
+    expect(parsed.program_record.wp05.paper_status).toBe(
+      'preprint drafted · submission in preparation',
+    );
+    expect(parsed.program_record.wp05.sweep_rows).toBe(2880);
+    expect(parsed.program_record.wp05.floor_band_m).toEqual([1.97, 4.39]);
+    expect(parsed.program_record.wp05.floor_median_m).toBeCloseTo(3.31, 2);
+    expect(parsed.program_record.wp05.anchors_reproduced).toBe('7/7');
+    expect(parsed.program_record.wp05.gap_orders_range).toEqual([1, 5]);
+  });
 });
 
 describe('workingSetToCsv', () => {

@@ -1,6 +1,6 @@
 # LUNARVOID Portal — Roadmap, Status & Lessons
 
-> Living document. Current as of **2026-09-13**.
+> Living document. Current as of **2026-10-05** (WP0.5 content refresh v1).
 > Execution record for the 17-plan improvement program lives in
 > [`../plans/README.md`](../plans/README.md).
 
@@ -12,10 +12,10 @@
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errors (2 known warnings: vendored `ui/button.tsx` fast-refresh + intentional `TubeCutaway` export) |
 | Typecheck | `npm run typecheck` | ✅ 0 errors — with `noUncheckedIndexedAccess` ON |
-| Tests | `npm test` | ✅ 7 files, **67 tests** passing (was 0 at program start) |
+| Tests | `npm test` | ✅ 8 files, **74 tests** passing (was 0 at program start; +7 added in Phase-5 WP0.5 content refresh: 6 new `WP05_RECORD` pins + 1 new `wp05` JSON-export pin) |
 | Format | `npm run format:check` | ✅ clean (Prettier, ui/ excluded) |
-| Build | `npm run build` | ✅ ~0.9s |
-| Live smoke | dev server, all 5 tabs | ✅ globe WebGL, 12 atlas rows, CSV export, calculator seeding, 20 knowledge dossiers |
+| Build | `npm run build` | ✅ ~1.1s |
+| Live smoke | dev server, all 5 tabs | ✅ globe WebGL, 12 atlas rows, CSV export, calculator seeding, 21 knowledge dossiers (+1: "WP0.5 Forward Model / F1 Sub-Floor Finding"), WP0.5 stats panel in Gates tab |
 
 **17/17 improvement plans executed** (commits `826e98b` → `06432ca`, 2026-09-13).
 CI (`validate` → `deploy`) runs the same gate on every push/PR; pushing `main`
@@ -64,7 +64,21 @@ Security: clean (no XSS sinks, 0 `npm audit` vulns, no secrets).
 | 016 | Knowledge vault made real: 20 curated dossiers via Dialog, single MOC source, honest counts (was "107 atomic notes", zero existed) | `6204356` |
 | 017 | Parametric cutaway spike: candidate geometry drives the 3D view (all 12 verified readable); verdict **SHIP-AS-IS** | `6e7df1b` |
 
-### Phase 5 — Recommended next (proposals, not yet planned)
+### Phase 5 — Content reconciliation + WP0.5 forward-model results (in progress, 2026-10-05)
+
+1. **WP0.5 content refresh v1** (this batch, 2026-10-05) — the forward-model falsification
+   test (3 regimes, 2,880-row sweep, per-DTM floor band 1.97–4.39 m, 7/7 anchor
+   reproduction ≤3.48%) is now first-class on the portal. Surfaces: new hero metric
+   MET-05, text-only preprint teaser (no link, slot reserved for arXiv DOI), epistemic
+   thesis exhibit, 5th Gates journey card, WP0.5 stats panel with the 4-panel
+   deflection figure, new knowledge dossier. Frozen R3 statistics (FP 3.74 [1.71, 7.10],
+   278-row registry, 21/649 DTMs, G0′/G1/G2) are byte-identical. Session count 58 → 70.
+2. **Zenodo + DOI closure of the G3 promise** — the export (plan 014) is the
+   artifact; archiving it + linking the DOI next to the (future) BibTeX completes the
+   "open artifact" story. Small effort, high credibility. **Blocked on arXiv preprint
+   DOI first** (the preprint is the citable artifact; Zenodo mirrors it).
+
+### Phase 5 (cont.) — Recommended next (proposals, not yet planned)
 
 Ordered by leverage; each needs a design pass before implementation:
 
