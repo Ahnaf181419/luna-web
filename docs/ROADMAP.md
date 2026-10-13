@@ -1,6 +1,6 @@
 # LUNARVOID Portal — Roadmap, Status & Lessons
 
-> Living document. Current as of **2026-10-05** (WP0.5 content refresh v1).
+> Living document. Current as of **2026-10-13** (22-step build timeline; prior: WP0.5 content refresh v1).
 > Execution record for the 17-plan improvement program lives in
 > [`../plans/README.md`](../plans/README.md).
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errors (2 known warnings: vendored `ui/button.tsx` fast-refresh + intentional `TubeCutaway` export) |
 | Typecheck | `npm run typecheck` | ✅ 0 errors — with `noUncheckedIndexedAccess` ON |
-| Tests | `npm test` | ✅ 8 files, **74 tests** passing (was 0 at program start; +7 added in Phase-5 WP0.5 content refresh: 6 new `WP05_RECORD` pins + 1 new `wp05` JSON-export pin) |
+| Tests | `npm test` | ✅ 8 files, **79 tests** passing (was 0 at program start; +7 in Phase-5 WP0.5 refresh, +5 in the 2026-10-13 timeline batch: order/dateless/claim-discipline/milestone/spot pins on `TIMELINE`) |
 | Format | `npm run format:check` | ✅ clean (Prettier, ui/ excluded) |
 | Build | `npm run build` | ✅ ~1.1s |
 | Live smoke | dev server, all 5 tabs | ✅ globe WebGL, 12 atlas rows, CSV export, calculator seeding, 21 knowledge dossiers (+1: "WP0.5 Forward Model / F1 Sub-Floor Finding"), WP0.5 stats panel in Gates tab |
@@ -74,9 +74,14 @@ Security: clean (no XSS sinks, 0 `npm audit` vulns, no secrets).
    deflection figure, new knowledge dossier. Frozen R3 statistics (FP 3.74 [1.71, 7.10],
    278-row registry, 21/649 DTMs, G0′/G1/G2) are byte-identical. Session count 58 → 70.
 2. **Zenodo + DOI closure of the G3 promise** — the export (plan 014) is the
-   artifact; archiving it + linking the DOI next to the (future) BibTeX completes the
-   "open artifact" story. Small effort, high credibility. **Blocked on arXiv preprint
-   DOI first** (the preprint is the citable artifact; Zenodo mirrors it).
+   artifact; archiving it + linking the DOI next to the (future) BibTeX completes
+   the "open artifact" story. Small effort, high credibility. **Blocked on arXiv
+   preprint DOI first** (the preprint is the citable artifact; Zenodo mirrors it).
+3. **22-step build timeline** (2026-10-13, commit `09b31a1`) — the 5-card
+   journey grid replaced by the complete dateless build record (all 22 steps,
+   milestones 08/13/15/19/21 in success tone, header tagline "every step,
+   including the failures"). Copy provenance: parent repo `admin/CHANGELOG.md`
+   sessions 1–70. Frozen stats untouched.
 
 ### Phase 5 (cont.) — Recommended next (proposals, not yet planned)
 
