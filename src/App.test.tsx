@@ -129,4 +129,16 @@ describe('a11y + interaction regression pins', () => {
     expect(img).toHaveAttribute('width', '2079');
     expect(img).toHaveAttribute('height', '1499');
   });
+
+  it('keeps table header cells in native table-cell layout (no display:flex utilities)', () => {
+    setUrl('/?tab=atlas');
+    render(<App />);
+    const ths = [...document.querySelectorAll('table thead th')];
+    expect(ths.length).toBeGreaterThan(0);
+    for (const th of ths) {
+      // collar-ribbon sets display:flex, which pulls <th> out of table-cell
+      // layout and stacks the header row vertically in Chromium.
+      expect(th.className).not.toContain('collar-ribbon');
+    }
+  });
 });

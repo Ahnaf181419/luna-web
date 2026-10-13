@@ -183,7 +183,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
                 'Status',
                 '',
               ].map((h) => (
-                <TableHead key={h} className="collar-ribbon text-[9px]">
+                <TableHead key={h} className="label-mono text-[9px] whitespace-nowrap">
                   {h}
                 </TableHead>
               ))}
