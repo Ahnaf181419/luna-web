@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BUDGET_LEDGER, GATES, PROGRAM_RECORD, WP05_RECORD } from '@/lib/lunarvoid-data';
+import { BUDGET_LEDGER, GATES, PROGRAM_RECORD, TIMELINE, WP05_RECORD } from '@/lib/lunarvoid-data';
 
 /*
  * Pins for the REAL frozen program statistics (WP0.5 paper-draft v1
@@ -141,5 +141,51 @@ describe('BUDGET_LEDGER — real spend record', () => {
     expect(BUDGET_LEDGER[0]?.status).toContain('70 SESSIONS');
     expect(BUDGET_LEDGER[1]?.allocation).toBe(150);
     expect(BUDGET_LEDGER[2]?.allocation).toBe(800);
+  });
+});
+
+describe('TIMELINE — the 22-step dateless build record', () => {
+  it('has all 22 steps in order with unique titles', () => {
+    expect(TIMELINE).toHaveLength(22);
+    expect(TIMELINE.map((t) => t.step)).toEqual(
+      Array.from({ length: 22 }, (_, i) => String(i + 1).padStart(2, '0')),
+    );
+    expect(new Set(TIMELINE.map((t) => t.title)).size).toBe(22);
+    for (const t of TIMELINE) {
+      expect(t.body.length).toBeGreaterThan(40);
+    }
+  });
+
+  it('is dateless by design (step numbers carry the chronology)', () => {
+    for (const t of TIMELINE) {
+      expect(`${t.title} ${t.body}`).not.toMatch(/20\d{2}-\d{2}-\d{2}/);
+    }
+  });
+
+  it('keeps claim discipline across every step (no detection language)', () => {
+    for (const t of TIMELINE) {
+      expect(t.body).not.toMatch(
+        /detected a lava tube|discovered a lava tube|confirmed a lava tube/i,
+      );
+    }
+  });
+
+  it('pins the milestone set (first lunar results, audit, statistics, physics test, preprint)', () => {
+    expect(TIMELINE.filter((t) => t.milestone).map((t) => t.step)).toEqual([
+      '08',
+      '13',
+      '15',
+      '19',
+      '21',
+    ]);
+  });
+
+  it('spot-pins headline content (provenance: admin/CHANGELOG.md)', () => {
+    expect(TIMELINE[7]?.body).toContain('44');
+    expect(TIMELINE[7]?.body).toContain('Tranquillitatis');
+    expect(TIMELINE[18]?.body).toContain('2,880-row');
+    expect(TIMELINE[18]?.body).toContain('far too little for orbit to see');
+    expect(TIMELINE[20]?.body).toContain('10,610');
+    expect(TIMELINE[21]?.body).toContain('$0');
   });
 });

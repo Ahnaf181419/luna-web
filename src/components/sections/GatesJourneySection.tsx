@@ -6,6 +6,7 @@ import {
   BUDGET_LEDGER,
   GATES,
   PROGRAM_RECORD,
+  TIMELINE,
   WP05_RECORD,
   type GateCriterion,
 } from '@/lib/lunarvoid-data';
@@ -18,44 +19,6 @@ const VERDICT_TONE: Record<GateCriterion['verdict'], string> = {
   'DEFERRED-DTM-GAP': 'border-warning/40 bg-warning/10 text-warning',
   'NOT MEASURED': 'border-border bg-muted text-muted-foreground',
 };
-
-const JOURNEY = [
-  {
-    phase: 'Gate G0′ · 2026-08-21 · Passed',
-    title: 'Tier-0 baseline',
-    body: 'Pit-recovery primitive (7/8), measured noise floors, confusion layers, and the first Z2 sag search — all at $0.',
-    tone: 'border-success/40',
-    label: 'text-success',
-  },
-  {
-    phase: 'Gate G1 · 2026-08-22 · Passed',
-    title: 'Calibration freeze',
-    body: 'TRANQPIT1 recipe frozen and reproduced byte-identically; analog registration; per-DTM floors at N=10; Diviner thermal sampled.',
-    tone: 'border-success/40',
-    label: 'text-success',
-  },
-  {
-    phase: 'Gate G2 · 2026-08-24 · Passed',
-    title: 'N=7 → N=21 expansion',
-    body: 'Eleven new sha-verified NAC DTMs; registry grown to 278 rows at terminal state; FP bound 3.74 [1.71, 7.10] per 10⁴ km².',
-    tone: 'border-success/40',
-    label: 'text-success',
-  },
-  {
-    phase: 'Sessions 25–58 · Complete',
-    title: 'Engineering terminal state',
-    body: 'Registry tooling, sentinel hardening, verifier scripts, 124-test suite. Queue exhausted; remaining items are user-gated — see the repository.',
-    tone: 'border-primary/50',
-    label: 'text-primary',
-  },
-  {
-    phase: 'WP0.5 · 2026-10-05 · Drafted',
-    title: 'Forward-model falsification test',
-    body: `Sessions 59–70 · F1 finding quantified: 1–5 orders sub-floor; 7/7 anchors ≤3.48% (ρ=2900); 2,880-row sweep. Preprint drafted.`,
-    tone: 'border-primary/60',
-    label: 'text-primary-bright',
-  },
-];
 
 const FROZEN_STATS = [
   {
@@ -113,11 +76,16 @@ export const GatesJourneySection: React.FC = () => {
       {/* Session roadmap */}
       <div className="workbench-panel space-y-6 p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
-          <div className="flex items-center gap-2">
-            <GitBranch className="h-4 w-4 text-primary" />
-            <h3 className="font-mono text-sm font-semibold text-foreground">
-              The {PROGRAM_RECORD.sessionsRun}-session autonomous research program
-            </h3>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4 text-primary" />
+              <h3 className="font-mono text-sm font-semibold text-foreground">
+                The {PROGRAM_RECORD.sessionsRun}-session autonomous research program
+              </h3>
+            </div>
+            <p className="font-sans text-xs leading-relaxed text-muted-foreground">
+              The complete build record — every step, including the failures.
+            </p>
           </div>
           <Badge
             variant="outline"
@@ -127,20 +95,39 @@ export const GatesJourneySection: React.FC = () => {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 font-mono text-xs md:grid-cols-3 lg:grid-cols-5">
-          {JOURNEY.map((j) => (
-            <div
-              key={j.title}
-              className={`rounded-[2px] border border-border/80 bg-surface/60 p-4 ${j.tone}`}
-            >
-              <div className={`text-[10px] font-bold ${j.label}`}>{j.phase}</div>
-              <div className="mt-1 text-sm font-bold text-foreground">{j.title}</div>
-              <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted-foreground">
-                {j.body}
-              </p>
-            </div>
+        <ol className="mt-4">
+          {TIMELINE.map((t, i) => (
+            <li key={t.step} className="grid grid-cols-[2.25rem_1fr] gap-3 sm:gap-4">
+              <div className="flex flex-col items-center">
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[2px] border font-mono text-[10px] font-bold ${
+                    t.milestone
+                      ? 'border-success/50 bg-success/15 text-success'
+                      : 'border-border bg-surface/60 text-muted-foreground'
+                  }`}
+                >
+                  {t.step}
+                </div>
+                {i < TIMELINE.length - 1 && (
+                  <div aria-hidden="true" className="w-px grow self-center bg-border" />
+                )}
+              </div>
+              <div className="pb-5">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h4 className="font-mono text-sm font-bold text-foreground">{t.title}</h4>
+                  {t.milestone && (
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-success">
+                      milestone
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 max-w-3xl font-sans text-[11px] leading-relaxed text-muted-foreground">
+                  {t.body}
+                </p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
 
       {/* Frozen program statistics */}

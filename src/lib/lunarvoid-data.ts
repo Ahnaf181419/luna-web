@@ -557,6 +557,142 @@ export const WP05_RECORD = {
     'Widest-span thin-roof corner (L=500 m, h=10 m, E=10 GPa: delta=9.18 m, above the 3.74 m TRANQPIT1 floor by 0.39 orders); 30/360 intact crossings mostly E<=10 GPa or h<=10 m',
 } as const;
 
+/* --------------------------- program timeline (2026-10-13) ------------------ */
+/*
+ * The complete 22-step build record, first to last — deliberately dateless
+ * (step numbers carry the chronology) and deliberately including the
+ * failures and audits, per the portal's epistemic thesis ("we do not
+ * detect, we infer"). Copy derives from the research repository's
+ * admin/CHANGELOG.md session log (sessions 1–70); numbers trace to the
+ * same frozen evidence as PROGRAM_RECORD / WP05_RECORD. Milestone steps
+ * (08, 13, 15, 19, 21) render with the success tone in the Journey section.
+ */
+
+export interface TimelineStep {
+  step: string;
+  title: string;
+  body: string;
+  milestone?: boolean;
+}
+
+export const TIMELINE: TimelineStep[] = [
+  {
+    step: '01',
+    title: 'Project set up',
+    body: 'Folder structure, a read-only archive of the original planning documents, agent rules, permission enforcement, and a Python environment. Reference index maps acquired — where terrain data exists, where known pits are.',
+  },
+  {
+    step: '02',
+    title: 'First maps and reading',
+    body: 'The scope map showing which pits have usable published terrain data; a prior-art matrix of 33 papers; the first lunar terrain model and the depression-depth tool. Key discovery: the standard sink-fill method fails on dark pit interiors — the Planchon–Darboux fill engine is required.',
+  },
+  {
+    step: '03',
+    title: 'First physics checks',
+    body: 'Kriging correction experiment (noise floor of published terrain models: ~a third of a metre); pit-depth recovery tests on the first sites; rille and crater datasets acquired; the recovery sweep passed everywhere but one site — a failure mode predicted in advance.',
+  },
+  {
+    step: '04',
+    title: 'Analog data unblocked',
+    body: 'Solved the compressed-archive extraction blocker without admin rights; downloaded the NASA cave-analog laser scans; ran the first end-to-end detection pipeline on the first analog site, then extended to six; wrote the first paper skeleton.',
+  },
+  {
+    step: '05',
+    title: 'Detector improved, version by version',
+    body: 'Small-blob filtering; a terrain-steepness mask that lifted precision on every site; automatic threshold tuning; plotting bug fixes; an incomplete local stereo-photogrammetry attempt honestly closed out.',
+  },
+  {
+    step: '06',
+    title: 'Team-of-agents machinery built',
+    body: 'Adversarial skeptic reviewer role, append-only findings log, candidate-registry schema, verification-evidence archive. The real cave point-cloud registered to the analog surface terrain for ground truth (entrance-only overlap — target precision not fully reached, documented).',
+  },
+  {
+    step: '07',
+    title: 'Robustness testing',
+    body: 'Analog scenes re-rendered under simulated lunar illumination — the detector degraded badly in shadow, documented honestly; sensor-degradation test ladder added; the detector released as a versioned benchmark.',
+  },
+  {
+    step: '08',
+    title: 'First lunar results',
+    body: 'Per-site detection noise floors; calibration frozen on the flagship Tranquillitatis site; recipe transferred to the other sites; first candidate registry (44 candidates, none promoted to a "likely tube" tier — correctly, by design); heat data checked (one site flagged as rocky ejecta — counter-evidence); first quality checkpoint passed after human review.',
+    milestone: true,
+  },
+  {
+    step: '09',
+    title: 'Scale-up',
+    body: 'Discovered which published terrain models overlap known pits; eleven more downloaded; score rasters generated; registry grown to 278 entries; false-positive rate improved as more empty terrain was searched without new false alarms.',
+  },
+  {
+    step: '10',
+    title: 'Knowledge base + first paper',
+    body: 'The Obsidian knowledge vault (site notes, concept notes, auto-regeneration script); the second quality checkpoint; the first paper brought to a complete submission-ready draft.',
+  },
+  {
+    step: '11',
+    title: 'Human-in-the-loop aids',
+    body: 'Visual-inspection helper with real spacecraft thumbnails — the principal inspected every candidate by eye; no promotions. First machine-learning baseline on the registry; references verified in Zotero; the blocked raw-image archive re-probed (still blocked).',
+  },
+  {
+    step: '12',
+    title: 'Self-teaching + second paper + full package',
+    body: 'A 35-lesson self-study curriculum covering the whole domain; the second paper drafted (the inference framework); the machine-learning model improved; the complete submission package assembled (graphical abstract, cover letter, referee template, suggested reviewers).',
+  },
+  {
+    step: '13',
+    title: 'Deep audit and repair',
+    body: 'An independent whole-project audit found real defects — float precision, a silent resampling error, supply-chain risk, an incomplete dependency list, a fabricated "passed" literal. All fixed with before/after parity proofs; test infrastructure built; a provenance index for every output; decisions recorded as architecture records.',
+    milestone: true,
+  },
+  {
+    step: '14',
+    title: 'Registry repaired, papers rewritten',
+    body: 'Malformed rows fixed and cross-run duplicates marked superseded (leaving unique features); the first paper rewritten in journal format with honest claims; the per-unique-feature false-positive estimate re-derived; the geometry of co-located detections corrected.',
+  },
+  {
+    step: '15',
+    title: 'Statistics made honest',
+    body: 'The machine-learning evaluation redesigned to remove data leakage (leave-one-site-out, cluster confidence intervals); the flashy early numbers labelled leak-inflated; the second paper reframed as an annotated test-bed; a fresh literature sweep; overlap between the two papers reduced.',
+    milestone: true,
+  },
+  {
+    step: '16',
+    title: 'Hardening + packaging',
+    body: 'Graphical abstract and referee template regenerated consistently; a silent-exception audit across all error handling; a one-command pipeline chain with frozen-artifact guards (one incident — caught and restored byte-identically); the public data deposit package prepared, awaiting publication decisions.',
+  },
+  {
+    step: '17',
+    title: 'Pre-submission polish + stand-down',
+    body: 'Reference audit of the first paper — nearly every reference had an error (author orders, titles, venues), all verified and fixed; second paper polished; sentinel-value hardening with a real data-quality finding; a byte-exact registry writer with schema validation; the entire program state consolidated into a single resume document. The autonomous queue exhausted — remaining steps require human decisions.',
+  },
+  {
+    step: '18',
+    title: 'Stereo attempt',
+    body: 'The NASA stereo pipeline running end-to-end locally (two real blocker bugs fixed); three homemade terrain models compared against published ones — they failed quality by a wide margin, correctly attributed to unfavourable camera geometry, not bugs; a verified-byte spacecraft product fetch; all 28 raw images for the target sites acquired.',
+  },
+  {
+    step: '19',
+    title: 'The physics test',
+    body: 'The roof-sag forward model — three roof regimes, a 2,880-row parameter sweep, verification against independent derivations. Headline conclusion: an intact lava-tube roof sags far too little for orbit to see; only a near-collapse roof is plausibly detectable.',
+    milestone: true,
+  },
+  {
+    step: '20',
+    title: 'Outreach kit',
+    body: 'Research statement, preprint abstract, one-page project overview, a target-faculty list with per-person angles, email templates, and a sending calendar.',
+  },
+  {
+    step: '21',
+    title: 'Paper + PDFs + portal',
+    body: 'The full 10,610-word preprint written through the complete review chain — rejected once, repaired, approved with every objection addressed; clean PDF conversions; the public portal refreshed with all findings.',
+    milestone: true,
+  },
+  {
+    step: '22',
+    title: 'Final close-out',
+    body: 'Session bookkeeping closed; total program spend: $0 of the $800 lifetime ceiling. The complete build record — including the failures — stands as the evidence base for the calibrated-inference thesis.',
+  },
+];
+
 /* ------------------------------ gates & budget ----------------------------- */
 
 export interface GateCriterion {
