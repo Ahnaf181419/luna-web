@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Type } from 'lucide-react';
 
 type FontTheme = 'console' | 'archive';
@@ -10,11 +10,7 @@ function readTheme(): FontTheme {
 }
 
 export const FontThemeToggle: React.FC = () => {
-  const [theme, setTheme] = useState<FontTheme>('console');
-
-  useEffect(() => {
-    setTheme(readTheme());
-  }, []);
+  const [theme, setTheme] = useState<FontTheme>(() => readTheme());
 
   const toggle = () => {
     const next: FontTheme = theme === 'console' ? 'archive' : 'console';
@@ -32,6 +28,7 @@ export const FontThemeToggle: React.FC = () => {
       type="button"
       onClick={toggle}
       aria-pressed={theme === 'archive'}
+      aria-label="Toggle font theme (Console / Archive)"
       title="Toggle font theme (Console / Archive)"
       className="flex items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground"
     >

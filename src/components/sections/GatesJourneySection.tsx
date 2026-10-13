@@ -260,6 +260,8 @@ export const GatesJourneySection: React.FC = () => {
           <div className="overflow-hidden rounded-md border border-border bg-surface/60 p-3">
             <img
               loading="lazy"
+              width={2079}
+              height={1499}
               src="/luna-web/figures/deflection_4panel.png"
               alt="WP0.5 4-panel forward-model figure: parameter sweep, predicted sag delta, and detection-floor comparison across 14 NAC DTMs"
               className="w-full h-auto"

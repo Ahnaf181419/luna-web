@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { App } from './App';
 import { CANDIDATES } from '@/lib/lunarvoid-data';
@@ -84,5 +84,49 @@ describe('App URL deep-link state machine', () => {
   it('survives garbage calculator params', () => {
     setUrl('/?tab=fusion&m=abc');
     expect(() => render(<App />)).not.toThrow();
+  });
+});
+
+describe('a11y + interaction regression pins', () => {
+  it('exposes a skip link to the main landmark', () => {
+    setUrl('/');
+    render(<App />);
+    expect(document.querySelector('a[href="#main"]')).not.toBeNull();
+    expect(document.querySelector('main#main')).not.toBeNull();
+  });
+
+  it('names the atlas search input (placeholder is not a label)', () => {
+    setUrl('/?tab=atlas');
+    render(<App />);
+    expect(screen.getByPlaceholderText(/Search candidate/)).toHaveAttribute('aria-label');
+  });
+
+  it('opens the drawer from the Inspect button itself, not only via row bubbling', () => {
+    setUrl('/?tab=atlas');
+    render(<App />);
+    const btn = screen.getAllByRole('button', { name: /Inspect/i })[0]!;
+    fireEvent.click(btn);
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog).not.toBeNull();
+    expect(dialog?.textContent).toContain('CAND-TRANQ-001');
+  });
+
+  it('names all three calculator sliders', () => {
+    setUrl('/?tab=fusion');
+    render(<App />);
+    const sliders = [...document.querySelectorAll('[role="slider"]')];
+    expect(sliders).toHaveLength(3);
+    for (const s of sliders) {
+      expect(s.getAttribute('aria-label')).toBeTruthy();
+    }
+  });
+
+  it('gives the WP0.5 figure intrinsic dimensions (CLS guard)', () => {
+    setUrl('/?tab=gates');
+    render(<App />);
+    const img = document.querySelector('img[src*="deflection_4panel"]');
+    expect(img).not.toBeNull();
+    expect(img).toHaveAttribute('width', '2079');
+    expect(img).toHaveAttribute('height', '1499');
   });
 });

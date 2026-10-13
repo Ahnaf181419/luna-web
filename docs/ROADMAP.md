@@ -1,6 +1,6 @@
 # LUNARVOID Portal — Roadmap, Status & Lessons
 
-> Living document. Current as of **2026-10-13** (22-step build timeline; prior: WP0.5 content refresh v1).
+> Living document. Current as of **2026-10-13** (audit fix batch: copy currency + a11y + social meta; prior: 22-step build timeline).
 > Execution record for the 17-plan improvement program lives in
 > [`../plans/README.md`](../plans/README.md).
 
@@ -10,17 +10,16 @@
 
 | Gate | Command | Result |
 |---|---|---|
-| Lint | `npm run lint` | ✅ 0 errors (2 known warnings: vendored `ui/button.tsx` fast-refresh + intentional `TubeCutaway` export) |
+| Lint | `npm run lint` | ✅ 0 errors (7 known warnings: vendored `ui/` fast-refresh ×2 + intentional `TubeCutaway` export, 3 `LunarGlobe` texture-upgrade immutability notes) |
 | Typecheck | `npm run typecheck` | ✅ 0 errors — with `noUncheckedIndexedAccess` ON |
-| Tests | `npm test` | ✅ 8 files, **79 tests** passing (was 0 at program start; +7 in Phase-5 WP0.5 refresh, +5 in the 2026-10-13 timeline batch: order/dateless/claim-discipline/milestone/spot pins on `TIMELINE`) |
+| Tests | `npm test` | ✅ 9 files, **85 tests** passing (was 0 at program start; +7 WP0.5 refresh, +5 timeline batch, +6 in the 2026-10-13 audit-fix batch: palette copy-currency + a11y regression pins) |
 | Format | `npm run format:check` | ✅ clean (Prettier, ui/ excluded) |
 | Build | `npm run build` | ✅ ~1.1s |
 | Live smoke | dev server, all 5 tabs | ✅ globe WebGL, 12 atlas rows, CSV export, calculator seeding, 21 knowledge dossiers (+1: "WP0.5 Forward Model / F1 Sub-Floor Finding"), WP0.5 stats panel in Gates tab |
 
 **17/17 improvement plans executed** (commits `826e98b` → `06432ca`, 2026-09-13).
 CI (`validate` → `deploy`) runs the same gate on every push/PR; pushing `main`
-publishes to https://ahnaf181419.github.io/luna-web/ — **not yet pushed: run
-`git push` when ready to publish this batch.**
+publishes to https://ahnaf181419.github.io/luna-web/.
 
 ## Complete roadmap
 
@@ -82,6 +81,18 @@ Security: clean (no XSS sinks, 0 `npm audit` vulns, no secrets).
    milestones 08/13/15/19/21 in success tone, header tagline "every step,
    including the failures"). Copy provenance: parent repo `admin/CHANGELOG.md`
    sessions 1–70. Frozen stats untouched.
+4. **Audit fix batch: copy currency + a11y + social meta** (2026-10-13) — full
+   portal audit (impeccable / ponytail-audit / Web Interface Guidelines + live
+   deploy check) found one shipped stale literal (palette "58-session journey")
+   and a class of a11y gaps. Fixed: palette subtitle now derives from
+   `PROGRAM_RECORD.sessionsRun` (+ regression pin), all 3 calculator sliders
+   named (thumb aria-label via ref shim — vendored slider untouched), atlas
+   search + palette inputs labelled, skip link + `main#main`, ⌘K / font-toggle
+   aria-labels, Atlas Inspect button owns its onClick (was row-bubbling),
+   WP0.5 figure intrinsic 2079×1499 (CLS), `og:image`/`twitter:image`/`og:url`/
+   canonical, `import.meta.dirname` in vitest config, FontThemeToggle lazy-init
+   (drops a lint warning). `npm audit fix` (source-map-js HIGH, build-chain
+   only) + in-range dep refresh → 0 vulnerabilities. Tests 79 → 85.
 
 ### Phase 5 (cont.) — Recommended next (proposals, not yet planned)
 
@@ -120,7 +131,7 @@ Ordered by leverage; each needs a design pass before implementation:
 
 | Metric | Program start (6f6856b) | Now |
 |---|---|---|
-| Tests | 0 | 67 passing |
+| Tests | 0 | 85 passing |
 | Runtime dependencies | 47 | 16 |
 | Vendored ui files | 46 | 11 (verbatim) |
 | CI gates on push | build only | lint + typecheck + test + format + build |

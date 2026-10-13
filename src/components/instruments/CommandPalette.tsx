@@ -13,6 +13,7 @@ import {
   CANDIDATES,
   CATALOG_SIZE,
   GATES,
+  PROGRAM_RECORD,
   SITES,
   type Candidate,
   type SiteId,
@@ -56,7 +57,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     {
       value: 'gates',
       title: 'Gates & Ledger',
-      subtitle: 'Gate G0′/G1/G2 criteria, 58-session journey & budget',
+      subtitle: `Gate G0′/G1/G2 criteria, ${PROGRAM_RECORD.sessionsRun}-session build record & budget`,
     },
     {
       value: 'knowledge',
@@ -67,7 +68,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <CommandDialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
-      <CommandInput placeholder="Search tabs, target sites, candidates, or gates…" />
+      <CommandInput
+        aria-label="Search project catalog"
+        placeholder="Search tabs, target sites, candidates, or gates…"
+      />
       <CommandList>
         <CommandEmpty>No matching lunar records found.</CommandEmpty>
 

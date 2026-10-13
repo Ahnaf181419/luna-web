@@ -208,10 +208,16 @@ export const App: React.FC = () => {
   return (
     <Tabs value={tab} onValueChange={(v) => setTab(v as TabId)} className="min-h-screen gap-0">
       <AnimatedCursor />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[2px] focus:border focus:border-primary focus:bg-background focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-primary"
+      >
+        Skip to main content
+      </a>
       {/* ---------------------------- header / status --------------------------- */}
       <Header onOpenCommandPalette={() => setIsCommandPaletteOpen(true)} />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+      <main id="main" className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         {/* ------------------------------ overview ----------------------------- */}
         <TabsContent value="overview" className="space-y-10">
           <HeroSection />

@@ -141,6 +141,7 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search candidates"
               placeholder="Search candidate ID, site name, or feature type…"
               className="pl-9 font-mono text-xs rounded-[2px]"
             />
@@ -216,7 +217,12 @@ export const AtlasSection: React.FC<AtlasSectionProps> = ({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button size="sm" variant="ghost" className="font-mono text-[10px] h-7 px-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onSelectCandidate(c)}
+                    className="font-mono text-[10px] h-7 px-2"
+                  >
                     <Binoculars className="mr-1 h-3 w-3" />
                     Inspect
                   </Button>

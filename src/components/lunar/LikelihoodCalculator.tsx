@@ -29,6 +29,12 @@ function Control({
   onChange: (v: number) => void;
   hint: string;
 }) {
+  const sliderRef = useRef<HTMLDivElement>(null);
+  // shortcut: vendored shadcn Slider forwards no thumb props; name the thumb via DOM
+  // until the primitive gains passthrough. Remove if ui/slider.tsx ever accepts thumb props.
+  useEffect(() => {
+    sliderRef.current?.querySelector('[role="slider"]')?.setAttribute('aria-label', label);
+  }, [label]);
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
@@ -38,6 +44,7 @@ function Control({
         </span>
       </div>
       <Slider
+        ref={sliderRef}
         value={[value]}
         min={min}
         max={max}

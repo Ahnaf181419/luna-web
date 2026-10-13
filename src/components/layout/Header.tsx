@@ -94,6 +94,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
             />
             <button
               onClick={onOpenCommandPalette}
+              aria-label="Search project catalog (Cmd+K)"
               className="flex min-h-11 items-center gap-2 rounded border border-border bg-surface/60 px-2.5 py-1.5 text-muted-foreground transition-colors hover:text-foreground touch-action-manipulation"
               title="Search Project Catalog (Cmd+K)"
             >
